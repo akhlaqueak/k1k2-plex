@@ -56,7 +56,7 @@ public:
             kplex(Cinit, Xinit);
             reset();
         }
-        cout << "Total (" << k1 << "-" << k2 << ")-plexes of at least " << q << " size" << kplexes << endl;
+        cout << "Total (" << k1 << "-" << k2 << ")-plexes of at least " << q << " size: " << kplexes << endl;
     }
     EnumKPlex(Graph &_g, ui _k1, ui _k2, ui _q) : pruned(_g.V), rid(_g.V),
                                                   g(_g), inDegree(_g.V), outDegree(_g.V),
