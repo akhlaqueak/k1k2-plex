@@ -81,7 +81,7 @@ private:
         vector<char> peeled = pruned;
         cout<<"peeled size "<<peeled.size();
         cout<<"pruned size "<<pruned.size();
-        peeled.resize(g.V);
+        // peeled.resize(g.V);
         cout<<"a peeled size "<<peeled.size();
         // check how many vertices have been pruned by k1k2pruning
         for (ui i = 0; i < g.V; i++)
