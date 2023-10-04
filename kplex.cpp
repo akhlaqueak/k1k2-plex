@@ -56,7 +56,7 @@ public:
             kplex(Cinit, Xinit);
             reset();
         }
-        cout << "Total (" << k1 << "-" << k2 << ")-plexes " << kplexes << endl;
+        cout << "Total (" << k1 << "-" << k2 << ")-plexes of at least " << q << " size" << kplexes << endl;
     }
     EnumKPlex(Graph &_g, ui _k1, ui _k2, ui _q) : pruned(_g.V), rid(_g.V),
                                                   g(_g), inDegree(_g.V), outDegree(_g.V),
@@ -79,17 +79,14 @@ private:
     {
         ui kc1 = q - k1, kc2 = q - k2, pn = 0, tail = 0;
         vector<char> peeled = pruned;
-        cout<<"peeled size "<<peeled.size();
-        cout<<"pruned size "<<pruned.size();
-        // peeled.resize(g.V);
-        cout<<"a peeled size "<<peeled.size();
+
         // check how many vertices have been pruned by k1k2pruning
         for (ui i = 0; i < g.V; i++)
         {
             if (peeled[i])
                 pn++;
         }
-        cout << "pruned vertices: " << pn << endl;
+        cout << "k1,k2 pruned vertices: " << pn << endl;
         while (pn + degenOrder.size() < g.V)
         {
 
@@ -105,7 +102,6 @@ private:
             }
             for (ui i = tail; i < degenOrder.size(); i++)
             {
-                cout<<degenOrder.size();
                 ui v = degenOrder[i];
                 for (ui j = 0; j < g.nsIn[v].size(); j++)
                 {
@@ -384,6 +380,7 @@ int main(int argc, char *argv[])
     ui q = cmd.GetOptionIntValue("-q", 2);
     ui k1 = cmd.GetOptionIntValue("-k1", 1);
     ui k2 = cmd.GetOptionIntValue("-k2", 1);
+    
 
     if (data_file == "")
     {
@@ -401,7 +398,7 @@ int main(int argc, char *argv[])
 
     EnumKPlex kp(g, k1, k2, q);
     kp.enumerate();
-    cout << data_file << " Enumeration time: " << chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - tick).count() << endl;
+    cout << data_file << " Enumeration time: " << chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - tick).count() << " ms" << endl;
 
     cout << endl;
     return 0;
