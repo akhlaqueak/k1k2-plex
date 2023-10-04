@@ -1,6 +1,6 @@
 # k1k2-plex
- (k1,k2)-plex
- This version is performs:
+
+ This version performs:
  * (k1,k2)-core pruning
  * Degeneracy Order
  * FaPlex Algorithm 1 style search of (k1,k2)-plex
