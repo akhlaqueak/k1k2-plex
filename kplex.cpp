@@ -105,6 +105,7 @@ private:
             }
             for (ui i = tail; i < degenOrder.size(); i++)
             {
+                cout<<degenOrder.size();
                 ui v = degenOrder[i];
                 for (ui j = 0; j < g.nsIn[v].size(); j++)
                 {
