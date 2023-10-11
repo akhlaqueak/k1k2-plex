@@ -20,6 +20,7 @@ class EnumKPlex
     vector<ui> outDegree;
     vector<ui> Cinit;
     vector<ui> Xinit;
+    vector<ui> counts;
 
     void print(string msg, auto &vec)
     {
@@ -57,6 +58,9 @@ public:
             reset();
         }
         cout << "Total (" << k1 << "-" << k2 << ")-plexes of at least " << q << " size: " << kplexes << endl;
+        for(ui i=0;i<counts.size();i++){
+            cout<<"kplex of size: "<<q+i<<" = "<<counts[i]+q<<endl;
+        }
     }
     EnumKPlex(Graph &_g, ui _k1, ui _k2, ui _q) : pruned(_g.V), rid(_g.V),
                                                   g(_g), inDegree(_g.V), outDegree(_g.V),
@@ -346,7 +350,10 @@ private:
         {
             if (P.size() < q)
                 return;
-            print("kplex: ", P);
+            ui sz = P.size() - q + 1;
+            if (counts.size() < sz)
+                counts.resize(sz);
+            counts[sz-1]++;
             kplexes++;
             return;
         }
@@ -380,7 +387,6 @@ int main(int argc, char *argv[])
     ui q = cmd.GetOptionIntValue("-q", 2);
     ui k1 = cmd.GetOptionIntValue("-k1", 1);
     ui k2 = cmd.GetOptionIntValue("-k2", 1);
-    
 
     if (data_file == "")
     {
