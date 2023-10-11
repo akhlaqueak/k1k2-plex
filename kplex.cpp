@@ -59,7 +59,7 @@ public:
         }
         cout << "Total (" << k1 << "-" << k2 << ")-plexes of at least " << q << " size: " << kplexes << endl;
         for(ui i=0;i<counts.size();i++){
-            cout<<"kplex of size: "<<q+i<<" = "<<counts[i]+q<<endl;
+            cout<<"kplex of size: "<<q+i<<" = "<<counts[i]<<endl;
         }
     }
     EnumKPlex(Graph &_g, ui _k1, ui _k2, ui _q) : pruned(_g.V), rid(_g.V),
