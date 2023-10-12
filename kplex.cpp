@@ -57,7 +57,7 @@ public:
             kplex(Cinit, Xinit);
             reset();
         }
-        cout << "Total (" << k1 << "-" << k2 << ")-plexes of at least " << q << " size: " << kplexes << endl;
+        cout << "Total (" << k1 << ", " << k2 << ")-plexes of at least " << q << " size: " << kplexes << endl;
         for (ui i = 0; i < counts.size(); i++)
         {
             cout << "kplex of size: " << q + i << " = " << counts[i] << endl;
@@ -351,9 +351,9 @@ private:
         {
             if (P.size() < q)
                 return;
-            ui sz = P.size() - q + 1;
-            counts.resize(sz);
-            counts[sz - 1]++;
+            ui sz = P.size() - q;
+            counts.resize(sz+1);
+            counts[sz]++;
             kplexes++;
             return;
         }
