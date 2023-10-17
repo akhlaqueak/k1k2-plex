@@ -109,37 +109,30 @@ private:
             for (ui i = tail; i < degenOrder.size(); i++)
             {
                 ui v = degenOrder[i];
-                for (ui j = 0; j < g.nsIn[v].size(); j++)
+                for (ui u : g.nsIn[v])
                 {
-                    ui u = g.nsIn[v][j];
-                    if (peeled[u])
-                        continue;
-
                     outDegree[u]--;
-                    if (outDegree[u] == kc1)
+                    if (outDegree[u] == kc1 and (not peeled[u]))
                     {
                         degenOrder.push_back(u);
                         peeled[u] = 1;
                     }
                 }
-                for (ui j = 0; j < g.nsOut[v].size(); j++)
+                for (ui u : g.nsOut[v])
                 {
-                    ui u = g.nsOut[v][j];
-                    if (peeled[u])
-                        continue;
-
                     inDegree[u]--;
-                    if (inDegree[u] == kc2)
+                    if (inDegree[u] == kc2 and (not peeled[u]))
                     {
                         degenOrder.push_back(u);
                         peeled[u] = 1;
-                    }
+                    }  
                 }
             }
             kc1++;
             kc2++;
             tail = degenOrder.size();
         }
+        print("peeled ", degenOrder);
     }
 
     void recodeIDs()
@@ -227,25 +220,19 @@ private:
         for (ui i = 0; i < buffer.size(); i++)
         {
             ui v = buffer[i];
-            for (ui j = 0; j < g.nsIn[v].size(); j++)
+            for (ui u : g.nsIn[v])
             {
-                ui u = g.nsIn[v][j];
-                if (pruned[u])
-                    continue;
                 outDegree[u]--;
-                if (outDegree[u] + k1 < q)
+                if (outDegree[u] + k1 < q and (not pruned[u]))
                 {
                     buffer.push_back(u);
                     pruned[u] = 1;
                 }
             }
-            for (ui j = 0; j < g.nsOut[v].size(); j++)
+            for (ui u : g.nsOut[v])
             {
-                ui u = g.nsOut[v][j];
-                if (pruned[u])
-                    continue;
                 inDegree[u]--;
-                if (inDegree[u] + k2 < q)
+                if (inDegree[u] + k2 < q and (not pruned[u]))
                 {
                     buffer.push_back(u);
                     pruned[u] = 1;
@@ -326,22 +313,26 @@ private:
         vector<ui> res1, res2;
         res1.reserve(B.size());
         res2.reserve(B.size());
-        for (ui i = 0; i < B.size(); i++)
+            print("P ", P);
+            print("B", B);
+            print("neighIn", neighPIn);
+            print("neighOut", neighPOut);
+        for (ui v : B)
         {
             // every vertex in vBoundary is in neighbors of B[i]
-            if (intersectsAll(vBoundaryIn, g.nsOut[B[i]]))
+            if (intersectsAll(vBoundaryIn, g.nsOut[v]))
                 // if (P.size() < k or P.intersect(g.nsIn, B[i]).size() > P.size() - k1)
-                if (neighPIn[B[i]] + k2 > P.size())
-                    res1.push_back(B[i]);
+                if (neighPIn[v] + k2 > P.size())
+                    res1.push_back(v);
         }
 
-        for (ui i = 0; i < res1.size(); i++)
+        for (ui v : res1)
         {
             // every vertex in vBoundary is in neighbors of B[i]
-            if (intersectsAll(vBoundaryOut, g.nsIn[res1[i]]))
+            if (intersectsAll(vBoundaryOut, g.nsIn[v]))
                 // if (P.size() < k or P.intersect(g.nsOut, B[i]).size() > P.size() - k2)
-                if (neighPOut[res1[i]] + k1 > P.size())
-                    res2.push_back(res1[i]);
+                if (neighPOut[v] + k1 > P.size())
+                    res2.push_back(v);
         }
 
         return res2;
@@ -356,6 +347,7 @@ private:
             if (sz > counts.size())
                 counts.resize(sz + 1);
             counts[sz - 1]++;
+                print("kplex: ", P);
             kplexes++;
             return;
         }
