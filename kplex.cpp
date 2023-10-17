@@ -313,10 +313,10 @@ private:
         vector<ui> res1, res2;
         res1.reserve(B.size());
         res2.reserve(B.size());
-            print("P ", P);
-            print("B", B);
-            print("neighIn", neighPIn);
-            print("neighOut", neighPOut);
+            // print("P ", P);
+            // print("B", B);
+            // print("neighIn", neighPIn);
+            // print("neighOut", neighPOut);
         for (ui v : B)
         {
             // every vertex in vBoundary is in neighbors of B[i]
