@@ -1,14 +1,13 @@
 # ********     Author: Lijun Chang    ******
 # ******** Email: ljchang@outlook.com ******
 #
-CC=g++ -flto -O3
-CFLAGS=-c -I../common/ -std=c++20
+CC=g++ -I../common/ -std=c++20
 
 all: k1k2plex
 
-debug: CFLAGS+= -g
+debug: CC+= -g
 debug: k1k2plex
 
 k1k2plex: kplex.cpp
-	${CC} ${CFLAGS} kplex.cpp -o kplex
+	${CC}  kplex.cpp -o kplex
 
