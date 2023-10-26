@@ -81,7 +81,10 @@ public:
     }
 
     void kplex(auto &C, auto &X)
-    {
+    {   
+        if(C.size()+P.size() < q)
+            return;
+        
         if (C.empty() and X.empty())
         {
             ui sz = P.size();
@@ -1093,6 +1096,7 @@ int main(int argc, char *argv[])
     if (q + 1 < 2 * k1 or q + 1 < 2 * k2)
     {
         cout << "q should be at least 2*k1-1, 2*k2-1" << endl;
+        return 0;
     }
 
     cout << "Loading Started" << endl;

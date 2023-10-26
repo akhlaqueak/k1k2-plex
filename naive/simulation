@@ -1,20 +1,24 @@
 ds='bitcoin.txt'
 
-k1s='2 3 4'
-k2s='2 3 4'
+k1s='2 3 4 5'
+k2s='2 3 4 5'
 qs='8 9 10 11 12'
-fk1=4
-fk2=4
+fk1=3
+fk2=3
 rm $ds.res
+
+for k2 in $k2s; do
+    ./kplex -g ../datasets/$ds -k1 $fk1 -k2 $k2 -q 10 >> $ds.res 
+done
+
 for k1 in $k1s; do
-    for k2 in $k2s; do
-        ./kplex -g ../datasets/$ds -k1 $k1 -k2 $k2 -q 10 >> $ds.res  # remember quotes here
-    done
+    ./kplex -g ../datasets/$ds -k1 $k1 -k2 $fk2 -q 10 >> $ds.res 
 done
 
 for q in $qs; do
-    echo ./kplex -g ../datasets/$ds -k1 $fk1 -k2 $fk2 -q $q >> $ds.res  # remember quotes here
+    ./kplex -g ../datasets/$ds -k1 $fk1 -k2 $fk2 -q $q >> $ds.res 
 done
+
 # for ds in $datasets; do
 #     ./mem.sh &
 #     pid=$!
