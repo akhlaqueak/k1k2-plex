@@ -106,3 +106,89 @@ public:
 		return lookup[ind];
 	}
 };
+
+class RandList
+{
+private:
+	ui *vlist;
+	ui *vpos;
+	ui vnum;
+	ui cap;
+public:
+	RandList() {
+		vlist = vpos = nullptr;
+		//vnum = cap = 0;
+	};
+	RandList(int _cap) {		
+		cap = _cap;
+		if (vlist == nullptr) 
+			vlist = new ui[cap];
+		if (vpos == nullptr) 
+			vpos = new ui[cap];
+
+		vpos = new ui[cap];
+		vnum = 0;
+		for (ui i = 0; i < cap; i++) {
+			vpos[i] = cap;
+		}
+	}	
+	void add(int vid) {
+		assert(vpos[vid] == cap);
+		vlist[vnum] = vid;
+		vpos[vid] = vnum;
+		vnum++;
+
+	};
+	void remove(int vid) {
+		assert(vpos[vid] < vnum);
+		ui last_id = vlist[vnum - 1];
+		ui id_pos = vpos[vid];
+		vlist[id_pos] = last_id;
+		vpos[last_id] = id_pos;
+		vnum--;
+		vpos[vid] = cap; /*set as visited*/
+	}
+	void clear() {			
+		for(ui i = 0; i < vnum; i++)
+			vpos[i] = cap;
+		vnum = 0;
+	}
+	ui get(ui i) {
+		assert(i < vnum);
+		return vlist[i];
+	}
+	bool contains(int vid) {
+		return vpos[vid] != cap;
+	}
+	bool empty() { return vnum == 0; }
+	ui size() { return vnum; }
+	ui getCap() { return cap; }
+	void dispose() {
+		if (vlist != nullptr) {
+			delete[] vlist;
+			vlist = nullptr;
+		}
+		if (vpos != nullptr) {
+			delete[] vpos;
+			vpos = nullptr;
+		}
+	}
+	~RandList() {
+		dispose();
+	}
+#ifdef DBGMOD		
+	void printList(FILE *f = stdout) {
+		fprintf(f, "Total %d: ", vnum);
+		int *tmp_lst = new int[cap];
+		memcpy(tmp_lst, vlist, vnum * sizeof(int));
+		std::sort(tmp_lst, tmp_lst + vnum);
+		//qsort(tmp_lst, vnum, sizeof(int), cmpfunc);
+		for (ui i = 0; i < vnum; i++) {
+			fprintf(f, "%d ", tmp_lst[i]);
+		}
+		fprintf(f, "\n");
+	};
+#else
+	void printList(FILE *f = stdout) {};
+#endif
+};

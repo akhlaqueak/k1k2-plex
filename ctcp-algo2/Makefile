@@ -9,5 +9,5 @@ debug: CC+= -g
 debug: k1k2plex
 
 k1k2plex: kplex.cpp
-	${CC}  kplex.cpp -o kplex-ctcp-algo2
+	${CC}  kplex.cpp -o kplex
 
