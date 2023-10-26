@@ -1,28 +1,28 @@
 ds='bitcoin.txt'
 
-k1s='2 3 4 5 6'
-k2s='2 3 4 5 6'
+k1s='2 3 4 5'
+k2s='2 3 4 5'
 qs='8 9 10 11 12'
 fk1=3
 fk2=3
 rm $ds.res
 
 for k2 in $k2s; do
-        ./kplex -g ../datasets/$ds -k1 fk1 -k2 $k2 -q 10 >> $ds.res  # remember quotes here
+    ./kplex -g ../datasets/$ds -k1 $fk1 -k2 $k2 -q 10 >> $ds.res 
 done
 
 for k1 in $k1s; do
-        ./kplex -g ../datasets/$ds -k1 $k1 -k2 fk2 -q 10 >> $ds.res  # remember quotes here
+    ./kplex -g ../datasets/$ds -k1 $k1 -k2 $fk2 -q 10 >> $ds.res 
 done
 
 for q in $qs; do
-    echo ./kplex -g ../datasets/$ds -k1 $fk1 -k2 $fk2 -q $q >> $ds.res  # remember quotes here
+    ./kplex -g ../datasets/$ds -k1 $fk1 -k2 $fk2 -q $q >> $ds.res 
 done
 
 # for ds in $datasets; do
 #     ./mem.sh &
 #     pid=$!
-#    ./kcore "$ds"  # remember quotes here
+#    ./kcore "$ds" 
 #    kill -9 $pid
 #    mem=$(sort -n memlog.txt |tail -1)
 #    echo "$ds: Mem Usage: $mem"

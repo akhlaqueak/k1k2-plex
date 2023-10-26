@@ -1139,6 +1139,7 @@ int main(int argc, char *argv[])
     if (q + 1 < 2 * k1 or q + 1 < 2 * k2)
     {
         cout << "q should be at least 2*k1-1, 2*k2-1" << endl;
+        return 0;
     }
 
     cout << "Loading Started" << endl;
