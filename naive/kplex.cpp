@@ -81,6 +81,8 @@ public:
 
     void kplex(auto &C, auto &X)
     {
+        if (C.size() + P.size() < q)
+            return;
         if (C.empty() and X.empty())
         {
             ui sz = P.size();
@@ -306,11 +308,11 @@ private:
         {
             ui u = Qe[i].first;
             ui vInd = Qe[i].second;
-            if(vInd>=g.nsOut[u].size()){
-                cout<<u<<" "<<vInd<<" "<<g.nsOut[u].size()<<endl;
+            if (vInd >= g.nsOut[u].size())
+            {
+                cout << u << " " << vInd << " " << g.nsOut[u].size() << endl;
             }
             deleteEdge(u, vInd);
-
         }
 
         // all edges have been processed, so clear the contents
@@ -716,7 +718,7 @@ private:
             }
         }
 
-        // Here calling erase explicitly, because in/out edge list of u is being cleared afterwards... 
+        // Here calling erase explicitly, because in/out edge list of u is being cleared afterwards...
         inLookup.erase();
         outLookup.erase();
 
