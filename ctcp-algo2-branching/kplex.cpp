@@ -108,30 +108,24 @@ public:
         if (X.empty() and C.empty())
         {
             // found a maximal clique
-            ui sz = P.size();
-            if (sz < q)
-                return;
-            counts[sz - 1]++;
-            // print("KPlex: ", P);
-            kplexes++;
+            if(P.size()>=q)
+                reportSolution();
             return;
         }
 
         if (C.empty() or C.size() + P.size() < q)
             return;
+        // todo find min degree vertex in P U C
+        // todo lookahead solution check
+        // todo branching... 
         ui u = C.get(0);
-
         // one branch that contains u
         recurSearch(u);
-
         // other branch that doesn't contain u
-        removeFromC(u);
-        X.add(u);
+        CToX(u);
         branch();
-
         // recover
-        X.remove(u);
-        addToC(u);
+        XToC(u);
     }
 
     EnumKPlex(Graph &_g, ui _k1, ui _k2, ui _q) : pruned(_g.V), peelSeq(_g.V),
@@ -1089,6 +1083,14 @@ private:
         }
     }
 
+    void CToX(const ui &u){
+        removeFromC(u);
+        X.add(u);
+    }
+    void XToC(const ui &u){
+        X.remove(u);
+        addToC(u);
+    }
     bool canMoveToP(ui u)
     {
         //// assert(Cand.contains(u));

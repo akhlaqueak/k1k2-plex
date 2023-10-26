@@ -81,8 +81,8 @@ public:
 
     void kplex(auto &C, auto &X)
     {
-        if (C.size() + P.size() < q)
-            return;
+        // if (C.size() + P.size() < q)
+        //     return;
         if (C.empty() and X.empty())
         {
             ui sz = P.size();
