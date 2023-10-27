@@ -149,6 +149,8 @@ public:
 		vnum--;
 		vpos[vid] = cap; /*set as visited*/
 	}
+
+
 	void clear()
 	{
 		for (ui i = 0; i < vnum; i++)

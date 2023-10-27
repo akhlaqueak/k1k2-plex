@@ -595,8 +595,19 @@ private:
         ui sz = C.size();
         for (ui i = 0; i < sz; i++)
         {
-            removeFromC(C[0]);
+            ui u=C[0];
+            in2HopG[u] = 0;
+            removeFromC(u);
         }
+
+        sz = X.size();
+        for (ui i = 0; i < sz; i++)
+        {
+            ui u=X[0];
+            in2HopG[u] = 0;
+            X.remove(u);
+        }
+ 
     }
 
     void k1k2CorePrune()
