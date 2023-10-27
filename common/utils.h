@@ -68,7 +68,7 @@ public:
 class Lookup
 {
 	vector<ui> &lookup;
-	const vector<ui>& data;
+	const vector<ui> &data;
 	bool binary;
 
 public:
@@ -101,7 +101,7 @@ public:
 		}
 	}
 
-	ui& operator[](ui ind)
+	ui &operator[](ui ind)
 	{
 		return lookup[ind];
 	}
@@ -114,32 +114,33 @@ private:
 	ui *vpos;
 	ui vnum;
 	ui cap;
-public:
-	RandList() {
-		vlist = vpos = nullptr;
-		//vnum = cap = 0;
-	};
-	RandList(int _cap) {		
-		cap = _cap;
-		if (vlist == nullptr) 
-			vlist = new ui[cap];
-		if (vpos == nullptr) 
-			vpos = new ui[cap];
 
+public:
+	RandList()
+	{
+		vlist = vpos = nullptr;
+		// vnum = cap = 0;
+	};
+	RandList(int _cap)
+	{
+		cap = _cap;
+		vlist = new ui[cap];
 		vpos = new ui[cap];
 		vnum = 0;
-		for (ui i = 0; i < cap; i++) {
+		for (ui i = 0; i < cap; i++)
+		{
 			vpos[i] = cap;
 		}
-	}	
-	void add(int vid) {
+	}
+	void add(int vid)
+	{
 		assert(vpos[vid] == cap);
 		vlist[vnum] = vid;
 		vpos[vid] = vnum;
 		vnum++;
-
 	};
-	void remove(int vid) {
+	void remove(int vid)
+	{
 		assert(vpos[vid] < vnum);
 		ui last_id = vlist[vnum - 1];
 		ui id_pos = vpos[vid];
@@ -148,51 +149,61 @@ public:
 		vnum--;
 		vpos[vid] = cap; /*set as visited*/
 	}
-	void clear() {			
-		for(ui i = 0; i < vnum; i++)
+	void clear()
+	{
+		for (ui i = 0; i < vnum; i++)
 			vpos[i] = cap;
 		vnum = 0;
 	}
-	ui get(ui i) {
+	ui get(ui i)
+	{
 		assert(i < vnum);
 		return vlist[i];
 	}
-	ui operator [](ui i) {
+	ui operator[](ui i)
+	{
 		assert(i < vnum);
 		return vlist[i];
 	}
-	bool contains(int vid) {
+	bool contains(int vid)
+	{
 		return vpos[vid] != cap;
 	}
 	bool empty() { return vnum == 0; }
 	ui size() { return vnum; }
 	ui getCap() { return cap; }
-	void dispose() {
-		if (vlist != nullptr) {
+	void dispose()
+	{
+		if (vlist != nullptr)
+		{
 			delete[] vlist;
 			vlist = nullptr;
 		}
-		if (vpos != nullptr) {
+		if (vpos != nullptr)
+		{
 			delete[] vpos;
 			vpos = nullptr;
 		}
 	}
-	~RandList() {
+	~RandList()
+	{
 		dispose();
 	}
-#ifdef DBGMOD		
-	void printList(FILE *f = stdout) {
+#ifdef DBGMOD
+	void printList(FILE *f = stdout)
+	{
 		fprintf(f, "Total %d: ", vnum);
 		int *tmp_lst = new int[cap];
 		memcpy(tmp_lst, vlist, vnum * sizeof(int));
 		std::sort(tmp_lst, tmp_lst + vnum);
-		//qsort(tmp_lst, vnum, sizeof(int), cmpfunc);
-		for (ui i = 0; i < vnum; i++) {
+		// qsort(tmp_lst, vnum, sizeof(int), cmpfunc);
+		for (ui i = 0; i < vnum; i++)
+		{
 			fprintf(f, "%d ", tmp_lst[i]);
 		}
 		fprintf(f, "\n");
 	};
 #else
-	void printList(FILE *f = stdout) {};
+	void printList(FILE *f = stdout){};
 #endif
 };

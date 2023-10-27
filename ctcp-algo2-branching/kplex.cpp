@@ -154,9 +154,9 @@ public:
                                                   in2HopG(_g.V), dPin(_g.V), dPout(_g.V),
                                                   dGin(_g.V), dGout(_g.V),
                                                   k1(_k1), k2(_k2), q(_q), kplexes(0),
-                                                  deletedOutEdge(_g.V), cnPP(g.V), cnPM(g.V),
-                                                  cnMP(g.V), cnMM(g.V), look1(g.V), look2(g.V),
-                                                  look3(g.V), look4(g.V),
+                                                  deletedOutEdge(_g.V), cnPP(_g.V), cnPM(_g.V),
+                                                  cnMP(_g.V), cnMM(_g.V), look1(_g.V), look2(_g.V),
+                                                  look3(_g.V), look4(_g.V),
                                                   P(_g.V), C(_g.V), X(_g.V),
                                                   counts(1000)
     {
