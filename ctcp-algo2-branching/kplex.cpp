@@ -823,8 +823,9 @@ private:
     {
         vector<ui> rC;
         rC.reserve(C.size());
-        for (ui u = 0; u < C.size(); u++)
+        for (ui i = 0; i < C.size(); i++)
         {
+            ui u=C[i];
             if (!canMoveToP(u))
             {
                 rC.push_back(u);
@@ -840,8 +841,9 @@ private:
         vector<ui> rX;
         rX.reserve(X.size());
 
-        for (ui u = 0; u < X.size(); u++)
+        for (ui i = 0; i < X.size(); i++)
         {
+            ui u=X[i];
             if (!canMoveToP(u))
             {
                 rX.push_back(u);
