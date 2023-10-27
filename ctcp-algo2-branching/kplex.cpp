@@ -12,17 +12,17 @@ enum CommonNeighbors
 };
 class EnumKPlex
 {
-    Graph& g;
+    Graph &g;
     ui kplexes;
     ui k1, k2, q;
     vector<ui> vBoundaryIn;
     vector<ui> vBoundaryOut;
-    vector<ui> neighPIn;
-    vector<ui> neighPOut;
+    vector<ui> dPin;
+    vector<ui> dPout;
 
     // G is a graph induced by P \cup C
-    vector<ui> neighGIn;
-    vector<ui> neighGOut;
+    vector<ui> dGin;
+    vector<ui> dGout;
 
     vector<char> pruned;    // todo change it to bitset for memory efficiency
     vector<char> prePruned; // todo change it to bitset for memory efficiency
@@ -67,6 +67,7 @@ public:
             // X = vertices u in B such that u>i
             vi = degenOrder[i];
             // getTwoHopG(vi);
+            addToC(vi);
             getTwoHopIterativePrunedG(vi);
             // cout << u << " ... " << endl;
 
@@ -84,9 +85,10 @@ public:
 
     void recurSearch(ui u)
     {
-        CToP(u);
         if (C.size() + P.size() < q)
             return;
+
+        CToP(u);
         // any vertex removed by X or C will be appended in rX, rC so that it can be recovered later
         vector<ui> rC = updateC();
         vector<ui> rX = updateX();
@@ -95,29 +97,40 @@ public:
 
         // recover
         PToC(u);
-
         for (auto u : rC)
             addToC(u);
-
         for (auto u : rX)
             X.add(u);
     }
 
     void branch()
     {
-        if (X.empty() and C.empty())
+
+        if (C.size() + P.size() < q)
+            return;
+        if (C.empty())
         {
-            // found a maximal clique
-            if(P.size()>=q)
+            if (X.empty())
                 reportSolution();
             return;
         }
 
-        if (C.empty() or C.size() + P.size() < q)
-            return;
+        // ui minu = getMinDegreeVertex();
+        // if (X.empty() and lookAheadSolutionExists(minu))
+        // {
+        //     // P U C is the solution, so add all C to P
+        //     vector<ui> Ctemp=C;
+        //     for (ui u : C)
+        //         CToP(u);
+        //     reportSolution();
+        //     // recover...
+        //     for(ui u:Ctemp)
+        //         PToC(u);
+        //     return;
+        // }
         // todo find min degree vertex in P U C
         // todo lookahead solution check
-        // todo branching... 
+        // todo branching...
         ui u = C.get(0);
         // one branch that contains u
         recurSearch(u);
@@ -128,20 +141,27 @@ public:
         XToC(u);
     }
 
+    void reportSolution()
+    {
+        counts[P.size() - 1]++;
+        // print("KPlex: ", P);
+        kplexes++;
+        return;
+    }
+
     EnumKPlex(Graph &_g, ui _k1, ui _k2, ui _q) : pruned(_g.V), peelSeq(_g.V),
                                                   g(_g), inDegree(_g.V), outDegree(_g.V),
-                                                  in2HopG(_g.V), neighPIn(_g.V), neighPOut(_g.V),
-                                                  neighGIn(_g.V), neighGOut(_g.V),
+                                                  in2HopG(_g.V), dPin(_g.V), dPout(_g.V),
+                                                  dGin(_g.V), dGout(_g.V),
                                                   k1(_k1), k2(_k2), q(_q), kplexes(0),
                                                   deletedOutEdge(_g.V), cnPP(g.V), cnPM(g.V),
                                                   cnMP(g.V), cnMM(g.V), look1(g.V), look2(g.V),
                                                   look3(g.V), look4(g.V),
-                                                  P(g.V), C(g.V), X(g.V),
+                                                  P(_g.V), C(_g.V), X(_g.V),
                                                   counts(1000)
     {
         vBoundaryIn.reserve(_g.V);
         vBoundaryOut.reserve(_g.V);
-
 
         degenOrder.reserve(_g.V);
 
@@ -530,10 +550,10 @@ private:
             // vi is the vertex for which we are building a kplex in current iteration
             if (peelSeq[v] < peelSeq[vi])
             {
-                X.push_back(v);
+                X.add(v);
             }
             else
-                C.push_back(v);
+                addToC(v);
             in2HopG[v] = 1;
         }
     }
@@ -572,33 +592,11 @@ private:
 
     void reset()
     {
-
-        // for (auto &u : C)
-        // {
-        //     neighPIn[u] = 0;
-        //     neighPOut[u] = 0;
-        //     in2HopG[u] = 0;
-        // }
-
-        if (!P.empty())
+        ui sz = C.size();
+        for (ui i = 0; i < sz; i++)
         {
-            ui u = P.front();
-            neighPIn[u] = 0;
-            neighPOut[u] = 0;
-            in2HopG[u] = 0;
+            removeFromC(C[0]);
         }
-        // all C vertices are added to X after kplex run on it.
-        for (auto &u : X)
-        {
-            neighPIn[u] = 0;
-            neighPOut[u] = 0;
-            in2HopG[u] = 0;
-        }
-        P.clear();
-        C.clear();
-        X.clear();
-        vBoundaryIn.clear();
-        vBoundaryOut.clear();
     }
 
     void k1k2CorePrune()
@@ -825,15 +823,16 @@ private:
     {
         vector<ui> rC;
         rC.reserve(C.size());
-
-        for (auto u : C)
+        for (ui u = 0; u < C.size(); u++)
         {
             if (!canMoveToP(u))
             {
                 rC.push_back(u);
-                removeFromC(u);
             }
         }
+
+        for (auto u : rC)
+            removeFromC(u);
         return rC;
     }
     vector<ui> updateX()
@@ -841,14 +840,15 @@ private:
         vector<ui> rX;
         rX.reserve(X.size());
 
-        for (auto u : X)
+        for (ui u = 0; u < X.size(); u++)
         {
             if (!canMoveToP(u))
             {
                 rX.push_back(u);
-                X.remove(u);
             }
         }
+        for (auto u : rX)
+                X.remove(u);
         return rX;
     }
     // calculates two-hop iterative pruned graph according to Algo 2
@@ -1033,11 +1033,11 @@ private:
         C.add(u);
         for (ui v : g.nsOut[u])
         {
-            neighGIn[v]++;
+            dGin[v]++;
         }
         for (ui v : g.nsIn[u])
         {
-            neighGOut[v]++;
+            dGout[v]++;
         }
     }
 
@@ -1046,11 +1046,11 @@ private:
         C.remove(u);
         for (ui v : g.nsOut[u])
         {
-            neighGIn[v]--;
+            dGin[v]--;
         }
         for (ui v : g.nsIn[u])
         {
-            neighGOut[v]--;
+            dGout[v]--;
         }
     }
 
@@ -1060,11 +1060,11 @@ private:
         C.add(u);
         for (ui v : g.nsOut[u])
         {
-            neighPIn[v]--;
+            dPin[v]--;
         }
         for (ui v : g.nsIn[u])
         {
-            neighPOut[v]--;
+            dPout[v]--;
         }
     }
 
@@ -1075,27 +1075,29 @@ private:
         P.add(u);
         for (ui v : g.nsOut[u])
         {
-            neighPIn[v]++;
+            dPin[v]++;
         }
         for (ui v : g.nsIn[u])
         {
-            neighPOut[v]++;
+            dPout[v]++;
         }
     }
 
-    void CToX(const ui &u){
+    void CToX(const ui &u)
+    {
         removeFromC(u);
         X.add(u);
     }
-    void XToC(const ui &u){
+    void XToC(const ui &u)
+    {
         X.remove(u);
         addToC(u);
     }
+
     bool canMoveToP(ui u)
     {
-        //// assert(Cand.contains(u));
         // u is not yet in P, hence checking <=
-        if (neighPOut[u] + k1 <= P.size() or neighPIn[u] + k2 <= P.size())
+        if (dPout[u] + k1 <= P.size() or dPin[u] + k2 <= P.size())
         {
             return false;
         }
@@ -1103,13 +1105,13 @@ private:
         {
             ui v = P.get(i);
             // assert(neiInP[v] + k >= P.size());
-            // should be connected to every out-boundary vertex
-            if (neighPOut[v] + k1 == P.size() && !binary_search(g.nsIn[u].begin(), g.nsIn[u].end(), v))
+            // should be in-connected to every out-boundary vertex
+            if (dPout[v] + k1 == P.size() && !binary_search(g.nsIn[u].begin(), g.nsIn[u].end(), v))
             {
                 return false;
             }
-            // should be connected to every in-boundary vertex
-            if (neighPIn[v] + k2 == P.size() && !binary_search(g.nsOut[u].begin(), g.nsOut[u].end(), v))
+            // should be out-connected to every in-boundary vertex
+            if (dPin[v] + k2 == P.size() && !binary_search(g.nsOut[u].begin(), g.nsOut[u].end(), v))
             {
                 return false;
             }

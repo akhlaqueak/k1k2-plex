@@ -157,6 +157,10 @@ public:
 		assert(i < vnum);
 		return vlist[i];
 	}
+	ui operator [](ui i) {
+		assert(i < vnum);
+		return vlist[i];
+	}
 	bool contains(int vid) {
 		return vpos[vid] != cap;
 	}
