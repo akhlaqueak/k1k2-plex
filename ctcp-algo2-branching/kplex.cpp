@@ -117,9 +117,11 @@ public:
             return;
         }
         ui vpIn, vpOut;
-        //vpout, vpIn are passed by reference... 
+        // vpout, vpIn are passed by reference...
+        // finds minimum degree in PuC
         ui vp = findMinDegreeVertex(vpOut, vpIn);
 
+        // if solution is found, it is also reported in the same function
         if (lookAheadSolutionExists(vpOut, vpIn))
             return;
 
@@ -164,24 +166,42 @@ public:
 
     void multiRecurSearch(ui vp)
     {
+        if (PuCSize < q)
+            return;
         ui p;
-        vector<ui> vpNN; //It stores {u1, u2, ..., ud} vertices
-        vpNN.reserve(C.size());
+        vector<ui> vpNN; // It stores {u1, u2, ..., ud} vertices
 
         auto getNonNeigh = [&](auto &adj)
         {
+            vector<ui> res;
+            res.reserve(C.size());
             for (ui i = 0; i < C.size(); i++)
             {
                 ui u = C[i];
                 if (!binary_search(adj.begin(), adj.end(), u))
-                    vpNN.push_back(u);
+                    res.push_back(u);
             }
+            return res;
         };
 
         ui outSupport = k1 - (P.size() - dPout[vp]);
         ui inSupport = k2 - (P.size() - dPin[vp]);
 
-        if (outSupport < inSupport)
+        // if vp have problem in both directions, then we choose min side support
+        if (dGout[vp] + k1 < PuCSize and dGin[vp] + k2 < PuCSize)
+        {
+            if (outSupport < inSupport)
+            {
+                p = outSupport;
+                getNonNeigh(g.nsOut[vp]);
+            }
+            else
+            {
+                p = inSupport;
+                getNonNeigh(g.nsIn[vp]);
+            }
+        }
+        else if (dGout[vp] + k1 < PuCSize)
         {
             p = outSupport;
             getNonNeigh(g.nsOut[vp]);
@@ -194,11 +214,13 @@ public:
 
         // d is the size of vpNN
         // Branch 1
+        cout << inSupport << " " << outSupport << " " << p << " " << vpNN.size() << " "
+             << " " << P.size() << " " << C.size() << endl;
         ui u = vpNN[0];
-        cout<<vpNN.size()<<" "<<vp<<" "<<C.contains(u) << endl;
+        // cout << vpNN.size() << " " << vp << " " << u << endl;
         CToX(u);
         branch();
-        cout<<"*";
+        cout << "*";
         XToC(u);
 
         // Branches 2...p
@@ -210,19 +232,21 @@ public:
             XToC(vpNN[i]);
         }
 
-        // p+1th last branch. 
+        // p+1th last branch.
         // so far 1...(p-2) vertices are moved from C to P
         // now move p...d vertices from C to X
-        for(ui i=p; i<vpNN.size(); i++){
+        for (ui i = p; i < vpNN.size(); i++)
+        {
             CToX(vpNN[i]);
         }
 
-        recurSearch(vpNN[p-1]);
+        recurSearch(vpNN[p - 1]);
 
         // recover
-        for(ui i=0;i<p;i++)
+        for (ui i = 0; i < p; i++)
             PToC(vpNN[i]);
-        for(ui i=p; i<vpNN.size(); i++){
+        for (ui i = p; i < vpNN.size(); i++)
+        {
             XToC(vpNN[i]);
         }
     }
@@ -265,17 +289,17 @@ public:
         // add all C to P
         for (ui i = 0; i < C.size(); i++)
         {
-            ui u = C[i];
-            ctemp.push_back(u);
+            ctemp.push_back(C[i]);
         }
 
-        for(auto u: ctemp){
+        for (auto u : ctemp)
+        {
             CToP(u);
         }
 
         // update X and see if it's empty...
         vector<ui> rX = updateX();
-        bool solExist = X.size() == 0;
+        bool solExist = (X.size() == 0);
         if (solExist)
         {
             reportSolution();
@@ -284,9 +308,8 @@ public:
         for (ui u : rX)
             X.add(u);
         for (ui u : ctemp)
-        {
             PToC(u);
-        }
+
         return solExist;
     }
 
