@@ -241,7 +241,7 @@ public:
         recurSearch(vpNN[p - 1]);
 
         // recover
-        for (ui i = 0; i < p; i++)
+        for (ui i = 0; i < p-1; i++)
             PToC(vpNN[i]);
         for (ui i = p; i < vpNN.size(); i++)
         {
