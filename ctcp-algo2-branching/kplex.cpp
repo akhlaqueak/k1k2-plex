@@ -117,7 +117,7 @@ public:
             return;
         }
         ui vpIn, vpOut;
-        //
+        //vpout, vpIn are passed by reference... 
         ui vp = findMinDegreeVertex(vpOut, vpIn);
 
         if (lookAheadSolutionExists(vpOut, vpIn))
@@ -166,7 +166,7 @@ public:
     void multiRecurSearch(ui vp)
     {
         ui p;
-        vector<ui> vpNN; //{u1, u2, ..., ud} vertices
+        vector<ui> vpNN; //It stores {u1, u2, ..., ud} vertices
         vpNN.reserve(C.size());
 
         auto getNonNeigh = [&](auto &adj)
@@ -174,7 +174,6 @@ public:
             for (ui i = 0; i < C.size(); i++)
             {
                 ui u = C[i];
-                // if(u==vp) continue;
                 if (!binary_search(adj.begin(), adj.end(), u))
                     vpNN.push_back(u);
             }
@@ -197,8 +196,10 @@ public:
         // d is the size of vpNN
         // Branch 1
         ui u = vpNN[0];
+        cout<<vpNN.size()<<" "<<vp<<" "<<C.contains(u) << endl;
         CToX(u);
         branch();
+        cout<<"*";
         XToC(u);
 
         // Branches 2...p
@@ -260,17 +261,19 @@ public:
             return false;
 
         // get a backup of C for reovery
-        vector<ui> vpNN;
-        vpNN.reserve(C.size());
+        vector<ui> ctemp;
+        ctemp.reserve(C.size());
         // add all C to P
         for (ui i = 0; i < C.size(); i++)
         {
             ui u = C[i];
-            vpNN.push_back(u);
-            // not using CToP(u) function to move to P, as no need to update dG
-            C.remove(u);
-            P.add(u);
+            ctemp.push_back(u);
         }
+
+        for(auto u: ctemp){
+            CToP(u);
+        }
+
         // update X and see if it's empty...
         vector<ui> rX = updateX();
         bool solExist = X.size() == 0;
@@ -281,11 +284,9 @@ public:
         // recover C, X
         for (ui u : rX)
             X.add(u);
-        for (ui u : vpNN)
+        for (ui u : ctemp)
         {
-            // not using PToC(u) function, as no need to update dG
-            P.remove(u);
-            C.add(u);
+            PToC(u);
         }
         return solExist;
     }
