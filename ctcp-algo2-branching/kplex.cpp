@@ -170,18 +170,16 @@ public:
             return;
         ui p;
         vector<ui> vpNN; // It stores {u1, u2, ..., ud} vertices
+        vpNN.reserve(C.size());
 
         auto getNonNeigh = [&](auto &adj)
         {
-            vector<ui> res;
-            res.reserve(C.size());
             for (ui i = 0; i < C.size(); i++)
             {
                 ui u = C[i];
                 if (!binary_search(adj.begin(), adj.end(), u))
-                    res.push_back(u);
+                    vpNN.push_back(u);
             }
-            return res;
         };
 
         ui outSupport = k1 - (P.size() - dPout[vp]);
