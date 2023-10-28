@@ -151,15 +151,14 @@ public:
         }
         else
         {
-            ui u = C[vp];
             // create two branches:
             // one branch where P doesn't contains u
-            CToX(u);
+            CToX(vp);
             branch();
             // recover
-            XToC(u);
+            XToC(vp);
             // other branch where P contains u
-            recurSearch(u);
+            recurSearch(vp);
         }
     }
 
