@@ -3,6 +3,8 @@
 // #define RAPIDS
 #include "command_line.h"
 #include "../common/utils.h"
+
+#define PuCSize (P.size() + C.size())
 enum CommonNeighbors
 {
     PM,
@@ -114,31 +116,178 @@ public:
                 reportSolution();
             return;
         }
+        ui vpIn, vpOut;
+        //
+        ui vp = findMinDegreeVertex(vpOut, vpIn);
 
-        // ui minu = getMinDegreeVertex();
-        // if (X.empty() and lookAheadSolutionExists(minu))
-        // {
-        //     // P U C is the solution, so add all C to P
-        //     vector<ui> Ctemp=C;
-        //     for (ui u : C)
-        //         CToP(u);
-        //     reportSolution();
-        //     // recover...
-        //     for(ui u:Ctemp)
-        //         PToC(u);
-        //     return;
-        // }
-        // todo find min degree vertex in P U C
-        // todo lookahead solution check
-        // todo branching...
-        ui u = C.get(0);
-        // one branch that contains u
-        recurSearch(u);
-        // other branch that doesn't contain u
+        if (lookAheadSolutionExists(vpOut, vpIn))
+            return;
+
+        if (C.contains(vp))
+        {
+            // see if vp can be obtained from P?
+            // IMO M can be calculated only from P, rather than PuC
+            ui vpm = -1, vpmDegree = 0;
+            for (ui i = 0; i < P.size(); i++)
+            {
+                ui u = P[i];
+                if (dGout[u] + k1 < PuCSize or dGin[u] + k2 < PuCSize)
+                {
+                    ui md = min(dGout[u], dGin[u]);
+                    if (vpm == -1 or md < vpmDegree)
+                    {
+                        vpm = u;
+                        vpmDegree = md;
+                    }
+                }
+            }
+            if (vpm != -1)
+                vp = vpm;
+        }
+
+        if (P.contains(vp))
+        {
+            multiRecurSearch(vp);
+        }
+        else
+        {
+            ui u = C[vp];
+            // create two branches:
+            // one branch where P doesn't contains u
+            CToX(u);
+            branch();
+            // recover
+            XToC(u);
+            // other branch where P contains u
+            recurSearch(u);
+        }
+    }
+
+    void multiRecurSearch(ui vp)
+    {
+        ui p;
+        vector<ui> vpNN; //{u1, u2, ..., ud} vertices
+        vpNN.reserve(C.size());
+
+        auto getNonNeigh = [&](auto &adj)
+        {
+            for (ui i = 0; i < C.size(); i++)
+            {
+                ui u = C[i];
+                // if(u==vp) continue;
+                if (!binary_search(adj.begin(), adj.end(), u))
+                    vpNN.push_back(u);
+            }
+        };
+
+        ui outSupport = k1 - (P.size() - dPout[vp]);
+        ui inSupport = k2 - (P.size() - dPin[vp]);
+
+        if (outSupport < inSupport)
+        {
+            p = outSupport;
+            getNonNeigh(g.nsOut[vp]);
+        }
+        else
+        {
+            p = inSupport;
+            getNonNeigh(g.nsIn[vp]);
+        }
+
+        // d is the size of vpNN
+        // Branch 1
+        ui u = vpNN[0];
         CToX(u);
         branch();
-        // recover
         XToC(u);
+
+        // Branches 2...p
+        for (ui i = 1; i < p; i++)
+        {
+            CToX(vpNN[i]);
+            recurSearch(vpNN[i - 1]);
+            CToP(vpNN[i - 1]);
+            XToC(vpNN[i]);
+        }
+
+        // p+1th last branch. 
+        // so far 1...(p-2) vertices are moved from C to P
+        // now move p...d vertices from C to X
+        for(ui i=p; i<vpNN.size(); i++){
+            CToX(vpNN[i]);
+        }
+
+        recurSearch(vpNN[p-1]);
+
+        // recover
+        for(ui i=0;i<p;i++)
+            PToC(vpNN[i]);
+        for(ui i=p; i<vpNN.size(); i++){
+            XToC(vpNN[i]);
+        }
+    }
+
+    ui findMinDegreeVertex(ui &vpOut, ui &vpIn)
+    {
+        // Find min degree vertex...
+        vpOut = vpIn = P[0];
+
+        for (ui i = 1; i < P.size(); i++)
+        {
+            ui u = P[i];
+            if (dGin[u] < dGin[vpIn])
+                vpIn = u;
+            if (dGout[u] < dGout[vpOut])
+                vpOut = u;
+        }
+
+        for (ui i = 0; i < C.size(); i++)
+        {
+            ui u = C[i];
+            if (dGin[u] < dGin[vpIn])
+                vpIn = u;
+            if (dGout[u] < dGout[vpOut])
+                vpOut = u;
+        }
+        // return vp = min(dGin[vpIn], dGOut[vpOut])
+
+        return (dGin[vpIn] < dGout[vpOut]) ? vpIn : vpOut;
+    }
+    bool lookAheadSolutionExists(ui vpOut, ui vpIn)
+    {
+        if (dGout[vpOut] + k1 < PuCSize or
+            dGin[vpIn] + k2 < PuCSize)
+            return false;
+
+        // get a backup of C for reovery
+        vector<ui> vpNN;
+        vpNN.reserve(C.size());
+        // add all C to P
+        for (ui i = 0; i < C.size(); i++)
+        {
+            ui u = C[i];
+            vpNN.push_back(u);
+            // not using CToP(u) function to move to P, as no need to update dG
+            C.remove(u);
+            P.add(u);
+        }
+        // update X and see if it's empty...
+        vector<ui> rX = updateX();
+        bool solExist = X.size() == 0;
+        if (solExist)
+        {
+            reportSolution();
+        }
+        // recover C, X
+        for (ui u : rX)
+            X.add(u);
+        for (ui u : vpNN)
+        {
+            // not using PToC(u) function, as no need to update dG
+            P.remove(u);
+            C.add(u);
+        }
+        return solExist;
     }
 
     void reportSolution()
@@ -595,7 +744,7 @@ private:
         ui sz = C.size();
         for (ui i = 0; i < sz; i++)
         {
-            ui u=C[0];
+            ui u = C[0];
             in2HopG[u] = 0;
             removeFromC(u);
         }
@@ -603,11 +752,10 @@ private:
         sz = X.size();
         for (ui i = 0; i < sz; i++)
         {
-            ui u=X[0];
+            ui u = X[0];
             in2HopG[u] = 0;
             X.remove(u);
         }
- 
     }
 
     void k1k2CorePrune()
@@ -787,7 +935,6 @@ private:
     {
         for (ui u = 0; u < g.V; u++)
         {
-
             if (!pruned[u])
             {
                 // out nieghbors are pruned by deleted edges as well
@@ -836,7 +983,7 @@ private:
         rC.reserve(C.size());
         for (ui i = 0; i < C.size(); i++)
         {
-            ui u=C[i];
+            ui u = C[i];
             if (!canMoveToP(u))
             {
                 rC.push_back(u);
@@ -854,14 +1001,14 @@ private:
 
         for (ui i = 0; i < X.size(); i++)
         {
-            ui u=X[i];
+            ui u = X[i];
             if (!canMoveToP(u))
             {
                 rX.push_back(u);
             }
         }
         for (auto u : rX)
-                X.remove(u);
+            X.remove(u);
         return rX;
     }
     // calculates two-hop iterative pruned graph according to Algo 2
