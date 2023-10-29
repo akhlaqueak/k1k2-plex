@@ -13,8 +13,10 @@ enum CommonNeighbors
     PP
 };
 
-enum Direction{
-    Out, In
+enum Direction
+{
+    Out,
+    In
 };
 
 class EnumKPlex
@@ -139,7 +141,7 @@ public:
         {
             // see if vp can be obtained from P?
             // IMO M can be calculated only from P, rather than PuC
-            
+
             ui vpOut = -1, vpIn = -1;
             ui vpOutDegree = 0, vpInDegree = 0;
 
@@ -166,15 +168,15 @@ public:
             }
             if (vpOut != -1 and vpIn != -1)
                 vp = pickvp(vpOut, vpIn);
-            else if (vpOut != -1){
+            else if (vpOut != -1)
+            {
                 vp = vpOut;
                 dir = Out;
-                p = k1 - (P.size() - dPout[vp]);
             }
-            else if (vpIn != -1){
+            else if (vpIn != -1)
+            {
                 vp = vpIn;
                 dir = In;
-                p = k2 - (P.size() - dPin[vp]);
             }
         }
 
@@ -211,22 +213,18 @@ public:
             dir = Out;
         else
             dir = In;
-        
-        if(dir == Out){
-            p = outSupport;
+
+        if (dir == Out)
             return vpOut;
-        }
-        else{
-            p = inSupport;
+        else
             return vpIn;
-        }
     }
 
     void multiRecurSearch(ui vp)
     {
         if (PuCSize < q)
             return;
-        // ui p;
+        ui p;
         vector<ui> vpNN; // It stores {u1, u2, ..., ud} vertices
         vpNN.reserve(C.size());
 
@@ -267,15 +265,21 @@ public:
         //     p = inSupport;
         //     getNonNeigh(g.nsIn[vp]);
         // }
-        if(dir == Out)
+        if (dir == Out)
+        {
             getNonNeigh(g.nsOut[vp]);
+            p = k1 - (P.size() - dPout[vp]);
+        }
         else
+        {
             getNonNeigh(g.nsIn[vp]);
+            p = k2 - (P.size() - dPin[vp]);
+        }
 
         if (vpNN.size() <= p)
         {
             // todo this condition should never be satisfied, check this bug...
-            cout<<"*";
+            cout << "*";
             return;
         }
 
@@ -308,7 +312,7 @@ public:
 
         recurSearch(vpNN[p - 1]);
 
-        cout<<vpNN.size()<<" "<<p<<" "<<P.size()<<" "<<C.size()<<endl;
+        // cout<<vpNN.size()<<" "<<p<<" "<<P.size()<<" "<<C.size()<<endl;
         // recover
         for (ui i = 0; i < p - 1; i++)
             PToC(vpNN[i]);
