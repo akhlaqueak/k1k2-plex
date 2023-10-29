@@ -226,7 +226,7 @@ public:
     {
         if (PuCSize < q)
             return;
-        ui p;
+        // ui p;
         vector<ui> vpNN; // It stores {u1, u2, ..., ud} vertices
         vpNN.reserve(C.size());
 
