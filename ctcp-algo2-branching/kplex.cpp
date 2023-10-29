@@ -181,7 +181,7 @@ public:
         else if (dGin[vpIn] + k2 < PuCSize)
             dir = In;
         else
-            cout << "#"; // if this happens there must be a problem... 
+            cout << "#"; // if this happens there must be a problem...
 
         if (dir == Out)
             return vpOut;
@@ -200,7 +200,7 @@ public:
             ui u = P[i];
             if (dGout[u] + k1 < PuCSize)
             {
-                if (vpOut == -1 or vpOutDegree > dGout[u])
+                if (vpOut == -1 or dGout[u] < vpOutDegree)
                 {
                     vpOut = u;
                     vpOutDegree = dGout[u];
@@ -209,7 +209,7 @@ public:
 
             if (dGin[u] + k2 < PuCSize)
             {
-                if (vpIn == -1 or vpInDegree > dGin[u])
+                if (vpIn == -1 or dGin[u] < vpInDegree)
                 {
                     vpIn = u;
                     vpInDegree = dGin[u];
@@ -218,7 +218,7 @@ public:
         }
         if (vpOut != -1 and vpIn != -1)
         {
-            ui outSupport = k1 - (P.size() - dPin[vpOut]);
+            ui outSupport = k1 - (P.size() - dPout[vpOut]);
             ui inSupport = k2 - (P.size() - dPin[vpIn]);
             if (outSupport < inSupport)
             {
