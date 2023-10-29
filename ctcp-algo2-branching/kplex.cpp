@@ -12,6 +12,11 @@ enum CommonNeighbors
     MP,
     PP
 };
+
+enum Direction{
+    Out, In
+};
+
 class EnumKPlex
 {
     Graph &g;
@@ -50,6 +55,9 @@ class EnumKPlex
     RandList C;
     RandList X;
     RandList P;
+
+    ui p;
+    Direction dir;
 
 public:
     void enumerate()
@@ -119,32 +127,55 @@ public:
         ui vpIn, vpOut;
         // vpout, vpIn are passed by reference...
         // finds minimum degree in PuC
-        ui vp = findMinDegreeVertex(vpOut, vpIn);
+        findMinDegreeVertex(vpOut, vpIn);
 
         // if solution is found, it is also reported in the same function
         if (lookAheadSolutionExists(vpOut, vpIn))
             return;
 
+        ui vp = pickvp(vpOut, vpIn);
+
         if (C.contains(vp))
         {
             // see if vp can be obtained from P?
             // IMO M can be calculated only from P, rather than PuC
-            ui vpm = -1, vpmDegree = 0;
+            
+            ui vpOut = -1, vpIn = -1;
+            ui vpOutDegree = 0, vpInDegree = 0;
+
             for (ui i = 0; i < P.size(); i++)
             {
                 ui u = P[i];
-                if (dGout[u] + k1 < PuCSize or dGin[u] + k2 < PuCSize)
+                if (dGout[u] + k1 < PuCSize)
                 {
-                    ui md = min(dGout[u], dGin[u]);
-                    if (vpm == -1 or md < vpmDegree)
+                    if (vpOut == -1 or vpOutDegree < dGout[u])
                     {
-                        vpm = u;
-                        vpmDegree = md;
+                        vpOut = u;
+                        vpOutDegree = dGout[u];
+                    }
+                }
+
+                if (dGin[u] + k2 < PuCSize)
+                {
+                    if (vpIn == -1 or vpInDegree < dGin[u])
+                    {
+                        vpIn = u;
+                        vpInDegree = dGin[u];
                     }
                 }
             }
-            if (vpm != -1)
-                vp = vpm;
+            if (vpOut != -1 and vpIn != -1)
+                vp = pickvp(vpOut, vpIn);
+            else if (vpOut != -1){
+                vp = vpOut;
+                dir = Out;
+                p = k1 - (P.size() - dPout[vp]);
+            }
+            else if (vpIn != -1){
+                vp = vpIn;
+                dir = In;
+                p = k2 - (P.size() - dPin[vp]);
+            }
         }
 
         if (P.contains(vp))
@@ -161,6 +192,33 @@ public:
             XToC(vp);
             // other branch where P contains u
             recurSearch(vp);
+        }
+    }
+    ui pickvp(ui vpOut, ui vpIn)
+    {
+        ui outSupport = k1 - (P.size() - dPout[vpOut]);
+        ui inSupport = k2 - (P.size() - dPin[vpIn]);
+
+        // if vp have problem in both directions, then we choose min side support
+        if (dGout[vpOut] + k1 < PuCSize and dGin[vpIn] + k2 < PuCSize)
+        {
+            if (outSupport < inSupport)
+                dir = Out;
+            else
+                dir = In;
+        }
+        else if (dGout[vpOut] + k1 < PuCSize)
+            dir = Out;
+        else
+            dir = In;
+        
+        if(dir == Out){
+            p = outSupport;
+            return vpOut;
+        }
+        else{
+            p = inSupport;
+            return vpIn;
         }
     }
 
@@ -182,44 +240,49 @@ public:
             }
         };
 
-        ui outSupport = k1 - (P.size() - dPout[vp]);
-        ui inSupport = k2 - (P.size() - dPin[vp]);
+        // ui outSupport = k1 - (P.size() - dPout[vp]);
+        // ui inSupport = k2 - (P.size() - dPin[vp]);
 
-        // if vp have problem in both directions, then we choose min side support
-        if (dGout[vp] + k1 < PuCSize and dGin[vp] + k2 < PuCSize)
-        {
-            if (outSupport < inSupport)
-            {
-                p = outSupport;
-                getNonNeigh(g.nsOut[vp]);
-            }
-            else
-            {
-                p = inSupport;
-                getNonNeigh(g.nsIn[vp]);
-            }
-        }
-        else if (dGout[vp] + k1 < PuCSize)
-        {
-            p = outSupport;
+        // // if vp have problem in both directions, then we choose min side support
+        // if (dGout[vp] + k1 < PuCSize and dGin[vp] + k2 < PuCSize)
+        // {
+        //     if (outSupport < inSupport)
+        //     {
+        //         p = outSupport;
+        //         getNonNeigh(g.nsOut[vp]);
+        //     }
+        //     else
+        //     {
+        //         p = inSupport;
+        //         getNonNeigh(g.nsIn[vp]);
+        //     }
+        // }
+        // else if (dGout[vp] + k1 < PuCSize)
+        // {
+        //     p = outSupport;
+        //     getNonNeigh(g.nsOut[vp]);
+        // }
+        // else
+        // {
+        //     p = inSupport;
+        //     getNonNeigh(g.nsIn[vp]);
+        // }
+        if(dir == Out)
             getNonNeigh(g.nsOut[vp]);
-        }
-        else 
-        {
-            p = inSupport;
+        else
             getNonNeigh(g.nsIn[vp]);
-        }
-        
-        if(vpNN.size()==0) {
-        // todo this condition should never be satisfied, check this bug... 
-            // cout<<"*";
+
+        if (vpNN.size() <= p)
+        {
+            // todo this condition should never be satisfied, check this bug...
+            cout<<"*";
             return;
         }
-        
+
         // d is the size of vpNN
         // Branch 1
         // cout << inSupport << " " << outSupport << " " << p << " " << vpNN.size() << " "
-            //  << " " << P.size() << " " << C.size() << endl;
+        //  << " " << P.size() << " " << C.size() << endl;
         ui u = vpNN[0];
         // cout << vpNN.size() << " " << vp << " " << u << endl;
         CToX(u);
@@ -246,7 +309,7 @@ public:
         recurSearch(vpNN[p - 1]);
 
         // recover
-        for (ui i = 0; i < p-1; i++)
+        for (ui i = 0; i < p - 1; i++)
             PToC(vpNN[i]);
         for (ui i = p; i < vpNN.size(); i++)
         {
@@ -276,7 +339,6 @@ public:
             if (dGout[u] < dGout[vpOut])
                 vpOut = u;
         }
-        // return vp = min(dGin[vpIn], dGOut[vpOut])
 
         return (dGin[vpIn] < dGout[vpOut]) ? vpIn : vpOut;
     }
