@@ -204,21 +204,26 @@ public:
             p = outSupport;
             getNonNeigh(g.nsOut[vp]);
         }
-        else
+        else 
         {
             p = inSupport;
             getNonNeigh(g.nsIn[vp]);
         }
-
+        
+        if(vpNN.size()==0) {
+        // todo this condition should never be satisfied, check this bug... 
+            // cout<<"*";
+            return;
+        }
+        
         // d is the size of vpNN
         // Branch 1
-        cout << inSupport << " " << outSupport << " " << p << " " << vpNN.size() << " "
-             << " " << P.size() << " " << C.size() << endl;
+        // cout << inSupport << " " << outSupport << " " << p << " " << vpNN.size() << " "
+            //  << " " << P.size() << " " << C.size() << endl;
         ui u = vpNN[0];
         // cout << vpNN.size() << " " << vp << " " << u << endl;
         CToX(u);
         branch();
-        cout << "*";
         XToC(u);
 
         // Branches 2...p
