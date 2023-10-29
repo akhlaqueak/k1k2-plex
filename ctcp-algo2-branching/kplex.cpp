@@ -308,6 +308,7 @@ public:
 
         recurSearch(vpNN[p - 1]);
 
+        cout<<vpNN.size()<<" "<<p<<" "<<P.size()<<" "<<C.size()<<endl;
         // recover
         for (ui i = 0; i < p - 1; i++)
             PToC(vpNN[i]);
