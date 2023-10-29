@@ -135,54 +135,21 @@ public:
         if (lookAheadSolutionExists(vpOut, vpIn))
             return;
 
-        ui vp = pickvp(vpOut, vpIn);
+        // dir holds the direction of non-neighbors vector of vp, in which it violates kplex condition
+        Direction dir;
+        ui vp = pickvp(vpOut, vpIn, dir);
 
         if (C.contains(vp))
         {
             // see if vp can be obtained from P?
             // IMO M can be calculated only from P, rather than PuC
 
-            ui vpOut = -1, vpIn = -1;
-            ui vpOutDegree = 0, vpInDegree = 0;
-
-            for (ui i = 0; i < P.size(); i++)
-            {
-                ui u = P[i];
-                if (dGout[u] + k1 < PuCSize)
-                {
-                    if (vpOut == -1 or vpOutDegree < dGout[u])
-                    {
-                        vpOut = u;
-                        vpOutDegree = dGout[u];
-                    }
-                }
-
-                if (dGin[u] + k2 < PuCSize)
-                {
-                    if (vpIn == -1 or vpInDegree < dGin[u])
-                    {
-                        vpIn = u;
-                        vpInDegree = dGin[u];
-                    }
-                }
-            }
-            if (vpOut != -1 and vpIn != -1)
-                vp = pickvp(vpOut, vpIn);
-            else if (vpOut != -1)
-            {
-                vp = vpOut;
-                dir = Out;
-            }
-            else if (vpIn != -1)
-            {
-                vp = vpIn;
-                dir = In;
-            }
+            vp = pickvpFromP(vp, dir);
         }
 
         if (P.contains(vp))
         {
-            multiRecurSearch(vp);
+            multiRecurSearch(vp, dir);
         }
         else
         {
@@ -196,7 +163,7 @@ public:
             recurSearch(vp);
         }
     }
-    ui pickvp(ui vpOut, ui vpIn)
+    ui pickvp(ui vpOut, ui vpIn, Direction &dir)
     {
         ui outSupport = k1 - (P.size() - dPout[vpOut]);
         ui inSupport = k2 - (P.size() - dPin[vpIn]);
@@ -211,8 +178,10 @@ public:
         }
         else if (dGout[vpOut] + k1 < PuCSize)
             dir = Out;
-        else
+        else if (dGin[vpIn] + k2 < PuCSize)
             dir = In;
+        else
+            cout << "#"; // if this happens there must be a problem... 
 
         if (dir == Out)
             return vpOut;
@@ -220,7 +189,63 @@ public:
             return vpIn;
     }
 
-    void multiRecurSearch(ui vp)
+    ui pickvpFromP(ui vp, Direction &dir)
+    {
+
+        ui vpOut = -1, vpIn = -1;
+        ui vpOutDegree = 0, vpInDegree = 0;
+
+        for (ui i = 0; i < P.size(); i++)
+        {
+            ui u = P[i];
+            if (dGout[u] + k1 < PuCSize)
+            {
+                if (vpOut == -1 or vpOutDegree > dGout[u])
+                {
+                    vpOut = u;
+                    vpOutDegree = dGout[u];
+                }
+            }
+
+            if (dGin[u] + k2 < PuCSize)
+            {
+                if (vpIn == -1 or vpInDegree > dGin[u])
+                {
+                    vpIn = u;
+                    vpInDegree = dGin[u];
+                }
+            }
+        }
+        if (vpOut != -1 and vpIn != -1)
+        {
+            ui outSupport = k1 - (P.size() - dPin[vpOut]);
+            ui inSupport = k2 - (P.size() - dPin[vpIn]);
+            if (outSupport < inSupport)
+            {
+                dir = Out;
+                vp = vpOut;
+            }
+            else
+            {
+                dir = In;
+                vp = vpIn;
+            }
+        }
+        else if (vpOut != -1)
+        {
+            vp = vpOut;
+            dir = Out;
+        }
+        else if (vpIn != -1)
+        {
+            vp = vpIn;
+            dir = In;
+        }
+        // else vp is unchanged...
+
+        return vp;
+    }
+    void multiRecurSearch(ui vp, Direction dir)
     {
         if (PuCSize < q)
             return;
@@ -238,33 +263,6 @@ public:
             }
         };
 
-        // ui outSupport = k1 - (P.size() - dPout[vp]);
-        // ui inSupport = k2 - (P.size() - dPin[vp]);
-
-        // // if vp have problem in both directions, then we choose min side support
-        // if (dGout[vp] + k1 < PuCSize and dGin[vp] + k2 < PuCSize)
-        // {
-        //     if (outSupport < inSupport)
-        //     {
-        //         p = outSupport;
-        //         getNonNeigh(g.nsOut[vp]);
-        //     }
-        //     else
-        //     {
-        //         p = inSupport;
-        //         getNonNeigh(g.nsIn[vp]);
-        //     }
-        // }
-        // else if (dGout[vp] + k1 < PuCSize)
-        // {
-        //     p = outSupport;
-        //     getNonNeigh(g.nsOut[vp]);
-        // }
-        // else
-        // {
-        //     p = inSupport;
-        //     getNonNeigh(g.nsIn[vp]);
-        // }
         if (dir == Out)
         {
             getNonNeigh(g.nsOut[vp]);
@@ -307,7 +305,7 @@ public:
         // now move p...d vertices from C to X
         for (ui i = p; i < vpNN.size(); i++)
         {
-            CToX(vpNN[i]);
+            removeFromC(vpNN[i]);
         }
 
         recurSearch(vpNN[p - 1]);
@@ -318,11 +316,11 @@ public:
             PToC(vpNN[i]);
         for (ui i = p; i < vpNN.size(); i++)
         {
-            XToC(vpNN[i]);
+            addToC(vpNN[i]);
         }
     }
 
-    ui findMinDegreeVertex(ui &vpOut, ui &vpIn)
+    void findMinDegreeVertex(ui &vpOut, ui &vpIn)
     {
         // Find min degree vertex...
         vpOut = vpIn = P[0];
@@ -344,8 +342,6 @@ public:
             if (dGout[u] < dGout[vpOut])
                 vpOut = u;
         }
-
-        return (dGin[vpIn] < dGout[vpOut]) ? vpIn : vpOut;
     }
     bool lookAheadSolutionExists(ui vpOut, ui vpIn)
     {
@@ -358,29 +354,22 @@ public:
         ctemp.reserve(C.size());
         // add all C to P
         for (ui i = 0; i < C.size(); i++)
-        {
             ctemp.push_back(C[i]);
-        }
 
         for (auto u : ctemp)
-        {
             CToP(u);
-        }
 
         // update X and see if it's empty...
         vector<ui> rX = updateX();
-        bool solExist = (X.size() == 0);
-        if (solExist)
-        {
+        if (X.empty())
             reportSolution();
-        }
         // recover C, X
         for (ui u : rX)
             X.add(u);
         for (ui u : ctemp)
             PToC(u);
 
-        return solExist;
+        return true;
     }
 
     void reportSolution()
