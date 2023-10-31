@@ -81,7 +81,7 @@ public:
             // X = vertices u in B such that u>i
             vi = degenOrder[i];
             // getTwoHopG(vi);
-            addToC(vi);
+            
             getTwoHopIterativePrunedG(vi);
             // cout << u << " ... " << endl;
 
