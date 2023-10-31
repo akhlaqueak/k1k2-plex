@@ -273,7 +273,7 @@ public:
             getNonNeigh(g.nsIn[vp]);
             p = k2 - (P.size() - dPin[vp]);
         }
-        cout<<vpNN.size()<<" "<<p<<endl;
+        // cout<<vpNN.size()<<" "<<p<<endl;
         if (vpNN.size() <= p)
         {
             // todo this condition should never be satisfied, check this bug...
