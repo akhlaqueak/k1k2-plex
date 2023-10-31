@@ -60,6 +60,7 @@ class EnumKPlex
 
     ui p;
     Direction dir;
+    vector<ui> rC, rX;
 
 public:
     void enumerate()
@@ -68,6 +69,8 @@ public:
         k1k2CorePrune();
         // find degeneracy order, the result is degenOrder vector
         degenerate();
+        rC.reserve(degenOrder.size());
+        rX.reserve(degenOrder.size());
         auto tick = chrono::steady_clock::now();
         applyCoreTrussPruning();
         cout << " CTCP time: " << chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - tick).count() << " ms" << endl;
@@ -103,8 +106,8 @@ public:
         CToP(u);
         // any vertex removed by X or C will be appended in rX, rC so that it can be recovered later
         vector<ui> rC, rX;
-        // rC.reserve(C.size());
-        // rX.reserve(X.size());
+        rC.reserve(C.size());
+        rX.reserve(X.size());
         updateC(rC);
         updateX(rX);
 
@@ -294,14 +297,14 @@ public:
         XToC(u);
 
         vector<ui> rC, rX;
-        // rC.reserve(C.size());
-        // rX.reserve(X.size());
+        rC.reserve(C.size());
+        rX.reserve(X.size());
 
         // Branches 2...p
         for (ui i = 1; i < p; i++)
         {
-            ui u = vpNN[i];     // u is u_i of algo
-            ui v = vpNN[i - 1]; // v is u_(i-1) of algo
+            ui u = vpNN[i];     // u_i of algo
+            ui v = vpNN[i - 1]; // u_(i-1) of algo
             // as v is added to P, it updates C. So might possible we don't find u in C
             if (C.contains(u))
                 CToX(u);
@@ -346,6 +349,8 @@ public:
             addToC(u);
         for (ui u : rX)
             X.add(u);
+        // rC.clear();
+        // rX.clear();
     }
 
     void findMinDegreeVertex(ui &vpOut, ui &vpIn)
@@ -1091,7 +1096,7 @@ private:
     void updateC(auto &rC)
     {
         // vector<ui> rC;
-        rC.reserve(C.size());
+        // rC.reserve(C.size());
         for (ui i = 0; i < C.size(); i++)
         {
             ui u = C[i];
@@ -1108,7 +1113,7 @@ private:
     void updateX(auto &rX)
     {
         // vector<ui> rX;
-        rX.reserve(X.size());
+        // rX.reserve(X.size());
 
         for (ui i = 0; i < X.size(); i++)
         {
