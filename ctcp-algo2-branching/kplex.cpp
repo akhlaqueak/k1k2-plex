@@ -60,7 +60,7 @@ class EnumKPlex
 
     ui p;
     Direction dir;
-    vector<ui> rC, rX;
+    // vector<ui> rC, rX;
 
 public:
     void enumerate()
@@ -69,8 +69,7 @@ public:
         k1k2CorePrune();
         // find degeneracy order, the result is degenOrder vector
         degenerate();
-        rC.reserve(degenOrder.size());
-        rX.reserve(degenOrder.size());
+
         auto tick = chrono::steady_clock::now();
         applyCoreTrussPruning();
         cout << " CTCP time: " << chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - tick).count() << " ms" << endl;
@@ -285,7 +284,6 @@ public:
             return;
         }
 
-
         // d is the size of vpNN
         // Branch 1
         // cout << inSupport << " " << outSupport << " " << p << " " << vpNN.size() << " "
@@ -335,7 +333,7 @@ public:
             recurSearch(vpNN[p - 1]);
 
         // cout<<vpNN.size()<<" "<<p<<" "<<P.size()<<" "<<C.size()<<endl;
-        
+
         // recover
         for (ui i = 0; i < p; i++)
         {
@@ -1276,25 +1274,23 @@ private:
                 }
             }
         }
-        // cout<<s<<" : ";
-        // print("X ", X);
-        // print("C ", C);
+
+        // build CX
+        for (ui u : degenOrder)
+        {
+            if (in2HopG[u])
+                if (peelSeq[u] < peelSeq[vi])
+                    X.add(u);
+                else
+                    addToC(u);
+        }
     }
 
     void addTo2HopG(ui u)
     {
-        if (in2HopG[u] == 1)
-            return;
+
         in2HopG[u] = 1;
         // cout<<P.front()<<endl;
-        if (peelSeq[u] < peelSeq[vi])
-        {
-            X.add(u);
-        }
-        else
-        {
-            addToC(u);
-        }
     }
     void print(string msg, auto &vec)
     {
@@ -1309,11 +1305,13 @@ private:
         C.add(u);
         for (ui v : g.nsOut[u])
         {
-            dGin[v]++;
+            if (in2HopG[v])
+                dGin[v]++;
         }
         for (ui v : g.nsIn[u])
         {
-            dGout[v]++;
+            if (in2HopG[v])
+                dGout[v]++;
         }
     }
 
@@ -1322,11 +1320,15 @@ private:
         C.remove(u);
         for (ui v : g.nsOut[u])
         {
-            dGin[v]--;
+            if (in2HopG[v])
+
+                dGin[v]--;
         }
         for (ui v : g.nsIn[u])
         {
-            dGout[v]--;
+            if (in2HopG[v])
+
+                dGout[v]--;
         }
     }
 
@@ -1336,11 +1338,13 @@ private:
         C.add(u);
         for (ui v : g.nsOut[u])
         {
-            dPin[v]--;
+            if (in2HopG[v])
+                dPin[v]--;
         }
         for (ui v : g.nsIn[u])
         {
-            dPout[v]--;
+            if (in2HopG[v])
+                dPout[v]--;
         }
     }
 
@@ -1351,11 +1355,13 @@ private:
         P.add(u);
         for (ui v : g.nsOut[u])
         {
-            dPin[v]++;
+            if (in2HopG[v])
+                dPin[v]++;
         }
         for (ui v : g.nsIn[u])
         {
-            dPout[v]++;
+            if (in2HopG[v])
+                dPout[v]++;
         }
     }
 
