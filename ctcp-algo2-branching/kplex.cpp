@@ -102,8 +102,11 @@ public:
 
         CToP(u);
         // any vertex removed by X or C will be appended in rX, rC so that it can be recovered later
-        vector<ui> rC = updateC();
-        vector<ui> rX = updateX();
+        vector<ui> rC, rX;
+        // rC.reserve(C.size());
+        // rX.reserve(X.size());
+        updateC(rC);
+        updateX(rX);
 
         branch();
 
@@ -141,9 +144,6 @@ public:
 
         if (C.contains(vp))
         {
-            // see if vp can be obtained from P?
-            // IMO M can be calculated only from P, rather than PuC
-
             vp = pickvpFromP(vp, dir);
         }
 
@@ -273,13 +273,15 @@ public:
             getNonNeigh(g.nsIn[vp]);
             p = k2 - (P.size() - dPin[vp]);
         }
-
+        cout<<vpNN.size()<<" "<<p<<endl;
         if (vpNN.size() <= p)
         {
             // todo this condition should never be satisfied, check this bug...
-            cout << "*";
+            cout << dir << " " << p << " ";
+            // cout<<p<<" "<<vpNN.size()<<endl;
             return;
         }
+
 
         // d is the size of vpNN
         // Branch 1
@@ -291,13 +293,27 @@ public:
         branch();
         XToC(u);
 
+        vector<ui> rC, rX;
+        // rC.reserve(C.size());
+        // rX.reserve(X.size());
+
         // Branches 2...p
         for (ui i = 1; i < p; i++)
         {
-            CToX(vpNN[i]);
-            recurSearch(vpNN[i - 1]);
-            CToP(vpNN[i - 1]);
-            XToC(vpNN[i]);
+            ui u = vpNN[i];     // u is u_i of algo
+            ui v = vpNN[i - 1]; // v is u_(i-1) of algo
+            // as v is added to P, it updates C. So might possible we don't find u in C
+            if (C.contains(u))
+                CToX(u);
+            if (C.contains(v))
+            {
+                recurSearch(v);
+                CToP(v);
+            }
+            if (X.contains(u))
+                XToC(u);
+            updateC(rC);
+            updateX(rX);
         }
 
         // p+1th last branch.
@@ -305,19 +321,31 @@ public:
         // now move p...d vertices from C to X
         for (ui i = p; i < vpNN.size(); i++)
         {
-            removeFromC(vpNN[i]);
+            ui u = vpNN[i];
+            if (C.contains(u))
+            {
+                removeFromC(u);
+                rC.push_back(u);
+            }
         }
-
-        recurSearch(vpNN[p - 1]);
+        if (C.contains(vpNN[p - 1]))
+            recurSearch(vpNN[p - 1]);
 
         // cout<<vpNN.size()<<" "<<p<<" "<<P.size()<<" "<<C.size()<<endl;
+        
         // recover
-        for (ui i = 0; i < p - 1; i++)
-            PToC(vpNN[i]);
-        for (ui i = p; i < vpNN.size(); i++)
+        for (ui i = 0; i < p; i++)
         {
-            addToC(vpNN[i]);
+            ui u = vpNN[i];
+            if (P.contains(u))
+                PToC(u);
         }
+
+        // recover C and X
+        for (ui u : rC)
+            addToC(u);
+        for (ui u : rX)
+            X.add(u);
     }
 
     void findMinDegreeVertex(ui &vpOut, ui &vpIn)
@@ -350,17 +378,18 @@ public:
             return false;
 
         // get a backup of C for reovery
-        vector<ui> ctemp;
-        ctemp.reserve(C.size());
-        // add all C to P
-        for (ui i = 0; i < C.size(); i++)
-            ctemp.push_back(C[i]);
+        vector<ui> ctemp = C.getData();
+        // ctemp.reserve(C.size());
+        // // add all C to P
+        // for (ui i = 0; i < C.size(); i++)
+        //     ctemp.push_back(C[i]);
 
         for (auto u : ctemp)
             CToP(u);
 
         // update X and see if it's empty...
-        vector<ui> rX = updateX();
+        vector<ui> rX;
+        updateX(rX);
         if (X.empty())
             reportSolution();
         // recover C, X
@@ -1059,9 +1088,9 @@ private:
         return true;
     }
 
-    vector<ui> updateC()
+    void updateC(auto &rC)
     {
-        vector<ui> rC;
+        // vector<ui> rC;
         rC.reserve(C.size());
         for (ui i = 0; i < C.size(); i++)
         {
@@ -1074,11 +1103,11 @@ private:
 
         for (auto u : rC)
             removeFromC(u);
-        return rC;
+        // return rC;
     }
-    vector<ui> updateX()
+    void updateX(auto &rX)
     {
-        vector<ui> rX;
+        // vector<ui> rX;
         rX.reserve(X.size());
 
         for (ui i = 0; i < X.size(); i++)
@@ -1091,7 +1120,7 @@ private:
         }
         for (auto u : rX)
             X.remove(u);
-        return rX;
+        // return rX;
     }
     // calculates two-hop iterative pruned graph according to Algo 2
     void getTwoHopIterativePrunedG(ui s)

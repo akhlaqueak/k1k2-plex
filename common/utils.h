@@ -174,6 +174,11 @@ public:
 	bool empty() { return vnum == 0; }
 	ui size() { return vnum; }
 	ui getCap() { return cap; }
+	vector<ui> getData(){
+		vector<ui> data;
+		data.insert(data.begin(), vlist, vlist+vnum);
+		return data;
+	}
 	void dispose()
 	{
 		if (vlist != nullptr)
