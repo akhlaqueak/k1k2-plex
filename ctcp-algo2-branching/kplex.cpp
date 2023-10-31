@@ -46,6 +46,8 @@ class EnumKPlex
     vector<vector<ui>> cnMM;
 
     vector<MBitSet> deletedOutEdge;
+    vector<MBitSet> edgesExist;
+
     vector<pair<ui, ui>> Qe;
     vector<ui> Qv;
     vector<ui> counts;
@@ -60,7 +62,7 @@ class EnumKPlex
 
     ui p;
     Direction dir;
-    // vector<ui> rC, rX;
+    ui vn;
 
 public:
     void enumerate()
@@ -72,6 +74,7 @@ public:
 
         auto tick = chrono::steady_clock::now();
         applyCoreTrussPruning();
+        // remove core pruned vertices from denenOrder... 
         cout << " CTCP time: " << chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - tick).count() << " ms" << endl;
         for (ui i = 0; i < degenOrder.size(); i++)
         {
@@ -80,8 +83,9 @@ public:
             // C = vertices u in B such that u<i
             // X = vertices u in B such that u>i
             vi = degenOrder[i];
-            // getTwoHopG(vi);
             
+            // getTwoHopG(vi);
+
             getTwoHopIterativePrunedG(vi);
             // cout << u << " ... " << endl;
 
@@ -308,13 +312,14 @@ public:
                 CToX(u);
             if (C.contains(v))
             {
-                recurSearch(v);
+                // recurSearch(v);
                 CToP(v);
+                updateC(rC);
+                updateX(rX);
+                branch();
             }
             if (X.contains(u))
                 XToC(u);
-            updateC(rC);
-            updateX(rX);
         }
 
         // p+1th last branch.
@@ -329,8 +334,14 @@ public:
                 rC.push_back(u);
             }
         }
-        if (C.contains(vpNN[p - 1]))
-            recurSearch(vpNN[p - 1]);
+        u = vpNN[p-1];
+        if (C.contains(u)){
+            // CToP(u);
+            // updateC(rC);
+            // updateX(rX);
+            // branch(); 
+            recurSearch(u);
+        }
 
         // cout<<vpNN.size()<<" "<<p<<" "<<P.size()<<" "<<C.size()<<endl;
 
@@ -433,6 +444,7 @@ public:
             deletedOutEdge[i] = MBitSet(g.nsOut[i].size());
         }
         Qe.reserve(g.E / 10);
+        
         reset();
     }
 
@@ -1077,6 +1089,14 @@ private:
         }
         for (ui u = 0; u < g.V; u++)
             sort(g.nsIn[u].begin(), g.nsIn[u].end());
+        ui k=0;
+        for(ui i=0;i<degenOrder.size(); i++){
+            ui u = degenOrder[i];
+            if(!pruned[u])
+                degenOrder[k++] = u;
+        }
+        degenOrder.resize(k);
+        cout<<"Total to process..."<<k<<endl;
     }
 
     bool intersectsAll(auto &X, auto &Y)
@@ -1306,12 +1326,12 @@ private:
         for (ui v : g.nsOut[u])
         {
             // if (in2HopG[v])
-                dGin[v]++;
+            dGin[v]++;
         }
         for (ui v : g.nsIn[u])
         {
             // if (in2HopG[v])
-                dGout[v]++;
+            dGout[v]++;
         }
     }
 
@@ -1322,13 +1342,13 @@ private:
         {
             // if (in2HopG[v])
 
-                dGin[v]--;
+            dGin[v]--;
         }
         for (ui v : g.nsIn[u])
         {
             // if (in2HopG[v])
 
-                dGout[v]--;
+            dGout[v]--;
         }
     }
 
@@ -1339,12 +1359,12 @@ private:
         for (ui v : g.nsOut[u])
         {
             // if (in2HopG[v])
-                dPin[v]--;
+            dPin[v]--;
         }
         for (ui v : g.nsIn[u])
         {
             // if (in2HopG[v])
-                dPout[v]--;
+            dPout[v]--;
         }
     }
 
@@ -1356,12 +1376,12 @@ private:
         for (ui v : g.nsOut[u])
         {
             // if (in2HopG[v])
-                dPin[v]++;
+            dPin[v]++;
         }
         for (ui v : g.nsIn[u])
         {
             // if (in2HopG[v])
-                dPout[v]++;
+            dPout[v]++;
         }
     }
 
