@@ -248,20 +248,23 @@ public:
         // p+1th last branch.
         // so far 1...(p-2) vertices are moved from C to P
         // now move p...d vertices from C to X
-        for (ui i = p; i < vpNN.size(); i++)
+        if (ind < p)
         {
-            ui u = vpNN[i];
-            if (C.contains(u))
+            for (ui i = p; i < vpNN.size(); i++)
             {
-                removeFromC(u);
-                rC.emplace_back(u);
+                ui u = vpNN[i];
+                if (C.contains(u))
+                {
+                    removeFromC(u);
+                    rC.emplace_back(u);
+                }
             }
-        }
 
-        CToP(vpNN[p - 1]);
-        updateC(rC);
-        updateX(rX);
-        branch();
+            CToP(vpNN[p - 1]);
+            updateC(rC);
+            updateX(rX);
+            branch();
+        }
 
         // cout<<vpNN.size()<<" "<<p<<" "<<P.size()<<" "<<C.size()<<endl;
 
