@@ -216,6 +216,7 @@ public:
         rX.reserve(X.size());
 
         // Branches 1...p
+        ui ind = 0;
         for (ui i = 0; i < p; i++)
         {
             ui u = vpNN[i]; // u_i of algo
@@ -225,10 +226,23 @@ public:
                 CToP(v);
                 updateC(rC);
                 updateX(rX);
+                cout << rC.size() << " " << rX.size() << " . ";
             }
-            CToX(u);
-            branch();
-            XToC(u);
+            if (C.contains(u))
+            {
+                CToX(u);
+                branch();
+                XToC(u);
+            }
+            else
+            {
+                X.add(u);
+                branch();
+                X.remove(u);
+                ind++;
+                break;
+            }
+            ind++;
         }
 
         // p+1th last branch.
@@ -243,24 +257,19 @@ public:
                 rC.emplace_back(u);
             }
         }
-        // if (C.contains(u))
-        ui u = vpNN[p - 1];
-        {
-            CToP(u);
-            updateC(rC);
-            updateX(rX);
-            branch();
-            // PToC(u);
-            // recurSearch(u);
-        }
+
+        CToP(vpNN[p - 1]);
+        updateC(rC);
+        updateX(rX);
+        branch();
+
         // cout<<vpNN.size()<<" "<<p<<" "<<P.size()<<" "<<C.size()<<endl;
 
         // recover
-        for (ui i = 0; i < p; i++)
+        for (ui i = 0; i < ind; i++)
         {
             ui u = vpNN[i];
-            // if (P.contains(u))
-                PToC(u);
+            PToC(u);
         }
 
         // recover C and X
@@ -1127,8 +1136,8 @@ private:
 
     void updateC(auto &rC)
     {
-        // vector<ui> rC;
-        // rC.reserve(C.size());
+
+        ui sz = rC.size();
         for (ui i = 0; i < C.size(); i++)
         {
             ui u = C[i];
@@ -1138,14 +1147,14 @@ private:
             }
         }
 
-        for (auto u : rC)
-            removeFromC(u);
-        // return rC;
+        for (ui i = sz; i < rC.size(); i++)
+            removeFromC(rC[i]);
     }
     void updateX(auto &rX)
     {
         // vector<ui> rX;
         // rX.reserve(X.size());
+        ui sz = rX.size();
 
         for (ui i = 0; i < X.size(); i++)
         {
@@ -1155,9 +1164,8 @@ private:
                 rX.emplace_back(u);
             }
         }
-        for (auto u : rX)
-            X.remove(u);
-        // return rX;
+        for (ui i = sz; i < rX.size(); i++)
+            X.remove(rX[i]);
     }
     // calculates two-hop iterative pruned graph according to Algo 2
     void getTwoHopIterativePrunedG(ui s)
