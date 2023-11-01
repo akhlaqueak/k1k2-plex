@@ -226,7 +226,7 @@ public:
                 CToP(v);
                 updateC(rC);
                 updateX(rX);
-                cout << rC.size() << " " << rX.size() << " . ";
+                // cout << rC.size() << " " << rX.size() << " . ";
             }
             if (C.contains(u))
             {
@@ -259,11 +259,14 @@ public:
                     rC.emplace_back(u);
                 }
             }
-
-            CToP(vpNN[p - 1]);
-            updateC(rC);
-            updateX(rX);
-            branch();
+            ui u = vpNN[p - 1];
+            if (C.contains(u))
+            {
+                CToP(u);
+                updateC(rC);
+                updateX(rX);
+                branch();
+            }
         }
 
         // cout<<vpNN.size()<<" "<<p<<" "<<P.size()<<" "<<C.size()<<endl;
@@ -272,6 +275,7 @@ public:
         for (ui i = 0; i < ind; i++)
         {
             ui u = vpNN[i];
+            if(P.contains(u))
             PToC(u);
         }
 
