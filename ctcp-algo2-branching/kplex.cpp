@@ -239,8 +239,8 @@ public:
                 X.add(u);
                 branch();
                 X.remove(u);
-                ind++;
-                break;
+                // ind++;
+                // break;
             }
             ind++;
         }
