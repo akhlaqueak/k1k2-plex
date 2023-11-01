@@ -248,7 +248,7 @@ public:
         // p+1th last branch.
         // so far 1...(p-2) vertices are moved from C to P
         // now move p...d vertices from C to X
-        if (ind < p)
+        if (ind == p)
         {
             for (ui i = p; i < vpNN.size(); i++)
             {
