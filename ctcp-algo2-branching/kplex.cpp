@@ -201,8 +201,9 @@ public:
             for (ui i = 0; i < C.size(); i++)
             {
                 ui u = C[i];
+                if(!in2HopG[u]) continue;
                 ui ru = recode[u];
-                if (!adj.test(ru))
+                if (!adj.test(ru) )
                     vpNN.push_back(u);
             }
         };
