@@ -148,10 +148,6 @@ public:
         {
             Direction dir;
             ui vp = pickvp(vpOut, vpIn, dir);
-            // cout << vp << " " << vpIn << " " << vpOut << " " << P.size() << " : ";
-            // for (ui i = 0; i < P.size(); i++)
-            //     cout << P[i] << " " << dGin[P[i]] << " " << dGout[P[i]] << "   ";
-            // cout << endl;
             multiRecurSearch(vp, dir);
             return;
         }
@@ -246,8 +242,7 @@ public:
         {
             ui u = vpNN[i];     // u_i of algo
             ui v = vpNN[i - 1]; // u_(i-1) of algo
-            if (!C.contains(v))
-                continue;
+            if(!C.contains(v)) continue;
             CToP(v);
             updateC(rC);
             updateX(rX);
@@ -278,7 +273,6 @@ public:
             ui u = vpNN[i];
             if (C.contains(u))
             {
-                // cout<<"*";
                 removeFromC(u);
                 rC.emplace_back(u);
             }
@@ -312,20 +306,14 @@ public:
 
     ui pickvp(ui vpOut, ui vpIn, Direction &dir)
     {
-        for (ui i = 0; i < P.size(); i++)
-        {
-            ui u = P[i];
-            if (dGout[u] + k1 < PuCSize and dPout[u] < dPout[vpOut])
-                vpOut = u;
-            if (dGin[u] + k2 < PuCSize and dPin[u] < dPin[vpIn])
-                vpIn = u;
-        }
+
+        // now both are in P
+        ui outSupport = k1 - (P.size() - dPout[vpOut]);
+        ui inSupport = k2 - (P.size() - dPin[vpIn]);
 
         // if both of vertices doesn't support G as a kplex
         if (dGout[vpOut] + k1 < PuCSize and dGin[vpIn] + k2 < PuCSize)
         {
-            ui outSupport = k1 - (P.size() - dPout[vpOut]);
-            ui inSupport = k2 - (P.size() - dPin[vpIn]);
             if (outSupport < inSupport)
                 dir = Out;
             else
