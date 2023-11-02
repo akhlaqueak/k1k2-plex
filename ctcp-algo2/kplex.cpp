@@ -42,6 +42,7 @@ class EnumKPlex
     vector<ui> look1, look2, look3, look4;
 
     ui vi; // current vertex in degeneracy order for which we are searching kplex
+    ui c = 0;
 
 public:
     void enumerate()
@@ -74,7 +75,7 @@ public:
             // print("aX: ", Xinit);
             reset();
         }
-        cout << "Total (" << k1 << ", " << k2 << ")-plexes of at least " << q << " size: " << kplexes << endl;
+        cout << "Total (" << k1 << ", " << k2 << ")-plexes of at least " << q << " size: " << kplexes << " "<<c<<endl;
         for (ui i = 0; i < counts.size(); i++)
             if (counts[i])
                 cout << "kplexes of size: " << i + 1 << " = " << counts[i] << endl;
@@ -84,7 +85,7 @@ public:
     {   
         if(C.size()+P.size() < q)
             return;
-        
+        c++;
         if (C.empty() and X.empty())
         {
             ui sz = P.size();

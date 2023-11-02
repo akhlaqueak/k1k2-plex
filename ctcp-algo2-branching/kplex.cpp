@@ -65,6 +65,7 @@ class EnumKPlex
     ui p;
     Direction dir;
     ui vn;
+    ui c = 0;
 
 public:
     void enumerate()
@@ -97,7 +98,7 @@ public:
             // print("aX: ", X);
             reset();
         }
-        cout << "Total (" << k1 << ", " << k2 << ")-plexes of at least " << q << " size: " << kplexes << endl;
+        cout << "Total (" << k1 << ", " << k2 << ")-plexes of at least " << q << " size: " << kplexes << " "<<c<<endl;
         for (ui i = 0; i < counts.size(); i++)
             if (counts[i])
                 cout << "kplexes of size: " << i + 1 << " = " << counts[i] << endl;
@@ -137,6 +138,7 @@ public:
                 reportSolution();
             return;
         }
+        c++;
         ui vpIn, vpOut;
         // vpout, vpIn are passed by reference...
         // finds minimum degree in PuC
