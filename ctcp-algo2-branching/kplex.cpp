@@ -315,9 +315,9 @@ public:
         for (ui i = 0; i < P.size(); i++)
         {
             ui u = P[i];
-            if (dGout[u] + k1 < PuCSize and dPout[u] < dPout[vpOut])
+            if (dGout[u] + k1 < PuCSize and dGout[u] < dGout[vpOut])
                 vpOut = u;
-            if (dGin[u] + k2 < PuCSize and dPin[u] < dPin[vpIn])
+            if (dGin[u] + k2 < PuCSize and dGin[u] < dGin[vpIn])
                 vpIn = u;
         }
 
