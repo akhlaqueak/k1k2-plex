@@ -202,7 +202,7 @@ public:
             {
                 ui u = C[i];
                 ui ru = recode[u];
-                if (!adj.test(ru) )
+                if (!adj.test(ru))
                     vpNN.push_back(u);
             }
         };
@@ -230,19 +230,23 @@ public:
         rC.reserve(C.size());
         rX.reserve(X.size());
 
+        // Branch 0
+        ui u = vpNN[0];
+        CToX(u);
+        branch();
+        XToC(u);
+
         // Branches 1...p
         ui ind = 0;
-        for (ui i = 0; i < p; i++)
+        for (ui i = 1; i < p; i++)
         {
-            ui u = vpNN[i]; // u_i of algo
-            if (i > 0)
-            {
-                ui v = vpNN[i - 1]; // u_(i-1) of algo
-                CToP(v);
-                updateC(rC);
-                updateX(rX);
-                // cout << rC.size() << " " << rX.size() << " . ";
-            }
+            ui u = vpNN[i];     // u_i of algo
+            ui v = vpNN[i - 1]; // u_(i-1) of algo
+            if(!C.contains(v)) continue;
+            CToP(v);
+            updateC(rC);
+            updateX(rX);
+            // cout << rC.size() << " " << rX.size() << " . ";
             if (C.contains(u))
             {
                 CToX(u);
@@ -273,7 +277,7 @@ public:
                 rC.emplace_back(u);
             }
         }
-        ui u = vpNN[p - 1];
+        u = vpNN[p - 1];
         if (C.contains(u))
         {
             CToP(u);
@@ -284,7 +288,7 @@ public:
         // cout<<vpNN.size()<<" "<<p<<" "<<P.size()<<" "<<C.size()<<endl;
 
         // recover
-        for (ui i = 0; i < ind; i++)
+        for (ui i = 0; i < p; i++)
         {
             ui u = vpNN[i];
             if (P.contains(u))
