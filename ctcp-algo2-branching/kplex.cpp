@@ -142,24 +142,25 @@ public:
         ui vpIn, vpOut;
         // vpout, vpIn are passed by reference...
         // finds minimum degree vertices in P
-        minDegreeP(vpOut, vpIn);
+        // minDegreeP(vpOut, vpIn);
 
-        if (dGout[vpOut] + k1 < PuCSize or dGin[vpIn] + k2 < PuCSize)
-        {
-            Direction dir;
-            ui vp = pickvp(vpOut, vpIn, dir);
-            multiRecurSearch(vp, dir);
-            return;
-        }
+        // if (dGout[vpOut] + k1 < PuCSize or dGin[vpIn] + k2 < PuCSize)
+        // {
+        //     Direction dir;
+        //     ui vp = pickvp(vpOut, vpIn, dir);
+        //     multiRecurSearch(vp, dir);
+        //     return;
+        // }
 
-        // finds minimum degree vertices in PuC
-        minDegreePuC(vpOut, vpIn);
+        // // finds minimum degree vertices in PuC
+        // // returns minimum degree vertex in C
+        // ui vc = minDegreePuC(vpOut, vpIn);
 
-        // if solution is found, it is also reported in the same function
-        if (lookAheadSolutionExists(vpOut, vpIn))
-            return;
-        Direction dir;
-        ui vp = pickvp(vpOut, vpIn, dir);
+        // // if solution is found, it is also reported in the same function
+        // if (lookAheadSolutionExists(vpOut, vpIn))
+        //     return;
+        // Direction dir;
+        // ui vp = pickvp(vpOut, vpIn, dir);
 
         // dir holds the direction of non-neighbors vector of vp, in which it violates kplex condition
 
@@ -168,21 +169,21 @@ public:
         //     vp = pickvpFromP(vp, dir);
         // }
 
-        if (P.contains(vp))
-            multiRecurSearch(vp, dir);
+        // if (P.contains(vp))
+        //     multiRecurSearch(vp, dir);
 
-        else
+        // else
         // vp is in C
         {
-            // ui vp = C[0];
+            ui vc = C[0];
             // create two branches:
             // one branch where P doesn't contains u
-            CToX(vp);
+            CToX(vc);
             branch();
             // recover
-            XToC(vp);
+            XToC(vc);
             // other branch where P contains u
-            recurSearch(vp);
+            recurSearch(vc);
         }
     }
 
@@ -262,27 +263,24 @@ public:
         // p+1th last branch.
         // so far 1...(p-2) vertices are moved from C to P
         // now move p...d vertices from C to X
-        if (ind == p)
+
+        for (ui i = p; i < vpNN.size(); i++)
         {
-            for (ui i = p; i < vpNN.size(); i++)
-            {
-                ui u = vpNN[i];
-                if (C.contains(u))
-                {
-                    removeFromC(u);
-                    rC.emplace_back(u);
-                }
-            }
-            ui u = vpNN[p - 1];
+            ui u = vpNN[i];
             if (C.contains(u))
             {
-                CToP(u);
-                updateC(rC);
-                updateX(rX);
-                branch();
+                removeFromC(u);
+                rC.emplace_back(u);
             }
         }
-
+        ui u = vpNN[p - 1];
+        if (C.contains(u))
+        {
+            CToP(u);
+            updateC(rC);
+            updateX(rX);
+            branch();
+        }
         // cout<<vpNN.size()<<" "<<p<<" "<<P.size()<<" "<<C.size()<<endl;
 
         // recover
@@ -304,12 +302,12 @@ public:
 
     ui pickvp(ui vpOut, ui vpIn, Direction &dir)
     {
+
+        // now both are in P
         ui outSupport = k1 - (P.size() - dPout[vpOut]);
         ui inSupport = k2 - (P.size() - dPin[vpIn]);
-        if(C.contains(vpOut)) outSupport--;
-        if(C.contains(vpIn)) inSupport--;
 
-        // if vp have problem in both directions, then we choose min side support
+        // if both of vertices doesn't support G as a kplex
         if (dGout[vpOut] + k1 < PuCSize and dGin[vpIn] + k2 < PuCSize)
         {
             if (outSupport < inSupport)
@@ -387,8 +385,9 @@ public:
         return vp;
     }
 
-    void minDegreePuC(ui &vpOut, ui &vpIn)
+    ui minDegreePuC(ui &vpOut, ui &vpIn)
     {
+        ui minc = C[0];
         for (ui i = 0; i < C.size(); i++)
         {
             ui u = C[i];
@@ -396,7 +395,10 @@ public:
                 vpIn = u;
             if (dGout[u] < dGout[vpOut])
                 vpOut = u;
+            if (dGout[u] < dGout[minc] or dGin[u] < dGin[minc])
+                minc = u;
         }
+        return minc;
     }
 
     void minDegreeP(ui &vpOut, ui &vpIn)
