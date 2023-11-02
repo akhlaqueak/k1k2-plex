@@ -132,13 +132,13 @@ public:
 
         if (C.size() + P.size() < q)
             return;
+        c++;
         if (C.empty())
         {
             if (X.empty())
                 reportSolution();
             return;
         }
-        c++;
         ui vpIn, vpOut;
         // vpout, vpIn are passed by reference...
         // finds minimum degree in PuC
