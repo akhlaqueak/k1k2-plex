@@ -142,23 +142,23 @@ public:
         ui vpIn, vpOut;
         // vpout, vpIn are passed by reference...
         // finds minimum degree vertices in P
-        // minDegreeP(vpOut, vpIn);
+        minDegreeP(vpOut, vpIn);
 
-        // if (dGout[vpOut] + k1 < PuCSize or dGin[vpIn] + k2 < PuCSize)
-        // {
-        //     Direction dir;
-        //     ui vp = pickvp(vpOut, vpIn, dir);
-        //     multiRecurSearch(vp, dir);
-        //     return;
-        // }
+        if (dGout[vpOut] + k1 < PuCSize or dGin[vpIn] + k2 < PuCSize)
+        {
+            Direction dir;
+            ui vp = pickvp(vpOut, vpIn, dir);
+            multiRecurSearch(vp, dir);
+            return;
+        }
 
-        // // finds minimum degree vertices in PuC
-        // // returns minimum degree vertex in C
-        // ui vc = minDegreePuC(vpOut, vpIn);
+        // finds minimum degree vertices in PuC
+        // returns minimum degree vertex in C
+        ui vc = minDegreePuC(vpOut, vpIn);
 
-        // // if solution is found, it is also reported in the same function
-        // if (lookAheadSolutionExists(vpOut, vpIn))
-        //     return;
+        // if solution is found, it is also reported in the same function
+        if (lookAheadSolutionExists(vpOut, vpIn))
+            return;
         // Direction dir;
         // ui vp = pickvp(vpOut, vpIn, dir);
 
@@ -175,7 +175,7 @@ public:
         // else
         // vp is in C
         {
-            ui vc = C[0];
+            // ui vc = C[0];
             // create two branches:
             // one branch where P doesn't contains u
             CToX(vc);
