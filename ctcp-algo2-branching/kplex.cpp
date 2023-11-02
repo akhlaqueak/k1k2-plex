@@ -130,7 +130,7 @@ public:
     void branch()
     {
 
-        if (C.size() + P.size() < q)
+        if (PuCSize < q)
             return;
         c++;
         if (C.empty())
@@ -244,6 +244,7 @@ public:
         ui ind = 0;
         for (ui i = 1; i < p; i++)
         {
+
             ui u = vpNN[i];     // u_i of algo
             ui v = vpNN[i - 1]; // u_(i-1) of algo
             if (!C.contains(v))
@@ -315,9 +316,9 @@ public:
         for (ui i = 0; i < P.size(); i++)
         {
             ui u = P[i];
-            if (dGout[u] + k1 < PuCSize and dGout[u] < dGout[vpOut])
+            if (dGout[u] + k1 < PuCSize and dPout[u] < dPout[vpOut])
                 vpOut = u;
-            if (dGin[u] + k2 < PuCSize and dGin[u] < dGin[vpIn])
+            if (dGin[u] + k2 < PuCSize and dPin[u] < dPin[vpIn])
                 vpIn = u;
         }
 
