@@ -306,6 +306,8 @@ public:
     {
         ui outSupport = k1 - (P.size() - dPout[vpOut]);
         ui inSupport = k2 - (P.size() - dPin[vpIn]);
+        if(C.contains(vpOut)) outSupport--;
+        if(C.contains(vpIn)) inSupport--;
 
         // if vp have problem in both directions, then we choose min side support
         if (dGout[vpOut] + k1 < PuCSize and dGin[vpIn] + k2 < PuCSize)
