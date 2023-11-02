@@ -98,7 +98,7 @@ public:
             // print("aX: ", X);
             reset();
         }
-        cout << "Total (" << k1 << ", " << k2 << ")-plexes of at least " << q << " size: " << kplexes << " "<<c<<endl;
+        cout << "Total (" << k1 << ", " << k2 << ")-plexes of at least " << q << " size: " << kplexes << " " << c << endl;
         for (ui i = 0; i < counts.size(); i++)
             if (counts[i])
                 cout << "kplexes of size: " << i + 1 << " = " << counts[i] << endl;
@@ -141,27 +141,38 @@ public:
         }
         ui vpIn, vpOut;
         // vpout, vpIn are passed by reference...
-        // finds minimum degree in PuC
-        findMinDegreeVertex(vpOut, vpIn);
+        // finds minimum degree vertices in P
+        minDegreeP(vpOut, vpIn);
+
+        if (dGout[vpOut] + k1 < PuCSize or dGin[vpIn] + k2 < PuCSize)
+        {
+            Direction dir;
+            ui vp = pickvp(vpOut, vpIn, dir);
+            multiRecurSearch(vp, dir);
+            return;
+        }
+
+        // finds minimum degree vertices in PuC
+        minDegreePuC(vpOut, vpIn);
 
         // if solution is found, it is also reported in the same function
         if (lookAheadSolutionExists(vpOut, vpIn))
             return;
-
-        // dir holds the direction of non-neighbors vector of vp, in which it violates kplex condition
         Direction dir;
         ui vp = pickvp(vpOut, vpIn, dir);
 
-        if (C.contains(vp))
-        {
-            vp = pickvpFromP(vp, dir);
-        }
+        // dir holds the direction of non-neighbors vector of vp, in which it violates kplex condition
+
+        // if (C.contains(vp))
+        // {
+        //     vp = pickvpFromP(vp, dir);
+        // }
 
         if (P.contains(vp))
-        {
             multiRecurSearch(vp, dir);
-        }
+
         else
+        // vp is in C
         {
             // ui vp = C[0];
             // create two branches:
@@ -175,7 +186,8 @@ public:
         }
     }
 
-    void multiRecurSearch(ui vp, Direction dir)
+    void
+    multiRecurSearch(ui vp, Direction dir)
     {
         if (PuCSize < q)
             return;
@@ -277,8 +289,8 @@ public:
         for (ui i = 0; i < ind; i++)
         {
             ui u = vpNN[i];
-            if(P.contains(u))
-            PToC(u);
+            if (P.contains(u))
+                PToC(u);
         }
 
         // recover C and X
@@ -373,7 +385,19 @@ public:
         return vp;
     }
 
-    void findMinDegreeVertex(ui &vpOut, ui &vpIn)
+    void minDegreePuC(ui &vpOut, ui &vpIn)
+    {
+        for (ui i = 0; i < C.size(); i++)
+        {
+            ui u = C[i];
+            if (dGin[u] < dGin[vpIn])
+                vpIn = u;
+            if (dGout[u] < dGout[vpOut])
+                vpOut = u;
+        }
+    }
+
+    void minDegreeP(ui &vpOut, ui &vpIn)
     {
         // Find min degree vertex...
         vpOut = vpIn = P[0];
@@ -381,15 +405,6 @@ public:
         for (ui i = 1; i < P.size(); i++)
         {
             ui u = P[i];
-            if (dGin[u] < dGin[vpIn])
-                vpIn = u;
-            if (dGout[u] < dGout[vpOut])
-                vpOut = u;
-        }
-
-        for (ui i = 0; i < C.size(); i++)
-        {
-            ui u = C[i];
             if (dGin[u] < dGin[vpIn])
                 vpIn = u;
             if (dGout[u] < dGout[vpOut])
