@@ -62,8 +62,6 @@ class EnumKPlex
     RandList X;
     RandList P;
 
-    vector<ui> rC, rX;
-
     ui p;
     Direction dir;
     ui vn;
@@ -113,16 +111,20 @@ public:
 
         CToP(u);
         // any vertex removed by X or C will be appended in rX, rC so that it can be recovered later
-
-        ui rc = updateC();
-        ui rx = updateX();
+        vector<ui> rC, rX;
+        rC.reserve(C.size());
+        rX.reserve(X.size());
+        updateC(rC);
+        updateX(rX);
 
         branch();
 
         // recover
         PToC(u);
-        recoverC(rc);
-        recoverX(rx);
+        for (auto u : rC)
+            addToC(u);
+        for (auto u : rX)
+            X.add(u);
     }
 
     void branch()
@@ -189,7 +191,8 @@ public:
         }
     }
 
-    void multiRecurSearch(ui vp, Direction dir)
+    void
+    multiRecurSearch(ui vp, Direction dir)
     {
         if (PuCSize < q)
             return;
@@ -227,7 +230,9 @@ public:
             return;
         }
 
-        ui rc = 0, rx = 0;
+        vector<ui> rC, rX;
+        rC.reserve(C.size());
+        rX.reserve(X.size());
 
         // Branch 0
         ui u = vpNN[0];
@@ -245,8 +250,8 @@ public:
             if (!C.contains(v))
                 continue;
             CToP(v);
-            rc+=updateC();
-            rx+=updateX();
+            updateC(rC);
+            updateX(rX);
             // cout << rC.size() << " " << rX.size() << " . ";
             if (C.contains(u))
             {
@@ -277,20 +282,19 @@ public:
                 // cout<<"*";
                 removeFromC(u);
                 rC.emplace_back(u);
-                rc++;
             }
         }
         u = vpNN[p - 1];
         if (C.contains(u))
         {
             CToP(u);
-            rc+=updateC();
-            rx+=updateX();
+            updateC(rC);
+            updateX(rX);
             branch();
         }
         // cout<<vpNN.size()<<" "<<p<<" "<<P.size()<<" "<<C.size()<<endl;
 
-        // recover C from P
+        // recover
         for (ui i = 0; i < p; i++)
         {
             ui u = vpNN[i];
@@ -299,8 +303,12 @@ public:
         }
 
         // recover C and X
-       recoverC(rc);
-       recoverX(rx);
+        for (ui u : rC)
+            addToC(u);
+        for (ui u : rX)
+            X.add(u);
+        // rC.clear();
+        // rX.clear();
     }
 
     ui pickvp(ui vpOut, ui vpIn, Direction &dir)
@@ -471,9 +479,6 @@ public:
     {
         vBoundaryIn.reserve(_g.V);
         vBoundaryOut.reserve(_g.V);
-
-        rC.reserve(g.V);
-        rX.reserve(g.V);
 
         degenOrder.reserve(_g.V);
 
@@ -1174,7 +1179,7 @@ private:
         return true;
     }
 
-    ui updateC()
+    void updateC(auto &rC)
     {
 
         ui sz = rC.size();
@@ -1189,9 +1194,8 @@ private:
 
         for (ui i = sz; i < rC.size(); i++)
             removeFromC(rC[i]);
-        return rC.size() - sz;
     }
-    ui updateX()
+    void updateX(auto &rX)
     {
         // vector<ui> rX;
         // rX.reserve(X.size());
@@ -1207,24 +1211,6 @@ private:
         }
         for (ui i = sz; i < rX.size(); i++)
             X.remove(rX[i]);
-        return rX.size() - sz;
-    }
-
-    void recoverX(ui sz)
-    {
-        for (ui i = 0; i < sz; i++)
-        {
-            X.add(rX.back());
-            rX.pop_back();
-        }       
-    }
-    void recoverC(ui sz)
-    {
-        for (ui i = 0; i < sz; i++)
-        {
-            addToC(rC.back());
-            rC.pop_back();
-        }       
     }
     // calculates two-hop iterative pruned graph according to Algo 2
     void getTwoHopIterativePrunedG(ui s)

@@ -142,6 +142,7 @@ public:
         ui vpIn, vpOut;
         // vpout, vpIn are passed by reference...
         // finds minimum degree vertices in P
+        calculateGdegrees();
         minDegreeP(vpOut, vpIn);
 
         if (dGout[vpOut] + k1 < PuCSize or dGin[vpIn] + k2 < PuCSize)
@@ -184,6 +185,31 @@ public:
             XToC(vc);
             // other branch where P contains u
             recurSearch(vc);
+        }
+    }
+
+    void calculateGdegrees()
+    {
+        for (ui i = 0; i < C.size(); i++)
+        {
+            ui u = C[i];
+            dGout[u] = dPout[u];
+            dGin[u] = dPin[u];
+        }
+        for (ui i = 0; i < P.size(); i++)
+        {
+            ui u = P[i];
+            dGin[u] = dGout[u] = 0;
+        }
+        for (ui i = 0; i < C.size(); i++)
+        {
+            ui u = C[i];
+            for (ui v : g.nsOut[u])
+                if (C.contains(v))
+                    dGin[v]++;
+            for (ui v : g.nsIn[u])
+                if (C.contains(v))
+                    dGout[v]++;
         }
     }
 
@@ -242,7 +268,8 @@ public:
         {
             ui u = vpNN[i];     // u_i of algo
             ui v = vpNN[i - 1]; // u_(i-1) of algo
-            if(!C.contains(v)) continue;
+            if (!C.contains(v))
+                continue;
             CToP(v);
             updateC(rC);
             updateX(rX);
@@ -1377,33 +1404,33 @@ private:
     void addToC(ui u)
     {
         C.add(u);
-        for (ui v : g.nsOut[u])
-        {
-            // if (in2HopG[v])
-            dGin[v]++;
-        }
-        for (ui v : g.nsIn[u])
-        {
-            // if (in2HopG[v])
-            dGout[v]++;
-        }
+        // for (ui v : g.nsOut[u])
+        // {
+        //     // if (in2HopG[v])
+        //     dGin[v]++;
+        // }
+        // for (ui v : g.nsIn[u])
+        // {
+        //     // if (in2HopG[v])
+        //     dGout[v]++;
+        // }
     }
 
     void removeFromC(ui u)
     {
         C.remove(u);
-        for (ui v : g.nsOut[u])
-        {
-            // if (in2HopG[v])
+        // for (ui v : g.nsOut[u])
+        // {
+        //     // if (in2HopG[v])
 
-            dGin[v]--;
-        }
-        for (ui v : g.nsIn[u])
-        {
-            // if (in2HopG[v])
+        //     dGin[v]--;
+        // }
+        // for (ui v : g.nsIn[u])
+        // {
+        //     // if (in2HopG[v])
 
-            dGout[v]--;
-        }
+        //     dGout[v]--;
+        // }
     }
 
     void PToC(ui u)
