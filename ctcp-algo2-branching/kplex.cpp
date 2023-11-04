@@ -437,13 +437,12 @@ public:
             CToP(u);
 
         // update X and see if it's empty...
-        vector<ui> rX;
-        updateX(rX);
+        ui rx;
+        rx = updateX();
         if (X.empty())
             reportSolution();
-        // recover C, X
-        for (ui u : rX)
-            X.add(u);
+            
+        recoverX(rx);
         for (ui u : ctemp)
             PToC(u);
 
