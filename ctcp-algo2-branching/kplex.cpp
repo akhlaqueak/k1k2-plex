@@ -1,9 +1,5 @@
-
-#include "graph.h"
-// #define RAPIDS
-#include "command_line.h"
 #include "../common/utils.h"
-
+#include "../common/command_line.h"
 #define PuCSize (P.size() + C.size())
 enum CommonNeighbors
 {
@@ -90,7 +86,8 @@ public:
             vi = degenOrder[i];
 
             // getTwoHopG(vi);
-
+        
+            
             getTwoHopIterativePrunedG(vi);
             // cout << u << " ... " << endl;
 
@@ -137,25 +134,38 @@ public:
                 reportSolution();
             return;
         }
-        ui vpIn, vpOut;
-        // vpout, vpIn are passed by reference...
-        // finds minimum degree vertices in P
-        minDegreeP(vpOut, vpIn);
+        vector<ui> MOut, MIn;
+        calculateM(MOut, MIn);
 
-        if (dGout[vpOut] + k1 < PuCSize or dGin[vpIn] + k2 < PuCSize)
+        if (MOut.size() or MIn.size())
         {
             Direction dir;
-            ui vp = pickvp(vpOut, vpIn, dir);
-            // cout << vp << " " << vpIn << " " << vpOut << " " << P.size() << " : ";
-            // for (ui i = 0; i < P.size(); i++)
-            //     cout << P[i] << " " << dGin[P[i]] << " " << dGout[P[i]] << "   ";
-            // cout << endl;
+            ui vp = pickvp2(MOut, MIn, dir);
+            // cout<<MOut.size()<<" "<<MIn.size()<<" "<<dGout[vp]<<" "<<dGin[vp]<<" "<<P.size()<<" "<<C.size()<<endl;
             multiRecurSearch(vp, dir);
             return;
         }
 
+        // vpout, vpIn are passed by reference...
+        // finds minimum degree vertices in P
+
+        // minDegreeP(vpOut, vpIn);
+
+        // if (dGout[vpOut] + k1 < PuCSize or dGin[vpIn] + k2 < PuCSize)
+        // {
+        //     Direction dir;
+        //     ui vp = pickvp(vpOut, vpIn, dir);
+        //     // cout << vp << " " << vpIn << " " << vpOut << " " << P.size() << " : ";
+        //     // for (ui i = 0; i < P.size(); i++)
+        //     //     cout << P[i] << " " << dGin[P[i]] << " " << dGout[P[i]] << "   ";
+        //     // cout << endl;
+        //     multiRecurSearch(vp, dir);
+        //     return;
+        // }
+
         // finds minimum degree vertices in PuC
         // returns minimum degree vertex in C
+        ui vpIn, vpOut;
         ui vc = minDegreePuC(vpOut, vpIn);
 
         // if solution is found, it is also reported in the same function
@@ -236,7 +246,6 @@ public:
         XToC(u);
 
         // Branches 1...p
-        ui ind = 0;
         for (ui i = 1; i < p; i++)
         {
 
@@ -245,8 +254,8 @@ public:
             if (!C.contains(v))
                 continue;
             CToP(v);
-            rc+=updateC();
-            rx+=updateX();
+            rc += updateC();
+            rx += updateX();
             // cout << rC.size() << " " << rX.size() << " . ";
             if (C.contains(u))
             {
@@ -259,10 +268,7 @@ public:
                 X.add(u);
                 branch();
                 X.remove(u);
-                // ind++;
-                // break;
             }
-            ind++;
         }
 
         // p+1th last branch.
@@ -284,8 +290,8 @@ public:
         if (C.contains(u))
         {
             CToP(u);
-            rc+=updateC();
-            rx+=updateX();
+            rc += updateC();
+            rx += updateX();
             branch();
         }
         // cout<<vpNN.size()<<" "<<p<<" "<<P.size()<<" "<<C.size()<<endl;
@@ -299,20 +305,57 @@ public:
         }
 
         // recover C and X
-       recoverC(rc);
-       recoverX(rx);
+        recoverC(rc);
+        recoverX(rx);
     }
-
-    ui pickvp(ui vpOut, ui vpIn, Direction &dir)
+    void calculateM(vector<ui> &MOut, vector<ui> &MIn)
     {
         for (ui i = 0; i < P.size(); i++)
         {
             ui u = P[i];
-            if (dGout[u] + k1 < PuCSize and dPout[u] < dPout[vpOut])
+            if (dGout[u] + k1 < PuCSize)
+                MOut.push_back(u);
+            if (dGin[u] + k2 < PuCSize)
+                MIn.push_back(u);
+        }
+    }
+    ui pickvp2(vector<ui> &MOut, vector<ui> &MIn, Direction &dir)
+    {
+        ui vpOut = -1, vpIn = -1;
+        for (ui u : MOut)
+        {
+            if (vpOut == -1 or dGout[u] < dGout[vpOut])
                 vpOut = u;
-            if (dGin[u] + k2 < PuCSize and dPin[u] < dPin[vpIn])
+        }
+        for (ui u : MIn)
+        {
+            if (vpIn == -1 or dGin[u] < dGin[vpIn])
                 vpIn = u;
         }
+        if (MOut.size() and MIn.size())
+        {
+            ui outSupport = k1 - (P.size() - dPout[vpOut]);
+            ui inSupport = k2 - (P.size() - dPin[vpIn]);
+            if (outSupport < inSupport)
+                dir = Out;
+            else
+                dir = In;
+        }
+        else if (MOut.size())
+            dir = Out;
+        else if (MIn.size())
+            dir = In;
+        else
+            cout << "#"; // if this happens there must be a problem...
+
+        if (dir == Out)
+            return vpOut;
+        else
+            return vpIn;
+    }
+
+    ui pickvp(ui vpOut, ui vpIn, Direction &dir)
+    {
 
         // if both of vertices doesn't support G as a kplex
         if (dGout[vpOut] + k1 < PuCSize and dGin[vpIn] + k2 < PuCSize)
@@ -396,6 +439,15 @@ public:
 
     ui minDegreePuC(ui &vpOut, ui &vpIn)
     {
+        vpOut = vpIn = P[0];
+        for (ui i = 1; i < P.size(); i++)
+        {
+            ui u = P[i];
+            if (dGout[u] < dGout[vpOut])
+                vpOut = u;
+            if (dGin[u] < dGin[vpIn])
+                vpIn = u;
+        }
         ui minc = C[0];
         for (ui i = 0; i < C.size(); i++)
         {
@@ -426,6 +478,7 @@ public:
     }
     bool lookAheadSolutionExists(ui vpOut, ui vpIn)
     {
+        
         if (dGout[vpOut] + k1 < PuCSize or
             dGin[vpIn] + k2 < PuCSize)
             return false;
@@ -441,7 +494,7 @@ public:
         rx = updateX();
         if (X.empty())
             reportSolution();
-            
+
         recoverX(rx);
         for (ui u : ctemp)
             PToC(u);
@@ -1215,7 +1268,7 @@ private:
         {
             X.add(rX.back());
             rX.pop_back();
-        }       
+        }
     }
     void recoverC(ui sz)
     {
@@ -1223,7 +1276,7 @@ private:
         {
             addToC(rC.back());
             rC.pop_back();
-        }       
+        }
     }
     // calculates two-hop iterative pruned graph according to Algo 2
     void getTwoHopIterativePrunedG(ui s)
@@ -1404,32 +1457,18 @@ private:
     {
         C.add(u);
         for (ui v : g.nsOut[u])
-        {
-            // if (in2HopG[v])
             dGin[v]++;
-        }
         for (ui v : g.nsIn[u])
-        {
-            // if (in2HopG[v])
             dGout[v]++;
-        }
     }
 
     void removeFromC(ui u)
     {
         C.remove(u);
         for (ui v : g.nsOut[u])
-        {
-            // if (in2HopG[v])
-
             dGin[v]--;
-        }
         for (ui v : g.nsIn[u])
-        {
-            // if (in2HopG[v])
-
             dGout[v]--;
-        }
     }
 
     void PToC(ui u)
@@ -1437,15 +1476,9 @@ private:
         P.remove(u);
         C.add(u);
         for (ui v : g.nsOut[u])
-        {
-            // if (in2HopG[v])
             dPin[v]--;
-        }
         for (ui v : g.nsIn[u])
-        {
-            // if (in2HopG[v])
             dPout[v]--;
-        }
     }
 
     void CToP(const ui &u)
@@ -1454,15 +1487,9 @@ private:
         C.remove(u);
         P.add(u);
         for (ui v : g.nsOut[u])
-        {
-            // if (in2HopG[v])
             dPin[v]++;
-        }
         for (ui v : g.nsIn[u])
-        {
-            // if (in2HopG[v])
             dPout[v]++;
-        }
     }
 
     void CToX(const ui &u)
@@ -1480,9 +1507,7 @@ private:
     {
         // u is not yet in P, hence checking <=
         if (dPout[u] + k1 <= P.size() or dPin[u] + k2 <= P.size())
-        {
             return false;
-        }
         for (ui i = 0; i < P.size(); i++)
         {
             ui v = P.get(i);

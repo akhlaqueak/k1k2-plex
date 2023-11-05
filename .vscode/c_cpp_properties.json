@@ -1,0 +1,26 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${default}",
+                "C:\\mingw_dev_lib\\mingw\\mingw64\\bin\\..\\lib\\gcc\\x86_64-w64-mingw32\\8.1.0\\include\\c++",
+                "C:\\mingw_dev_lib\\mingw\\mingw64\\bin\\..\\lib\\gcc\\x86_64-w64-mingw32\\8.1.0\\include\\c++\\x86_64-w64-mingw32",
+                "C:\\mingw_dev_lib\\mingw\\mingw64\\bin\\..\\lib\\gcc\\x86_64-w64-mingw32\\8.1.0\\include\\c++\\backward",
+                "C:\\mingw_dev_lib\\mingw\\mingw64\\bin\\..\\lib\\gcc\\x86_64-w64-mingw32\\8.1.0\\include",
+                "C:\\mingw_dev_lib\\mingw\\mingw64\\bin\\..\\lib\\gcc\\x86_64-w64-mingw32\\8.1.0\\include-fixed",
+                "C:\\mingw_dev_lib\\mingw\\mingw64\\bin\\..\\lib\\gcc\\x86_64-w64-mingw32\\8.1.0\\..\\..\\..\\..\\x86_64-w64-mingw32\\include"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "compilerPath": "C:\\mingw_dev_lib\\mingw\\mingw64\\bin\\g++.exe",
+            "cStandard": "c17",
+            "cppStandard": "gnu++17",
+            "intelliSenseMode": "linux-gcc-x64"
+        }
+    ],
+    "version": 4
+}

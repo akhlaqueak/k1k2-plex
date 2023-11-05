@@ -1,3 +1,6 @@
+#ifndef CUTS_GRAPH_H
+#define CUTS_GRAPH_H
+
 #include <bits/stdc++.h>
 using namespace std;
 typedef unsigned int ui;
@@ -5,12 +8,9 @@ typedef unsigned int ui;
 #define DS_LOC string("")
 #define OUTPUT_LOC string("")
 
-#ifndef CUTS_GRAPH_H
-#define CUTS_GRAPH_H
 
 class Graph{
 public:
-    // vector<vector<int>>
     vector<vector<ui>> nsIn, nsOut;
     ui V;
     ui E;
