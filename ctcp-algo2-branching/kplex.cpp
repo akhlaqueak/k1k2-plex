@@ -85,11 +85,13 @@ public:
             // X = vertices u in B such that u>i
             vi = degenOrder[i];
 
+
             // getTwoHopG(vi);
         
             
             getTwoHopIterativePrunedG(vi);
             // cout << u << " ... " << endl;
+            // cout<<endl<<"***********************" << vi <<','<<inDegree[vi]<<','<<outDegree[vi]<<","<<C.size()<<","<<P.size()<<"****************"<<endl;
 
             recurSearch(vi);
 
@@ -107,12 +109,12 @@ public:
     {
         if (PuCSize < q)
             return;
-
         CToP(u);
         // any vertex removed by X or C will be appended in rX, rC so that it can be recovered later
 
         ui rc = updateC();
         ui rx = updateX();
+        // cout<<P.size()<< ", "<<C.size()<<" "<<dGout[u]<<" "<<dGin[u]<< " : ";
 
         branch();
 
@@ -124,6 +126,7 @@ public:
 
     void branch()
     {
+        // cout<<"("<<P.size()<< ","<<C.size()<<")";
 
         if (PuCSize < q)
             return;
@@ -135,6 +138,8 @@ public:
             return;
         }
         vector<ui> MOut, MIn;
+        MOut.reserve(P.size());
+        MIn.reserve(P.size());
         calculateM(MOut, MIn);
 
         if (MOut.size() or MIn.size())
@@ -190,12 +195,12 @@ public:
             // ui vc = C[0];
             // create two branches:
             // one branch where P doesn't contains u
+            recurSearch(vc);
             CToX(vc);
             branch();
             // recover
             XToC(vc);
             // other branch where P contains u
-            recurSearch(vc);
         }
     }
 
@@ -237,14 +242,13 @@ public:
             return;
         }
 
-        ui rc = 0, rx = 0;
-
+        ui rc = 0;
+        ui rx = 0;
         // Branch 0
         ui u = vpNN[0];
         CToX(u);
         branch();
         XToC(u);
-
         // Branches 1...p
         for (ui i = 1; i < p; i++)
         {
@@ -303,7 +307,6 @@ public:
             if (P.contains(u))
                 PToC(u);
         }
-
         // recover C and X
         recoverC(rc);
         recoverX(rx);
@@ -972,6 +975,7 @@ private:
             in2HopG[u] = 0;
             X.remove(u);
         }
+
     }
 
     void k1k2CorePrune()
@@ -993,7 +997,7 @@ private:
             for (ui u : g.nsIn[v])
             {
                 outDegree[u]--;
-                if (outDegree[u] + k1 + 1 == q and not pruned[u])
+                if (outDegree[u] + k1 < q and not pruned[u])
                 {
                     Qv.push_back(u);
                     pruned[u] = 1;
@@ -1002,7 +1006,7 @@ private:
             for (ui u : g.nsOut[v])
             {
                 inDegree[u]--;
-                if (inDegree[u] + k2 + 1 == q and not pruned[u])
+                if (inDegree[u] + k2 < q and not pruned[u])
                 {
                     Qv.push_back(u);
                     pruned[u] = 1;
@@ -1108,8 +1112,6 @@ private:
         inLookup.erase();
         outLookup.erase();
 
-        g.nsIn[u].clear();
-        g.nsOut[u].clear();
         // All out-edges are deleted now
         deletedOutEdge[u].setAll();
         // All in-edges are deleted...
@@ -1118,6 +1120,8 @@ private:
             ui uIndv = getLowerBound(g.nsOut[v], u);
             deletedOutEdge[v].set(uIndv);
         }
+        g.nsIn[u].clear();
+        g.nsOut[u].clear();
 
         // cout << Qv.size() << " vertices to be removed" << endl;
     }
@@ -1281,11 +1285,11 @@ private:
     // calculates two-hop iterative pruned graph according to Algo 2
     void getTwoHopIterativePrunedG(ui s)
     {
-        in2HopG[s] = 1;
         auto &nsIn = g.nsIn[s];
         auto &nsOut = g.nsOut[s];
-        if (nsIn.size() == 0 or nsOut.size() == 0)
+        if (nsIn.size() < k2 or nsOut.size() < k1)
             return;
+        in2HopG[s] = 1;
         // auto inLookup = getLookup(nsIn);
         // auto outLookup = getLookup(nsOut);
         Lookup inLookup(look1, nsIn);
