@@ -91,7 +91,7 @@ public:
             
             getTwoHopIterativePrunedG(vi);
             // cout << u << " ... " << endl;
-            // cout<<endl<<"***********************" << vi <<','<<inDegree[vi]<<','<<outDegree[vi]<<","<<C.size()<<","<<P.size()<<"****************"<<endl;
+            cout<<endl<<"***********************" << vi <<','<<g.nsIn[vi].size()<<','<<g.nsOut[vi].size()<<","<<C.size()<<","<<P.size()<<"****************"<<endl;
 
             recurSearch(vi);
 
@@ -145,7 +145,7 @@ public:
         if (MOut.size() or MIn.size())
         {
             Direction dir;
-            ui vp = pickvp2(MOut, MIn, dir);
+            ui vp = pickvp(MOut, MIn, dir);
             // cout<<MOut.size()<<" "<<MIn.size()<<" "<<dGout[vp]<<" "<<dGin[vp]<<" "<<P.size()<<" "<<C.size()<<endl;
             multiRecurSearch(vp, dir);
             return;
@@ -322,7 +322,7 @@ public:
                 MIn.push_back(u);
         }
     }
-    ui pickvp2(vector<ui> &MOut, vector<ui> &MIn, Direction &dir)
+    ui pickvp(vector<ui> &MOut, vector<ui> &MIn, Direction &dir)
     {
         ui vpOut = -1, vpIn = -1;
         for (ui u : MOut)
@@ -442,16 +442,17 @@ public:
 
     ui minDegreePuC(ui &vpOut, ui &vpIn)
     {
-        vpOut = vpIn = P[0];
-        for (ui i = 1; i < P.size(); i++)
-        {
-            ui u = P[i];
-            if (dGout[u] < dGout[vpOut])
-                vpOut = u;
-            if (dGin[u] < dGin[vpIn])
-                vpIn = u;
-        }
+        // vpOut = vpIn = P[0];
+        // for (ui i = 1; i < P.size(); i++)
+        // {
+        //     ui u = P[i];
+        //     if (dGout[u] < dGout[vpOut])
+        //         vpOut = u;
+        //     if (dGin[u] < dGin[vpIn])
+        //         vpIn = u;
+        // }
         ui minc = C[0];
+        vpOut = vpIn = minc;
         for (ui i = 0; i < C.size(); i++)
         {
             ui u = C[i];
@@ -709,10 +710,10 @@ private:
         {
             ui u = Qe[i].first;
             ui vInd = Qe[i].second;
-            if (vInd >= g.nsOut[u].size())
-            {
-                cout << u << " " << vInd << " " << g.nsOut[u].size() << endl;
-            }
+            // if (vInd >= g.nsOut[u].size())
+            // {
+            //     cout << u << " " << vInd << " " << g.nsOut[u].size() << endl;
+            // }
             deleteEdge(u, vInd);
         }
 
@@ -1122,6 +1123,7 @@ private:
         }
         g.nsIn[u].clear();
         g.nsOut[u].clear();
+        inDegree[u] = outDegree[u] = 0;
 
         // cout << Qv.size() << " vertices to be removed" << endl;
     }
@@ -1174,6 +1176,7 @@ private:
             if (pruned[u])
                 continue;
             // out nieghbors are pruned by deleted edges as well
+            // compact(g.nsOut[u], deletedOutEdge[u]);
             compact(g.nsOut[u], deletedOutEdge[u]);
 
             for (ui v : g.nsOut[u])
@@ -1187,7 +1190,8 @@ private:
         for (ui i = 0; i < degenOrder.size(); i++)
         {
             ui u = degenOrder[i];
-            if (!pruned[u])
+            // if (!pruned[u])
+            if(g.nsOut[u].size()+k1>=q and g.nsIn[u].size()+k2>=q)
                 degenOrder[k++] = u;
         }
         degenOrder.resize(k);
@@ -1232,21 +1236,18 @@ private:
 
     ui updateC()
     {
-
         ui sz = rC.size();
         for (ui i = 0; i < C.size(); i++)
         {
             ui u = C[i];
             if (!canMoveToP(u))
-            {
                 rC.emplace_back(u);
-            }
         }
-
         for (ui i = sz; i < rC.size(); i++)
             removeFromC(rC[i]);
         return rC.size() - sz;
     }
+    
     ui updateX()
     {
         // vector<ui> rX;
@@ -1287,8 +1288,6 @@ private:
     {
         auto &nsIn = g.nsIn[s];
         auto &nsOut = g.nsOut[s];
-        if (nsIn.size() < k2 or nsOut.size() < k1)
-            return;
         in2HopG[s] = 1;
         // auto inLookup = getLookup(nsIn);
         // auto outLookup = getLookup(nsOut);
@@ -1515,10 +1514,9 @@ private:
         for (ui i = 0; i < P.size(); i++)
         {
             ui v = P.get(i);
-            // assert(neiInP[v] + k >= P.size());
-            // should be in-connected to every out-boundary vertex
             ui ru = recode[u];
             ui rv = recode[v];
+            // should be in-connected to every out-boundary vertex
             if (dPout[v] + k1 == P.size() && !edgeIn[ru].test(rv))
                 return false;
             // should be out-connected to every in-boundary vertex

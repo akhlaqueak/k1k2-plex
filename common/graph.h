@@ -8,8 +8,8 @@ typedef unsigned int ui;
 #define DS_LOC string("")
 #define OUTPUT_LOC string("")
 
-
-class Graph{
+class Graph
+{
 public:
     vector<vector<ui>> nsIn, nsOut;
     ui V;
@@ -20,13 +20,10 @@ public:
     void readFile(string input_file);
 };
 
-
 bool degComp(const pair<ui, ui> &lhs, const pair<ui, ui> &rhs)
 {
     return lhs.second > rhs.second;
 }
-
-
 
 Graph::Graph()
 {
@@ -84,6 +81,9 @@ void Graph::readFile(string input_file)
     {
         nsOut[p.first].push_back(p.second);
         nsIn[p.second].push_back(p.first);
+// trying undirected graphs... 
+        nsOut[p.second].push_back(p.first);
+        nsIn[p.first].push_back(p.second);
     }
 
     lines.clear();
@@ -93,7 +93,7 @@ void Graph::readFile(string input_file)
         sort(ns.begin(), ns.end());
         auto last = std::unique(ns.begin(), ns.end());
         ns.erase(last, ns.end());
-        E+=ns.size();
+        E += ns.size();
     }
 
     for (auto &ns : nsOut)
@@ -102,7 +102,6 @@ void Graph::readFile(string input_file)
         auto last = std::unique(ns.begin(), ns.end());
         ns.erase(last, ns.end());
     }
-
 }
 
 Graph::Graph(std::string input_file)
@@ -151,4 +150,4 @@ Graph::Graph(std::string input_file)
 //     delete [] neighbors_offset;
 //     delete [] degrees;
 // }
-#endif //CUTS_GRAPH_H
+#endif // CUTS_GRAPH_H
