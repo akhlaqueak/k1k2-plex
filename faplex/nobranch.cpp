@@ -872,7 +872,6 @@ void EnuBundle::branch()
 		}
 	}
 
-	ui minc = UINT_MAX;
 	for (ui i = 0; i < Cand.getSize(); i++)
 	{
 		ui u = Cand.get(i);
@@ -880,10 +879,7 @@ void EnuBundle::branch()
 		{
 			minu = u;
 		}
-		if (minc == UINT_MAX || neiInG[u] < neiInG[minc])
-		{
-			minc = u;
-		}
+		
 	}
 
 	if (neiInG[minu] >= Cand.getSize() + P.getSize() - k)
@@ -896,7 +892,7 @@ void EnuBundle::branch()
 #endif
 		return;
 	}
-	minu = minc;
+	minu = Cand.get(0);
 	// minu in Cand
 	// The first branch add minu to P
 #ifdef SHOWRECUR
