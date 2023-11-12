@@ -863,30 +863,30 @@ void EnuBundle::branch()
 	// 	}
 	// }
 	
-	for (ui i = 0; i < P.getSize(); i++)
-	{
-		ui u = P.get(i);
-		if (minu == UINT_MAX || neiInG[u] < neiInG[minu])
-			minu = u;
-	}
+// 	for (ui i = 0; i < P.getSize(); i++)
+// 	{
+// 		ui u = P.get(i);
+// 		if (minu == UINT_MAX || neiInG[u] < neiInG[minu])
+// 			minu = u;
+// 	}
 
-	for (ui i = 0; i < Cand.getSize(); i++)
-	{
-		ui u = Cand.get(i);
-		if (minu == UINT_MAX || neiInG[u] < neiInG[minu])
-			minu = u;
-	}
+// 	for (ui i = 0; i < Cand.getSize(); i++)
+// 	{
+// 		ui u = Cand.get(i);
+// 		if (minu == UINT_MAX || neiInG[u] < neiInG[minu])
+// 			minu = u;
+// 	}
 
-	if (neiInG[minu]+k >= Cand.getSize() + P.getSize())
-	{
-		// The whole graph is a k-plex
-		stopAsSolution();
-#ifdef SHOWRECUR
-		printf("G is a k-plex. Backtrack.\n");
-		printf("--------BK-------------\n");
-#endif
-		return;
-	}
+// 	if (neiInG[minu]+k >= Cand.getSize() + P.getSize())
+// 	{
+// 		// The whole graph is a k-plex
+// 		stopAsSolution();
+// #ifdef SHOWRECUR
+// 		printf("G is a k-plex. Backtrack.\n");
+// 		printf("--------BK-------------\n");
+// #endif
+// 		return;
+// 	}
 	minu = Cand.get(0);
 	// minu in Cand
 	// The first branch add minu to P
