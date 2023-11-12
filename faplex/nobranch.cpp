@@ -873,11 +873,11 @@ void EnuBundle::branch()
 	for (ui i = 0; i < Cand.getSize(); i++)
 	{
 		ui u = Cand.get(i);
-		if (neiInG[u] < neiInG[minu])
+		if (minu == UINT_MAX || neiInG[u] < neiInG[minu])
 			minu = u;
 	}
 
-	if (neiInG[minu] >= Cand.getSize() + P.getSize() - k)
+	if (neiInG[minu]+k >= Cand.getSize() + P.getSize())
 	{
 		// The whole graph is a k-plex
 		stopAsSolution();
