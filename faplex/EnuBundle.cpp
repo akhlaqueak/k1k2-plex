@@ -790,6 +790,7 @@ ubr: suggestion a vertex for branch
 				if (u != minu && !badc[minu].test(u))
 					doing.emplace_back(u);
 			}
+			printf("#");
 			// assert(szmax < doing.size());
 			multiRecurSearch(doing, szmax);
 		}
