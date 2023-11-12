@@ -566,7 +566,7 @@ void EnuBundle::checkSolution() {
 		ismax = isGlobalMaximal();
 	else
 		ismax = 1;
-	if (1) {
+	if (ismax) {
 		cntplex++;
 #ifdef SHOWSOL
 		printf("Sol:");
