@@ -855,32 +855,32 @@ void EnuBundle::branch()
 
 	// find mindeg
 	ui minu = UINT_MAX;
-	/*
+	
 	for (ui u = 0; u < bn; u++) {
 		if (Cand.contains(u) || P.contains(u)) {
-			if(minu == bn || neiInG[u] < neiInG[minu])
+			if(minu == UINT_MAX || neiInG[u] < neiInG[minu])
 				minu = u;
 		}
 	}
-	*/
-	for (ui i = 0; i < P.getSize(); i++)
-	{
-		ui u = P.get(i);
-		if (minu == UINT_MAX || neiInG[u] < neiInG[minu])
-		{
-			minu = u;
-		}
-	}
+	
+	// for (ui i = 0; i < P.getSize(); i++)
+	// {
+	// 	ui u = P.get(i);
+	// 	if (minu == UINT_MAX || neiInG[u] < neiInG[minu])
+	// 	{
+	// 		minu = u;
+	// 	}
+	// }
 
-	for (ui i = 0; i < Cand.getSize(); i++)
-	{
-		ui u = Cand.get(i);
-		if (minu == UINT_MAX || neiInG[u] < neiInG[minu])
-		{
-			minu = u;
-		}
+	// for (ui i = 0; i < Cand.getSize(); i++)
+	// {
+	// 	ui u = Cand.get(i);
+	// 	if (minu == UINT_MAX || neiInG[u] < neiInG[minu])
+	// 	{
+	// 		minu = u;
+	// 	}
 		
-	}
+	// }
 
 	if (neiInG[minu] >= Cand.getSize() + P.getSize() - k)
 	{
