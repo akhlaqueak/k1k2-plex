@@ -613,9 +613,6 @@ void EnuBundle::recurSearch(ui start)
 	vector<ui> rcand;
 	vector<ui> rexcl;
 
-	if(start==0)
-		printf("%u", Excl.getSize());
-
 	if (Cand.getSize() + P.getSize() < lb)
 	{
 		return;
@@ -636,6 +633,8 @@ void EnuBundle::recurSearch(ui start)
 		removeFrCand(u);
 	}
 	// update excl
+	if(start==0)
+		printf("%d", Excl.getSize());
 	for (ui i = 0; i < Excl.getSize(); i++)
 	{
 		ui u = Excl.get(i);
