@@ -636,6 +636,7 @@ void EnuBundle::recurSearch(ui start)
 	for (ui i = 0; i < Excl.getSize(); i++)
 	{
 		ui u = Excl.get(i);
+		printf("#");
 		if (!canMoveToP(u))
 			rexcl.emplace_back(u);
 	}
