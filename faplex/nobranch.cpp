@@ -633,8 +633,7 @@ void EnuBundle::recurSearch(ui start)
 		removeFrCand(u);
 	}
 	// update excl
-	if(start==0)
-		printf("%d", Excl.getSize());
+
 	for (ui i = 0; i < Excl.getSize(); i++)
 	{
 		ui u = Excl.get(i);
@@ -1003,6 +1002,7 @@ void EnuBundle::enumPlex(ui _k, ui _lb, uli _maxsec, ui _isdecompose, ui _quiete
 				}
 				Excl.clear();
 				nnodes = 0;
+				
 				recurSearch(0);
 				// branch();
 				// Clear block
