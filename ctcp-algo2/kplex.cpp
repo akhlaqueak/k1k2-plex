@@ -725,8 +725,6 @@ private:
         inLookup.erase();
         outLookup.erase();
 
-        g.nsIn[u].clear();
-        g.nsOut[u].clear();
         // All out-edges are deleted now
         deletedOutEdge[u].setAll();
         // All in-edges are deleted...
@@ -735,6 +733,9 @@ private:
             ui uIndv = getLowerBound(g.nsOut[v], u);
             deletedOutEdge[v].set(uIndv);
         }
+        g.nsIn[u].clear();
+        g.nsOut[u].clear();
+        inDegree[u] = outDegree[u] = 0;
 
         // cout << Qv.size() << " vertices to be removed" << endl;
     }

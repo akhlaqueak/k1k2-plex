@@ -171,7 +171,7 @@ public:
         // finds minimum degree vertices in PuC
         // returns minimum degree vertex in C
         ui vpIn, vpOut;
-        ui vc = minDegreePuC(vpOut, vpIn);
+        ui vc = minDegreeC(vpOut, vpIn);
 
         // if solution is found, it is also reported in the same function
         if (lookAheadSolutionExists(vpOut, vpIn))
@@ -440,7 +440,7 @@ public:
         return vp;
     }
 
-    ui minDegreePuC(ui &vpOut, ui &vpIn)
+    ui minDegreeC(ui &vpOut, ui &vpIn)
     {
         // vpOut = vpIn = P[0];
         // for (ui i = 1; i < P.size(); i++)
