@@ -111,17 +111,19 @@ public:
             return;
         CToP(u);
         // any vertex removed by X or C will be appended in rX, rC so that it can be recovered later
-
-        ui rc = updateC();
-        ui rx = updateX();
+        vector<ui> rC, rX;
+        rC.reserve(C.size());
+        rX.reserve(X.size());
+        updateC(rC);
+        updateX(rX);
         // cout<<P.size()<< ", "<<C.size()<<" "<<dGout[u]<<" "<<dGin[u]<< " : ";
 
         branch();
 
         // recover
         PToC(u);
-        recoverC(rc);
-        recoverX(rx);
+        recoverC(rC);
+        recoverX(rX);
     }
 
     void branch()
@@ -242,8 +244,9 @@ public:
             return;
         }
 
-        ui rc = 0;
-        ui rx = 0;
+        vector<ui> rC, rX;
+        rC.reserve(C.size());
+        rX.reserve(X.size());
         // Branch 0
         ui u = vpNN[0];
         CToX(u);
@@ -258,8 +261,8 @@ public:
             if (!C.contains(v))
                 continue;
             CToP(v);
-            rc += updateC();
-            rx += updateX();
+            updateC(rC);
+            updateX(rX);
             // cout << rC.size() << " " << rX.size() << " . ";
             if (C.contains(u))
             {
@@ -287,15 +290,14 @@ public:
                 // cout<<"*";
                 removeFromC(u);
                 rC.emplace_back(u);
-                rc++;
             }
         }
         u = vpNN[p - 1];
         if (C.contains(u))
         {
             CToP(u);
-            rc += updateC();
-            rx += updateX();
+            updateC(rC);
+            updateX(rX);
             branch();
         }
         // cout<<vpNN.size()<<" "<<p<<" "<<P.size()<<" "<<C.size()<<endl;
@@ -308,8 +310,8 @@ public:
                 PToC(u);
         }
         // recover C and X
-        recoverC(rc);
-        recoverX(rx);
+        recoverC(rC);
+        recoverX(rX);
     }
     void calculateM(vector<ui> &MOut, vector<ui> &MIn)
     {
@@ -494,12 +496,13 @@ public:
             CToP(u);
 
         // update X and see if it's empty...
-        ui rx;
-        rx = updateX();
+        vector<ui> rX;
+        rX.reserve(X.size());
+        updateX(rX);
         if (X.empty())
             reportSolution();
 
-        recoverX(rx);
+        recoverX(rX);
         for (ui u : ctemp)
             PToC(u);
 
@@ -1234,31 +1237,24 @@ private:
         return true;
     }
 
-    ui updateC()
+    void updateC(vector<ui>& rC)
     {
         ui sz = rC.size();
-        ui cap = rC.capacity();
         for (ui i = 0; i < C.size(); i++)
         {
             ui u = C[i];
             if (!canMoveToP(u))
                 rC.emplace_back(u);
         }
-
-        if(cap!=rC.capacity()) cout<<"$";
         for (ui i = sz; i < rC.size(); i++)
             removeFromC(rC[i]);
-        
-        return rC.size() - sz;
     }
     
-    ui updateX()
+    void updateX(vector<ui>& rX)
     {
         // vector<ui> rX;
         // rX.reserve(X.size());
         ui sz = rX.size();
-        ui cap = rX.capacity();
-
         for (ui i = 0; i < X.size(); i++)
         {
             ui u = X[i];
@@ -1267,27 +1263,19 @@ private:
                 rX.emplace_back(u);
             }
         }
-        if(cap!=rX.capacity()) cout<<"&";
         for (ui i = sz; i < rX.size(); i++)
             X.remove(rX[i]);
-        return rX.size() - sz;
     }
 
-    void recoverX(ui sz)
+    void recoverX(vector<ui> & rX)
     {
-        for (ui i = 0; i < sz; i++)
-        {
-            X.add(rX.back());
-            rX.pop_back();
-        }
+        for (ui u: rX)
+            X.add(u);
     }
-    void recoverC(ui sz)
+    void recoverC(vector<ui> & rC)
     {
-        for (ui i = 0; i < sz; i++)
-        {
-            addToC(rC.back());
-            rC.pop_back();
-        }
+        for (ui u: rC)
+            addToC(u);
     }
     // calculates two-hop iterative pruned graph according to Algo 2
     void getTwoHopIterativePrunedG(ui s)
