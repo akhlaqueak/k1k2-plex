@@ -82,9 +82,12 @@ public:
             // C = vertices u in B such that u<i
             // X = vertices u in B such that u>i
             vi = degenOrder[i];
-            getTwoHopG(vi);
+            // getTwoHopG(vi);
 
-            // getTwoHopIterativePrunedG(vi);
+            getTwoHopIterativePrunedG(vi);
+
+            // cout << u << " ... " << endl;
+            // cout<<endl<<"***********************" << vi <<','<<g.nsIn[vi].size()<<','<<g.nsOut[vi].size()<<","<<C.size()<<","<<P.size()<<"****************"<<endl;
 
             recurSearch(vi);
             // auto t1 = chrono::steady_clock::now();
@@ -92,7 +95,7 @@ public:
             reset();
             // print("aX: ", dGout);
         }
-        cout << "Total (" << k1 << "," << k2 << ")-plexes of at least " << q << " size: " << kplexes << endl;
+        cout << "Total (" << k1 << ", " << k2 << ")-plexes of at least " << q << " size: " << kplexes  << endl;
         for (ui i = 0; i < counts.size(); i++)
             if (counts[i])
                 cout << "kplexes of size: " << i + 1 << " = " << counts[i] << endl;
@@ -142,19 +145,57 @@ public:
             return;
         }
 
+        // vpout, vpIn are passed by reference...
+        // finds minimum degree vertices in P
+
+        // minDegreeP(vpOut, vpIn);
+
+        // if (dGout[vpOut] + k1 < PuCSize or dGin[vpIn] + k2 < PuCSize)
+        // {
+        //     Direction dir;
+        //     ui vp = pickvp(vpOut, vpIn, dir);
+        //     // cout << vp << " " << vpIn << " " << vpOut << " " << P.size() << " : ";
+        //     // for (ui i = 0; i < P.size(); i++)
+        //     //     cout << P[i] << " " << dGin[P[i]] << " " << dGout[P[i]] << "   ";
+        //     // cout << endl;
+        //     multiRecurSearch(vp, dir);
+        //     return;
+        // }
+
+        // finds minimum degree out/in degree vertices in C
+        // returns minimum degree vertex in C
         ui vpIn, vpOut;
         ui vc = minDegreeC(vpOut, vpIn);
 
         // if solution is found, it is also reported in the same function
         if (lookAheadSolutionExists(vpOut, vpIn))
             return;
+        // Direction dir;
+        // ui vp = pickvp(vpOut, vpIn, dir);
 
-        recurSearch(vc);
-        CToX(vc);
-        branch();
-        // recover
-        XToC(vc);
-        // other branch where P contains u
+        // dir holds the direction of non-neighbors vector of vp, in which it violates kplex condition
+
+        // if (C.contains(vp))
+        // {
+        //     vp = pickvpFromP(vp, dir);
+        // }
+
+        // if (P.contains(vp))
+        //     multiRecurSearch(vp, dir);
+
+        // else
+        // vp is in C
+        {
+            // ui vc = C[0];
+            // create two branches:
+            // one branch where P doesn't contains u
+            recurSearch(vc);
+            CToX(vc);
+            branch();
+            // recover
+            XToC(vc);
+            // other branch where P contains u
+        }
     }
 
     void multiRecurSearch(ui vp, Direction dir)
@@ -187,10 +228,12 @@ public:
             p = k2 - (P.size() - dPin[vp]);
         }
         // cout<<vpNN.size()<<" "<<p<<endl;
-        if (vpNN.size() <= p )
+        if (vpNN.size() <= p or p == 0)
         {
-            // ! this condition should never be satisfied, check this bug...
+            // todo this condition should never be satisfied, check this bug...
             cout << "d<=p: " << vpNN.size() << " " << p << " ";
+
+            // cout<<p<<" "<<vpNN.size()<<endl;
             return;
         }
 
@@ -394,17 +437,28 @@ public:
 
     ui minDegreeC(ui &vpOut, ui &vpIn)
     {
-        vpOut = vpIn = C[0];
-        for (ui i = 1; i < C.size(); i++)
+        // vpOut = vpIn = P[0];
+        // for (ui i = 1; i < P.size(); i++)
+        // {
+        //     ui u = P[i];
+        //     if (dGout[u] < dGout[vpOut])
+        //         vpOut = u;
+        //     if (dGin[u] < dGin[vpIn])
+        //         vpIn = u;
+        // }
+        ui minc = C[0];
+        vpOut = vpIn = minc;
+        for (ui i = 0; i < C.size(); i++)
         {
             ui u = C[i];
             if (dGin[u] < dGin[vpIn])
                 vpIn = u;
             if (dGout[u] < dGout[vpOut])
                 vpOut = u;
-
+            if (dGout[u] < dGout[minc] or dGin[u] < dGin[minc])
+                minc = u;
         }
-        return dGin[vpIn]<dGout[vpOut]? vpIn: vpOut;
+        return minc;
     }
 
     void minDegreeP(ui &vpOut, ui &vpIn)
@@ -481,37 +535,6 @@ public:
         Qe.reserve(g.E / 10);
 
         reset();
-    }
-   void getNeighbors(auto &neigh)
-    {
-        for (ui i = 0; i < neigh.size(); i++)
-            addTo2HopG(neigh[i]);
-    }
-
-    void getFirstHop(ui u)
-    {
-        getNeighbors(g.nsOut[u]);
-        getNeighbors(g.nsIn[u]);
-    }
-
-    void getSecondHop(ui c1h, ui x1h)
-    {
-        for (size_t i = 0; i < c1h; i++)
-            getFirstHop(C[i]);
-        for (size_t i = 0; i < x1h; i++)
-            getFirstHop(X[i]);
-    }
-
-    void getTwoHopG(ui u)
-    {
-        addTo2HopG(u);
-
-        getFirstHop(u);
-
-        // get 2nd hop neighbors, first hop neighbors are found until c1h, x1h
-        // 2nd hop neighbors are appended afterwards
-        getSecondHop(C.size(), X.size());
-        // getSecondHop(c1h, x1h);
     }
 
 private:
@@ -982,6 +1005,7 @@ private:
         g.nsIn[u].clear();
         g.nsOut[u].clear();
         inDegree[u] = outDegree[u] = 0;
+
     }
 
     void compact(auto &adjList, auto &deletedEdges)
@@ -1311,7 +1335,7 @@ private:
     void addTo2HopG(ui u)
     {
 
-        if (pruned[u] or in2HopG(u))
+        if (in2HopG(u))
             return;
 
         if (peelSeq[u] < peelSeq[vi])

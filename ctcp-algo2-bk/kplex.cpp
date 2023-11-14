@@ -1,4 +1,5 @@
-#include "../common/utils.h"
+
+    #include "../common/utils.h"
 #include "../common/command_line.h"
 #define PuCSize (P.size() + C.size())
 enum CommonNeighbors
@@ -31,7 +32,6 @@ class EnumKPlex
 
     vector<char> pruned;    // todo change it to bitset for memory efficiency
     vector<char> prePruned; // todo change it to bitset for memory efficiency
-    vector<char> in2HopG;
     vector<ui> degenOrder;
     vector<ui> peelSeq;
     vector<ui> inDegree;
@@ -50,7 +50,7 @@ class EnumKPlex
     vector<ui> Qv;
     vector<ui> counts;
 
-    vector<ui> look1, look2, look3, look4;
+    vector<ui> look1, look2, look3, look4, look5;
 
     ui vi; // current vertex in degeneracy order for which we are searching kplex
 
@@ -63,7 +63,6 @@ class EnumKPlex
     ui p;
     Direction dir;
     ui vn;
-    ui c = 0;
 
 public:
     void enumerate()
@@ -84,22 +83,17 @@ public:
             // C = vertices u in B such that u<i
             // X = vertices u in B such that u>i
             vi = degenOrder[i];
-
-
             // getTwoHopG(vi);
-        
-            
+
             getTwoHopIterativePrunedG(vi);
-            // cout << u << " ... " << endl;
-            // cout<<endl<<"***********************" << vi <<','<<g.nsIn[vi].size()<<','<<g.nsOut[vi].size()<<","<<C.size()<<","<<P.size()<<"****************"<<endl;
 
             recurSearch(vi);
+            // auto t1 = chrono::steady_clock::now();
 
             reset();
-            // print("aC: ", dGin);
             // print("aX: ", dGout);
         }
-        cout << "Total (" << k1 << ", " << k2 << ")-plexes of at least " << q << " size: " << kplexes << " " << c << endl;
+        cout << "Total (" << k1 << ", " << k2 << ")-plexes of at least " << q << " size: " << kplexes << endl;
         for (ui i = 0; i < counts.size(); i++)
             if (counts[i])
                 cout << "kplexes of size: " << i + 1 << " = " << counts[i] << endl;
@@ -123,14 +117,12 @@ public:
         recoverC(rc);
         recoverX(rx);
     }
-
     void branch()
     {
         // cout<<"("<<P.size()<< ","<<C.size()<<")";
 
         if (PuCSize < q)
             return;
-        c++;
         if (C.empty())
         {
             if (X.empty())
@@ -151,119 +143,10 @@ public:
             PToX(v);
             xtemp.push_back(v);
         }
-
         
         for(ui v: xtemp){
             XToC(v);
         }
-    }
-
-    void multiRecurSearch(ui vp, Direction dir)
-    {
-        if (PuCSize < q)
-            return;
-        ui p;
-        vector<ui> vpNN; // It stores {u1, u2, ..., ud} vertices
-        vpNN.reserve(C.size());
-
-        auto getNonNeigh = [&](auto &adj)
-        {
-            for (ui i = 0; i < C.size(); i++)
-            {
-                ui u = C[i];
-                ui ru = recode[u];
-                if (!adj.test(ru))
-                    vpNN.push_back(u);
-            }
-        };
-        ui rvp = recode[vp];
-        if (dir == Out)
-        {
-            getNonNeigh(edgeOut[rvp]);
-            p = k1 - (P.size() - dPout[vp]);
-        }
-        else
-        {
-            getNonNeigh(edgeIn[rvp]);
-            p = k2 - (P.size() - dPin[vp]);
-        }
-        // cout<<vpNN.size()<<" "<<p<<endl;
-        if (vpNN.size() <= p)
-        {
-            // todo this condition should never be satisfied, check this bug...
-            cout << dir << " " << p << " ";
-            // cout<<p<<" "<<vpNN.size()<<endl;
-            return;
-        }
-
-        ui rc = 0;
-        ui rx = 0;
-        // Branch 0
-        ui u = vpNN[0];
-        CToX(u);
-        branch();
-        XToC(u);
-        // Branches 1...p
-        for (ui i = 1; i < p; i++)
-        {
-
-            ui u = vpNN[i];     // u_i of algo
-            ui v = vpNN[i - 1]; // u_(i-1) of algo
-            if (!C.contains(v))
-                continue;
-            CToP(v);
-            rc += updateC();
-            rx += updateX();
-            // cout << rC.size() << " " << rX.size() << " . ";
-            if (C.contains(u))
-            {
-                CToX(u);
-                branch();
-                XToC(u);
-            }
-            else
-            {
-                X.add(u);
-                branch();
-                X.remove(u);
-            }
-        }
-
-        // p+1th last branch.
-        // so far 1...(p-2) vertices are moved from C to P
-        // now move p...d vertices from C to X
-
-        for (ui i = p; i < vpNN.size(); i++)
-        {
-            ui u = vpNN[i];
-            if (C.contains(u))
-            {
-                // cout<<"*";
-                removeFromC(u);
-                rC.emplace_back(u);
-                rc++;
-            }
-        }
-        u = vpNN[p - 1];
-        if (C.contains(u))
-        {
-            CToP(u);
-            rc += updateC();
-            rx += updateX();
-            branch();
-        }
-        // cout<<vpNN.size()<<" "<<p<<" "<<P.size()<<" "<<C.size()<<endl;
-
-        // recover C from P
-        for (ui i = 0; i < p; i++)
-        {
-            ui u = vpNN[i];
-            if (P.contains(u))
-                PToC(u);
-        }
-        // recover C and X
-        recoverC(rc);
-        recoverX(rx);
     }
     void calculateM(vector<ui> &MOut, vector<ui> &MIn)
     {
@@ -291,8 +174,8 @@ public:
         }
         if (MOut.size() and MIn.size())
         {
-            ui outSupport = k1 - (P.size() - dPout[vpOut]);
-            ui inSupport = k2 - (P.size() - dPin[vpIn]);
+            ui outSupport = k1 + dPout[vpOut] - P.size();
+            ui inSupport = k2 + dPin[vpIn] - P.size();
             if (outSupport < inSupport)
                 dir = Out;
             else
@@ -396,28 +279,17 @@ public:
 
     ui minDegreeC(ui &vpOut, ui &vpIn)
     {
-        // vpOut = vpIn = P[0];
-        // for (ui i = 1; i < P.size(); i++)
-        // {
-        //     ui u = P[i];
-        //     if (dGout[u] < dGout[vpOut])
-        //         vpOut = u;
-        //     if (dGin[u] < dGin[vpIn])
-        //         vpIn = u;
-        // }
-        ui minc = C[0];
-        vpOut = vpIn = minc;
-        for (ui i = 0; i < C.size(); i++)
+        vpOut = vpIn = C[0];
+        for (ui i = 1; i < C.size(); i++)
         {
             ui u = C[i];
             if (dGin[u] < dGin[vpIn])
                 vpIn = u;
             if (dGout[u] < dGout[vpOut])
                 vpOut = u;
-            if (dGout[u] < dGout[minc] or dGin[u] < dGin[minc])
-                minc = u;
+
         }
-        return minc;
+        return dGin[vpIn]<dGout[vpOut]? vpIn: vpOut;
     }
 
     void minDegreeP(ui &vpOut, ui &vpIn)
@@ -436,7 +308,7 @@ public:
     }
     bool lookAheadSolutionExists(ui vpOut, ui vpIn)
     {
-        
+
         if (dGout[vpOut] + k1 < PuCSize or
             dGin[vpIn] + k2 < PuCSize)
             return false;
@@ -470,12 +342,12 @@ public:
 
     EnumKPlex(Graph &_g, ui _k1, ui _k2, ui _q) : pruned(_g.V), peelSeq(_g.V),
                                                   g(_g), inDegree(_g.V), outDegree(_g.V),
-                                                  in2HopG(_g.V), dPin(_g.V), dPout(_g.V),
+                                                  dPin(_g.V), dPout(_g.V),
                                                   dGin(_g.V), dGout(_g.V),
                                                   k1(_k1), k2(_k2), q(_q), kplexes(0),
                                                   deletedOutEdge(_g.V), cnPP(_g.V), cnPM(_g.V),
                                                   cnMP(_g.V), cnMM(_g.V), look1(_g.V), look2(_g.V),
-                                                  look3(_g.V), look4(_g.V), recode(_g.V),
+                                                  look3(_g.V), look4(_g.V), look5(_g.V), recode(_g.V),
                                                   P(_g.V), C(_g.V), X(_g.V),
                                                   counts(1000)
     {
@@ -568,18 +440,7 @@ private:
 
         compactAdjListsWithRemomvedEdges();
     }
-    void printCN()
-    {
-        for (ui i = 0; i < g.V; i++)
-        {
-            cout << "************** " << i << " **************" << endl;
-            print("adj: ", g.nsOut[i]);
-            print("PP ", cnPP[i]);
-            print("PM ", cnPM[i]);
-            print("MP ", cnMP[i]);
-            print("MM ", cnMM[i]);
-        }
-    }
+
     void deleteEdge(ui u, ui vIndu)
     {
         // the edge might already have been deleted...
@@ -590,19 +451,19 @@ private:
 
         ui v = g.nsOut[u][vIndu];
         // u -> v is an edge that we want to remove...
-        if (prePruned[u] or prePruned[v])
-            return;
 
-        if (outDegree[u]-- + k1 == q)
+        if (not prePruned[u] and outDegree[u]-- + k1 == q)
         {
             Qv.push_back(u);
             prePruned[u] = 1;
         }
-        if (inDegree[v]-- + k2 == q)
+        if (not prePruned[v] and inDegree[v]-- + k2 == q)
         {
             Qv.push_back(v);
             prePruned[v] = 1;
         }
+        if (prePruned[u] or prePruned[v])
+            return;
         // updating triangles now...
         // following loop check the u->w edges, that form a triangle with v->w and w->v
         // auto outLookup = getLookup(g.nsOut[u]);
@@ -737,40 +598,9 @@ private:
                         cnPM[u][outLookup[w] - 1]++;
                     }
                     if (inLookup[w])
-                    {
                         cnMP[u][j]++;
-                        // cnMP[v][k]++;
-                        // ui uIndw = getLowerBound(g.nsOut[w], u);
-                        // cnMP[w][uIndw]++;
-                    }
                 }
             }
-            // for (ui j = 0; j < g.nsIn[u].size(); j++)
-            // {
-            //     ui v = g.nsIn[u][j];
-            //     if (pruned[v])
-            //         continue;
-            //     ui uIndv = getLowerBound(g.nsOut[v], u);
-            //     // v->u there is an edge
-            //     // intersectSize returns the number of elements found in intersection
-            //     for (ui k = 0; k < g.nsOut[v].size(); k++)
-            //     {
-            //         ui w = g.nsOut[v][k];
-            //         if (outLookup[w])
-            //         {
-            //             cnPP[v][uIndv]++;
-            //             cnPM[v][k]++;
-            //             cnMM[u][outLookup[w] - 1]++;
-            //         }
-            //         if (inLookup[w])
-            //         {
-            //             cnPM[v][uIndv]++;
-            //             cnPP[v][k]++;
-            //             ui uIndw = getLowerBound(g.nsOut[w], u);
-            //             cnMM[w][uIndw]++;
-            //         }
-            //     }
-            // }
         }
 
         for (ui u = 0; u < g.V; u++)
@@ -782,24 +612,16 @@ private:
                     continue;
                 // Theorem 3
                 if (cnPM[u][j] + k1 + k2 < q)
-                {
                     Qe.push_back({u, j});
-                }
                 // Theorem 4
                 else if (cnPP[u][j] + 2 * k1 < q)
-                {
                     Qe.push_back({u, j});
-                }
                 // Theorem 5
                 else if (cnMP[u][j] + k1 + k2 < q)
-                {
                     Qe.push_back({u, j});
-                }
                 // Theorem 6
                 else if (cnPM[u][j] + 2 * k2 < q)
-                {
                     Qe.push_back({u, j});
-                }
             }
         }
     }
@@ -863,74 +685,15 @@ private:
         }
     }
 
-    void getNeighbors(auto &neigh)
-    {
-        for (ui i = 0; i < neigh.size(); i++)
-        {
-            ui v = neigh[i];
-            if (pruned[v] or in2HopG[v])
-                continue;
-            // vi is the vertex for which we are building a kplex in current iteration
-            if (peelSeq[v] < peelSeq[vi])
-            {
-                X.add(v);
-            }
-            else
-                addToC(v);
-            in2HopG[v] = 1;
-        }
-    }
-
-    void getFirstHop(ui u)
-    {
-        getNeighbors(g.nsOut[u]);
-        getNeighbors(g.nsIn[u]);
-    }
-
-    void getSecondHop(ui c1h, ui x1h)
-    {
-        for (size_t i = 0; i < c1h; i++)
-        {
-            getFirstHop(C[i]);
-        }
-        for (size_t i = 0; i < x1h; i++)
-        {
-            getFirstHop(X[i]);
-        }
-    }
-
-    void getTwoHopG(ui u)
-    {
-        // reset in2HopG to 0
-
-        in2HopG[u] = 1;
-        // get 1st hop neighbors, they are appended to C and X
-        getFirstHop(u);
-
-        // get 2nd hop neighbors, first hop neighbors are found until c1h, x1h
-        // 2nd hop neighbors are appended afterwards
-        getSecondHop(C.size(), X.size());
-        // getSecondHop(c1h, x1h);
-    }
-
     void reset()
     {
         ui sz = C.size();
         for (ui i = 0; i < sz; i++)
-        {
-            ui u = C[0];
-            in2HopG[u] = 0;
-            C.remove(u);
-        }
+            removeFromC(C[0]);
 
         sz = X.size();
         for (ui i = 0; i < sz; i++)
-        {
-            ui u = X[0];
-            in2HopG[u] = 0;
-            X.remove(u);
-        }
-
+            X.remove(X[0]);
     }
 
     void k1k2CorePrune()
@@ -1007,6 +770,8 @@ private:
             // u->v is an edge
             if (pruned[v] or deletedOutEdge[u].test(i))
                 continue;
+            // adding now
+            deletedOutEdge[u].set(i);
             if (not prePruned[v] and inDegree[v]-- + k2 == q)
             {
                 Qv.push_back(v);
@@ -1039,6 +804,7 @@ private:
             ui uIndv = getLowerBound(g.nsOut[v], u);
             if (deletedOutEdge[v].test(uIndv))
                 continue;
+            deletedOutEdge[v].set(uIndv);
             if (not prePruned[v] and outDegree[v]-- + k1 == q)
             {
                 Qv.push_back(v);
@@ -1067,19 +833,9 @@ private:
         inLookup.erase();
         outLookup.erase();
 
-        // All out-edges are deleted now
-        deletedOutEdge[u].setAll();
-        // All in-edges are deleted...
-        for (ui v : g.nsIn[u])
-        {
-            ui uIndv = getLowerBound(g.nsOut[v], u);
-            deletedOutEdge[v].set(uIndv);
-        }
         g.nsIn[u].clear();
         g.nsOut[u].clear();
         inDegree[u] = outDegree[u] = 0;
-
-        // cout << Qv.size() << " vertices to be removed" << endl;
     }
 
     void compact(auto &adjList, auto &deletedEdges)
@@ -1128,7 +884,9 @@ private:
         for (ui u = 0; u < g.V; u++)
         {
             if (pruned[u])
+            {
                 continue;
+            }
             // out nieghbors are pruned by deleted edges as well
             // compact(g.nsOut[u], deletedOutEdge[u]);
             compact(g.nsOut[u], deletedOutEdge[u]);
@@ -1144,12 +902,12 @@ private:
         for (ui i = 0; i < degenOrder.size(); i++)
         {
             ui u = degenOrder[i];
-            // if (!pruned[u])
-            if(g.nsOut[u].size()+k1>=q and g.nsIn[u].size()+k2>=q)
-                degenOrder[k++] = u;
+            if (pruned[u])
+                continue;
+            degenOrder[k++] = u;
         }
         degenOrder.resize(k);
-        cout << "Total to process..." << k << endl;
+        cout << "Remaining vertices to process..." << k << endl;
 
         ui VV = degenOrder.size();
         edgeOut.resize(VV);
@@ -1165,14 +923,10 @@ private:
             ui u = degenOrder[i];
             ui ru = recode[u];
             for (ui j = 0; j < g.nsOut[u].size(); j++)
-            {
                 edgeOut[ru].set(recode[g.nsOut[u][j]]);
-            }
 
             for (ui j = 0; j < g.nsIn[u].size(); j++)
-            {
                 edgeIn[ru].set(recode[g.nsIn[u][j]]);
-            }
         }
     }
 
@@ -1191,22 +945,28 @@ private:
     ui updateC()
     {
         ui sz = rC.size();
+        ui cap = rC.capacity();
         for (ui i = 0; i < C.size(); i++)
         {
             ui u = C[i];
             if (!canMoveToP(u))
                 rC.emplace_back(u);
         }
+
+        if (cap != rC.capacity())
+            cout << "$";
         for (ui i = sz; i < rC.size(); i++)
             removeFromC(rC[i]);
+
         return rC.size() - sz;
     }
-    
+
     ui updateX()
     {
         // vector<ui> rX;
         // rX.reserve(X.size());
         ui sz = rX.size();
+        ui cap = rX.capacity();
 
         for (ui i = 0; i < X.size(); i++)
         {
@@ -1216,6 +976,8 @@ private:
                 rX.emplace_back(u);
             }
         }
+        if (cap != rX.capacity())
+            cout << "&";
         for (ui i = sz; i < rX.size(); i++)
             X.remove(rX[i]);
         return rX.size() - sz;
@@ -1242,17 +1004,17 @@ private:
     {
         auto &nsIn = g.nsIn[s];
         auto &nsOut = g.nsOut[s];
-        in2HopG[s] = 1;
+        addTo2HopG(s);
         // auto inLookup = getLookup(nsIn);
         // auto outLookup = getLookup(nsOut);
         Lookup inLookup(look1, nsIn);
         Lookup outLookup(look2, nsOut);
         // both in-out neighbors
         vector<ui> nsInOut;
-        nsInOut.reserve(min(nsIn.size(), nsOut.size()));
         // exclusive in/out neighbors
         vector<ui> I;
         vector<ui> O;
+        nsInOut.reserve(min(nsIn.size(), nsOut.size()));
         I.reserve(nsIn.size());
         O.reserve(nsOut.size());
 
@@ -1286,9 +1048,11 @@ private:
             // cout << s << " I: " << I.size() << " O: "<< O.size() << endl;
             inSize = I.size();
             outSize = O.size();
+
             vector<ui> tempIn, tempOut;
             tempIn.reserve(inSize);
             tempOut.reserve(outSize);
+
             for (auto v : nsInOut)
             {
                 I.push_back(v);
@@ -1344,69 +1108,78 @@ private:
             O.push_back(u);
             addTo2HopG(u);
         }
+        // erasing previous lookups so that we can reutilize the memory
+        existsIn.erase();
+        existsOut.erase();
         // since in/out neighbors are added, now onwards I is SI and O is SO
-
         // Calculate and B to two hop graph
-
+        vector<ui> temp;
+        Lookup intersect(look4, temp);
         for (auto u : O)
         {
             for (auto v : g.nsOut[u])
             {
                 // v is not already added in 2hop graph
-                if (!in2HopG[v])
-                    in2HopG[v] = 2;
+                if (!in2HopG(v))
+                {
+                    temp.push_back(v);
+                    intersect[v] = 2;
+                }
             }
         }
         for (auto u : O)
         {
             for (auto v : g.nsIn[u])
             {
-                if (in2HopG[v] == 2)
-                    in2HopG[v] = 3;
+                if (intersect[v] == 2)
+                {
+                    intersect[v] = 3;
+                }
             }
         }
         for (auto u : I)
         {
             for (auto v : g.nsOut[u])
             {
-                if (in2HopG[v] == 3)
-                    in2HopG[v] = 4;
+                if (intersect[v] == 3)
+                    intersect[v] = 4;
             }
         }
         for (auto u : I)
         {
             for (auto v : g.nsIn[u])
             {
-                if (in2HopG[v] == 4)
+                if (intersect[v] == 4)
                 {
                     addTo2HopG(v);
-                    // cout<<"added "<<v<<endl;
                 }
             }
         }
 
-        // build CX
-        for (ui u : degenOrder)
-        {
-            if (in2HopG[u])
-                if (peelSeq[u] < peelSeq[vi])
-                    X.add(u);
-                else
-                    addToC(u);
-        }
+        intersect.erase();
     }
-
+    bool in2HopG(ui u)
+    {
+        return X.contains(u) or C.contains(u);
+    }
     void addTo2HopG(ui u)
     {
 
-        in2HopG[u] = 1;
+        if (in2HopG(u))
+            return;
+
+        if (peelSeq[u] < peelSeq[vi])
+            X.add(u);
+        else
+            addToC(u);
         // cout<<P.front()<<endl;
     }
     void print(string msg, auto &vec)
     {
         cout << msg;
         for (auto u : vec)
-            cout << u << " ";
+            if (u)
+                cout << u << " ";
         cout << endl;
     }
 
@@ -1437,7 +1210,6 @@ private:
         for (ui v : g.nsIn[u])
             dPout[v]--;
     }
-
     void PToX(ui u)
     {
         P.remove(u);
@@ -1447,7 +1219,6 @@ private:
         for (ui v : g.nsIn[u])
             dPout[v]--;
     }
-
     void CToP(const ui &u)
     {
         // assert(Cand.contains(u));
