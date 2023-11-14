@@ -91,7 +91,7 @@ public:
             
             getTwoHopIterativePrunedG(vi);
             // cout << u << " ... " << endl;
-            cout<<endl<<"***********************" << vi <<','<<g.nsIn[vi].size()<<','<<g.nsOut[vi].size()<<","<<C.size()<<","<<P.size()<<"****************"<<endl;
+            // cout<<endl<<"***********************" << vi <<','<<g.nsIn[vi].size()<<','<<g.nsOut[vi].size()<<","<<C.size()<<","<<P.size()<<"****************"<<endl;
 
             recurSearch(vi);
 

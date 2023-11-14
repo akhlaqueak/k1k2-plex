@@ -31,7 +31,6 @@ class EnumKPlex
 
     vector<char> pruned;    // todo change it to bitset for memory efficiency
     vector<char> prePruned; // todo change it to bitset for memory efficiency
-    vector<char> in2HopG;
     vector<ui> degenOrder;
     vector<ui> peelSeq;
     vector<ui> inDegree;
@@ -85,7 +84,6 @@ public:
             // C = vertices u in B such that u<i
             // X = vertices u in B such that u>i
             vi = degenOrder[i];
-
             // getTwoHopG(vi);
 
             getTwoHopIterativePrunedG(vi);
@@ -169,7 +167,7 @@ public:
         //     return;
         // }
 
-        // finds minimum degree vertices in PuC
+        // finds minimum degree out/in degree vertices in C
         // returns minimum degree vertex in C
         ui vpIn, vpOut;
         ui vc = minDegreeC(vpOut, vpIn);
@@ -235,10 +233,11 @@ public:
             p = k2 - (P.size() - dPin[vp]);
         }
         // cout<<vpNN.size()<<" "<<p<<endl;
-        if (vpNN.size() <= p)
+        if (vpNN.size() <= p or p == 0)
         {
             // todo this condition should never be satisfied, check this bug...
-            cout << dir << " " << p << " ";
+            cout << "d<=p: " << vpNN.size() << " " << p << " ";
+
             // cout<<p<<" "<<vpNN.size()<<endl;
             return;
         }
@@ -338,8 +337,8 @@ public:
         }
         if (MOut.size() and MIn.size())
         {
-            ui outSupport = k1 - (P.size() - dPout[vpOut]);
-            ui inSupport = k2 - (P.size() - dPin[vpIn]);
+            ui outSupport = k1 + dPout[vpOut] - P.size();
+            ui inSupport = k2 + dPin[vpIn] - P.size();
             if (outSupport < inSupport)
                 dir = Out;
             else
@@ -517,7 +516,7 @@ public:
 
     EnumKPlex(Graph &_g, ui _k1, ui _k2, ui _q) : pruned(_g.V), peelSeq(_g.V),
                                                   g(_g), inDegree(_g.V), outDegree(_g.V),
-                                                  in2HopG(_g.V), dPin(_g.V), dPout(_g.V),
+                                                  dPin(_g.V), dPout(_g.V),
                                                   dGin(_g.V), dGout(_g.V),
                                                   k1(_k1), k2(_k2), q(_q), kplexes(0),
                                                   deletedOutEdge(_g.V), cnPP(_g.V), cnPM(_g.V),
@@ -637,19 +636,19 @@ private:
 
         ui v = g.nsOut[u][vIndu];
         // u -> v is an edge that we want to remove...
-        if (prePruned[u] or prePruned[v])
-            return;
 
-        if (outDegree[u]-- + k1 == q)
+        if (not prePruned[u] and outDegree[u]-- + k1 == q)
         {
             Qv.push_back(u);
             prePruned[u] = 1;
         }
-        if (inDegree[v]-- + k2 == q)
+        if (not prePruned[v] and inDegree[v]-- + k2 == q)
         {
             Qv.push_back(v);
             prePruned[v] = 1;
         }
+        if (prePruned[u] or prePruned[v])
+            return;
         // updating triangles now...
         // following loop check the u->w edges, that form a triangle with v->w and w->v
         // auto outLookup = getLookup(g.nsOut[u]);
@@ -910,55 +909,7 @@ private:
         }
     }
 
-    void getNeighbors(auto &neigh)
-    {
-        for (ui i = 0; i < neigh.size(); i++)
-        {
-            ui v = neigh[i];
-            if (pruned[v] or in2HopG[v])
-                continue;
-            // vi is the vertex for which we are building a kplex in current iteration
-            if (peelSeq[v] < peelSeq[vi])
-            {
-                X.add(v);
-            }
-            else
-                addToC(v);
-            in2HopG[v] = 1;
-        }
-    }
 
-    void getFirstHop(ui u)
-    {
-        getNeighbors(g.nsOut[u]);
-        getNeighbors(g.nsIn[u]);
-    }
-
-    void getSecondHop(ui c1h, ui x1h)
-    {
-        for (size_t i = 0; i < c1h; i++)
-        {
-            getFirstHop(C[i]);
-        }
-        for (size_t i = 0; i < x1h; i++)
-        {
-            getFirstHop(X[i]);
-        }
-    }
-
-    void getTwoHopG(ui u)
-    {
-        // reset in2HopG to 0
-
-        in2HopG[u] = 1;
-        // get 1st hop neighbors, they are appended to C and X
-        getFirstHop(u);
-
-        // get 2nd hop neighbors, first hop neighbors are found until c1h, x1h
-        // 2nd hop neighbors are appended afterwards
-        getSecondHop(C.size(), X.size());
-        // getSecondHop(c1h, x1h);
-    }
 
     void reset()
     {
@@ -966,7 +917,6 @@ private:
         for (ui i = 0; i < sz; i++)
         {
             ui u = C[0];
-            in2HopG[u] = 0;
             removeFromC(u);
         }
 
@@ -974,7 +924,6 @@ private:
         for (ui i = 0; i < sz; i++)
         {
             ui u = X[0];
-            in2HopG[u] = 0;
             X.remove(u);
         }
     }
@@ -1053,6 +1002,8 @@ private:
             // u->v is an edge
             if (pruned[v] or deletedOutEdge[u].test(i))
                 continue;
+            // adding now
+            deletedOutEdge[u].set(i);
             if (not prePruned[v] and inDegree[v]-- + k2 == q)
             {
                 Qv.push_back(v);
@@ -1085,6 +1036,7 @@ private:
             ui uIndv = getLowerBound(g.nsOut[v], u);
             if (deletedOutEdge[v].test(uIndv))
                 continue;
+            deletedOutEdge[v].set(uIndv);
             if (not prePruned[v] and outDegree[v]-- + k1 == q)
             {
                 Qv.push_back(v);
@@ -1114,13 +1066,13 @@ private:
         outLookup.erase();
 
         // All out-edges are deleted now
-        deletedOutEdge[u].setAll();
-        // All in-edges are deleted...
-        for (ui v : g.nsIn[u])
-        {
-            ui uIndv = getLowerBound(g.nsOut[v], u);
-            deletedOutEdge[v].set(uIndv);
-        }
+        // deletedOutEdge[u].setAll();
+        // // All in-edges are deleted...
+        // for (ui v : g.nsIn[u])
+        // {
+        //     ui uIndv = getLowerBound(g.nsOut[v], u);
+        //     deletedOutEdge[v].set(uIndv);
+        // }
         g.nsIn[u].clear();
         g.nsOut[u].clear();
         inDegree[u] = outDegree[u] = 0;
@@ -1174,7 +1126,9 @@ private:
         for (ui u = 0; u < g.V; u++)
         {
             if (pruned[u])
+            {
                 continue;
+            }
             // out nieghbors are pruned by deleted edges as well
             // compact(g.nsOut[u], deletedOutEdge[u]);
             compact(g.nsOut[u], deletedOutEdge[u]);
@@ -1190,9 +1144,16 @@ private:
         for (ui i = 0; i < degenOrder.size(); i++)
         {
             ui u = degenOrder[i];
-            // if (!pruned[u])
+            if (pruned[u])
+                continue;
             if (g.nsOut[u].size() + k1 >= q and g.nsIn[u].size() + k2 >= q)
-                degenOrder[k++] = u;
+            {
+            }
+            else{
+                cout << (g.nsOut[u].size() + k1) << ","<<(g.nsIn[u].size() + k2 )<<","<<prePruned[u]<<" ";
+            }
+            degenOrder[k++] = u;
+            //     cout<<u<<"-";
         }
         degenOrder.resize(k);
         cout << "Total to process..." << k << endl;
@@ -1412,7 +1373,7 @@ private:
             for (auto v : g.nsOut[u])
             {
                 // v is not already added in 2hop graph
-                if (!in2HopG[v])
+                if (!in2HopG(v))
                 {
                     temp.push_back(v);
                     intersect[v] = 2;
@@ -1423,7 +1384,8 @@ private:
         {
             for (auto v : g.nsIn[u])
             {
-                if (intersect[v] == 2){
+                if (intersect[v] == 2)
+                {
                     intersect[v] = 3;
                 }
             }
@@ -1441,10 +1403,12 @@ private:
             for (auto v : g.nsIn[u])
             {
                 if (intersect[v] == 4)
+                {
                     addTo2HopG(v);
+                }
             }
         }
-        // print("look", look4);
+
         intersect.erase();
         auto t1 = chrono::steady_clock::now();
         // build CX
@@ -1458,11 +1422,13 @@ private:
         // }
         it += chrono::duration_cast<chrono::nanoseconds>(chrono::steady_clock::now() - t1).count();
     }
-
+    bool in2HopG(ui u){
+        return X.contains(u) or C.contains(u);
+    }
     void addTo2HopG(ui u)
     {
-        if(in2HopG[u]==1) return;
-        in2HopG[u] = 1;
+
+        if(in2HopG(u)) return;
 
         if (peelSeq[u] < peelSeq[vi])
             X.add(u);
@@ -1474,8 +1440,8 @@ private:
     {
         cout << msg;
         for (auto u : vec)
-        if(u)
-            cout << u << " ";
+            if (u)
+                cout << u << " ";
         cout << endl;
     }
 
