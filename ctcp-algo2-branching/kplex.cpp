@@ -50,7 +50,7 @@ class EnumKPlex
     vector<ui> Qv;
     vector<ui> counts;
 
-    vector<ui> look1, look2, look3, look4;
+    vector<ui> look1, look2, look3, look4, look5;
 
     ui vi; // current vertex in degeneracy order for which we are searching kplex
 
@@ -64,6 +64,7 @@ class EnumKPlex
     Direction dir;
     ui vn;
     ui c = 0;
+    ui it = 0;
 
 public:
     void enumerate()
@@ -85,24 +86,24 @@ public:
             // X = vertices u in B such that u>i
             vi = degenOrder[i];
 
-
             // getTwoHopG(vi);
-        
-            
+
             getTwoHopIterativePrunedG(vi);
+
             // cout << u << " ... " << endl;
-            cout<<endl<<"***********************" << vi <<','<<g.nsIn[vi].size()<<','<<g.nsOut[vi].size()<<","<<C.size()<<","<<P.size()<<"****************"<<endl;
+            // cout<<endl<<"***********************" << vi <<','<<g.nsIn[vi].size()<<','<<g.nsOut[vi].size()<<","<<C.size()<<","<<P.size()<<"****************"<<endl;
 
             recurSearch(vi);
+            // auto t1 = chrono::steady_clock::now();
 
             reset();
-            // print("aC: ", dGin);
             // print("aX: ", dGout);
         }
         cout << "Total (" << k1 << ", " << k2 << ")-plexes of at least " << q << " size: " << kplexes << " " << c << endl;
         for (ui i = 0; i < counts.size(); i++)
             if (counts[i])
                 cout << "kplexes of size: " << i + 1 << " = " << counts[i] << endl;
+        cout << "Pruning time: " << it << endl;
     }
 
     void recurSearch(ui u)
@@ -482,7 +483,7 @@ public:
     }
     bool lookAheadSolutionExists(ui vpOut, ui vpIn)
     {
-        
+
         if (dGout[vpOut] + k1 < PuCSize or
             dGin[vpIn] + k2 < PuCSize)
             return false;
@@ -521,7 +522,7 @@ public:
                                                   k1(_k1), k2(_k2), q(_q), kplexes(0),
                                                   deletedOutEdge(_g.V), cnPP(_g.V), cnPM(_g.V),
                                                   cnMP(_g.V), cnMM(_g.V), look1(_g.V), look2(_g.V),
-                                                  look3(_g.V), look4(_g.V), recode(_g.V),
+                                                  look3(_g.V), look4(_g.V), look5(_g.V), recode(_g.V),
                                                   P(_g.V), C(_g.V), X(_g.V),
                                                   counts(1000)
     {
@@ -976,7 +977,6 @@ private:
             in2HopG[u] = 0;
             X.remove(u);
         }
-
     }
 
     void k1k2CorePrune()
@@ -1191,7 +1191,7 @@ private:
         {
             ui u = degenOrder[i];
             // if (!pruned[u])
-            if(g.nsOut[u].size()+k1>=q and g.nsIn[u].size()+k2>=q)
+            if (g.nsOut[u].size() + k1 >= q and g.nsIn[u].size() + k2 >= q)
                 degenOrder[k++] = u;
         }
         degenOrder.resize(k);
@@ -1245,13 +1245,14 @@ private:
                 rC.emplace_back(u);
         }
 
-        if(cap!=rC.capacity()) cout<<"$";
+        if (cap != rC.capacity())
+            cout << "$";
         for (ui i = sz; i < rC.size(); i++)
             removeFromC(rC[i]);
-        
+
         return rC.size() - sz;
     }
-    
+
     ui updateX()
     {
         // vector<ui> rX;
@@ -1267,7 +1268,8 @@ private:
                 rX.emplace_back(u);
             }
         }
-        if(cap!=rX.capacity()) cout<<"&";
+        if (cap != rX.capacity())
+            cout << "&";
         for (ui i = sz; i < rX.size(); i++)
             X.remove(rX[i]);
         return rX.size() - sz;
@@ -1294,17 +1296,17 @@ private:
     {
         auto &nsIn = g.nsIn[s];
         auto &nsOut = g.nsOut[s];
-        in2HopG[s] = 1;
+        addTo2HopG(s);
         // auto inLookup = getLookup(nsIn);
         // auto outLookup = getLookup(nsOut);
         Lookup inLookup(look1, nsIn);
         Lookup outLookup(look2, nsOut);
         // both in-out neighbors
         vector<ui> nsInOut;
-        nsInOut.reserve(min(nsIn.size(), nsOut.size()));
         // exclusive in/out neighbors
         vector<ui> I;
         vector<ui> O;
+        nsInOut.reserve(min(nsIn.size(), nsOut.size()));
         I.reserve(nsIn.size());
         O.reserve(nsOut.size());
 
@@ -1338,9 +1340,11 @@ private:
             // cout << s << " I: " << I.size() << " O: "<< O.size() << endl;
             inSize = I.size();
             outSize = O.size();
+
             vector<ui> tempIn, tempOut;
             tempIn.reserve(inSize);
             tempOut.reserve(outSize);
+
             for (auto v : nsInOut)
             {
                 I.push_back(v);
@@ -1396,68 +1400,81 @@ private:
             O.push_back(u);
             addTo2HopG(u);
         }
+        // erasing previous lookups so that we can reutilize the memory
+        existsIn.erase();
+        existsOut.erase();
         // since in/out neighbors are added, now onwards I is SI and O is SO
-
         // Calculate and B to two hop graph
-
+        vector<ui> temp;
+        Lookup intersect(look4, temp);
         for (auto u : O)
         {
             for (auto v : g.nsOut[u])
             {
                 // v is not already added in 2hop graph
                 if (!in2HopG[v])
-                    in2HopG[v] = 2;
+                {
+                    temp.push_back(v);
+                    intersect[v] = 2;
+                }
             }
         }
         for (auto u : O)
         {
             for (auto v : g.nsIn[u])
             {
-                if (in2HopG[v] == 2)
-                    in2HopG[v] = 3;
+                if (intersect[v] == 2){
+                    intersect[v] = 3;
+                }
             }
         }
         for (auto u : I)
         {
             for (auto v : g.nsOut[u])
             {
-                if (in2HopG[v] == 3)
-                    in2HopG[v] = 4;
+                if (intersect[v] == 3)
+                    intersect[v] = 4;
             }
         }
         for (auto u : I)
         {
             for (auto v : g.nsIn[u])
             {
-                if (in2HopG[v] == 4)
-                {
+                if (intersect[v] == 4)
                     addTo2HopG(v);
-                    // cout<<"added "<<v<<endl;
-                }
             }
         }
-
+        // print("look", look4);
+        intersect.erase();
+        auto t1 = chrono::steady_clock::now();
         // build CX
-        for (ui u : degenOrder)
-        {
-            if (in2HopG[u])
-                if (peelSeq[u] < peelSeq[vi])
-                    X.add(u);
-                else
-                    addToC(u);
-        }
+        // for (ui u : degenOrder)
+        // {
+        //     if (in2HopG[u])
+        //         if (peelSeq[u] < peelSeq[vi])
+        //             X.add(u);
+        //         else
+        //             addToC(u);
+        // }
+        it += chrono::duration_cast<chrono::nanoseconds>(chrono::steady_clock::now() - t1).count();
     }
 
     void addTo2HopG(ui u)
     {
-
+        if(in2HopG[u]==1) return;
         in2HopG[u] = 1;
+
+        if (peelSeq[u] < peelSeq[vi])
+            X.add(u);
+        else
+            addToC(u);
         // cout<<P.front()<<endl;
     }
     void print(string msg, auto &vec)
     {
         cout << msg;
         for (auto u : vec)
+        if(u)
             cout << u << " ";
         cout << endl;
     }

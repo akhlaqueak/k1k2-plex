@@ -920,7 +920,7 @@ private:
         {
             ui u = C[0];
             in2HopG[u] = 0;
-            removeFromC(u);
+            C.remove(u);
         }
 
         sz = X.size();
