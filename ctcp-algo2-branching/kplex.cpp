@@ -82,9 +82,9 @@ public:
             // C = vertices u in B such that u<i
             // X = vertices u in B such that u>i
             vi = degenOrder[i];
-            getTwoHopG(vi);
+            // getTwoHopG(vi);
 
-            // getTwoHopIterativePrunedG(vi);
+            getTwoHopIterativePrunedG(vi);
 
             recurSearch(vi);
             // auto t1 = chrono::steady_clock::now();

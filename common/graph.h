@@ -82,8 +82,8 @@ void Graph::readFile(string input_file)
         nsOut[p.first].push_back(p.second);
         nsIn[p.second].push_back(p.first);
         // trying undirected graphs... 
-        // nsOut[p.second].push_back(p.first);
-        // nsIn[p.first].push_back(p.second);
+        nsOut[p.second].push_back(p.first);
+        nsIn[p.first].push_back(p.second);
     }
 
     lines.clear();
