@@ -25,23 +25,34 @@ module load Valgrind
 alias python=python3
 
 datasets='
-bitcoin
-mathoverflow
-epinions
-web-Google
 baidu
 amazon0505
-clue-web
 wiki-vote
+clue-web
+web-Google
 '
 ds=($datasets)
 cp kplex kp
-qs='10 15 15 10 15 10 35 10'
+qs='15
+10
+10
+35
+10
+'
 qs=($qs)
-rm simulation.txt
-k1s='3 2 3 5 2 5 2 3'
+k1s='2
+5
+3
+2
+5
+'
 k1s=($k1s)
-k2s='5 2 2 3 3 3 2 5'
+k2s='3
+3
+5
+2
+3
+'
 k2s=($k2s)
 for i in "${!ds[@]}"
 do
