@@ -1,6 +1,7 @@
 #include "../common/utils.h"
 #include "../common/command_line.h"
 #define PuCSize (P.size() + C.size())
+
 enum CommonNeighbors
 {
     PM,
@@ -75,22 +76,18 @@ public:
         applyCoreTrussPruning();
 
         cout << " CTCP time: " << chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - tick).count() << " ms" << endl;
-        for (ui i = 0; i < degenOrder.size(); i++)
+        for (ui vi : degenOrder)
         {
-            // getTwoHopG selects vertices in 2 hop neigbhors of i, and appends them in X, C
-            // B = two hop neighbors of i
-            // C = vertices u in B such that u<i
-            // X = vertices u in B such that u>i
-            vi = degenOrder[i];
-            // getTwoHopG(vi);
 
+#define ITERATIVE_PRUNE
+#ifdef ITERATIVE_PRUNE
             getTwoHopIterativePrunedG(vi);
+#else
+            getTwoHopG(vi);
+#endif
 
             recurSearch(vi);
-            // auto t1 = chrono::steady_clock::now();
-
-            reset();
-            // print("aX: ", dGout);
+            reset(); // clears C and X
         }
         cout << "Total (" << k1 << "," << k2 << ")-plexes of at least " << q << " size: " << kplexes << endl;
         for (ui i = 0; i < counts.size(); i++)
@@ -187,7 +184,7 @@ public:
             p = k2 - (P.size() - dPin[vp]);
         }
         // cout<<vpNN.size()<<" "<<p<<endl;
-        if (vpNN.size() <= p )
+        if (vpNN.size() <= p)
         {
             // ! this condition should never be satisfied, check this bug...
             cout << "d<=p: " << vpNN.size() << " " << p << " ";
@@ -402,9 +399,8 @@ public:
                 vpIn = u;
             if (dGout[u] < dGout[vpOut])
                 vpOut = u;
-
         }
-        return dGin[vpIn]<dGout[vpOut]? vpIn: vpOut;
+        return dGin[vpIn] < dGout[vpOut] ? vpIn : vpOut;
     }
 
     void minDegreeP(ui &vpOut, ui &vpIn)
@@ -482,7 +478,7 @@ public:
 
         reset();
     }
-   void getNeighbors(auto &neigh)
+    void getNeighbors(auto &neigh)
     {
         for (ui i = 0; i < neigh.size(); i++)
             addTo2HopG(neigh[i]);

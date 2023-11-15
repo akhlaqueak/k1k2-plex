@@ -74,24 +74,20 @@ public:
 
         auto tick = chrono::steady_clock::now();
         applyCoreTrussPruning();
-
         cout << " CTCP time: " << chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - tick).count() << " ms" << endl;
-        for (ui i = 0; i < degenOrder.size(); i++)
-        {
-            // getTwoHopG selects vertices in 2 hop neigbhors of i, and appends them in X, C
-            // B = two hop neighbors of i
-            // C = vertices u in B such that u<i
-            // X = vertices u in B such that u>i
-            vi = degenOrder[i];
-            // getTwoHopG(vi);
 
+        for (ui vi : degenOrder)
+        {
+
+#define ITERATIVE_PRUNE
+#ifdef ITERATIVE_PRUNE
             getTwoHopIterativePrunedG(vi);
+#else
+            getTwoHopG(vi);
+#endif
 
             recurSearch(vi);
-            // auto t1 = chrono::steady_clock::now();
-
-            reset();
-            // print("aX: ", dGout);
+            reset(); // clears C and X
         }
         cout << "Total (" << k1 << ", " << k2 << ")-plexes of at least " << q << " size: " << kplexes << endl;
         for (ui i = 0; i < counts.size(); i++)
