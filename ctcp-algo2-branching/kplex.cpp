@@ -76,9 +76,9 @@ public:
         applyCoreTrussPruning();
 
         cout << " CTCP time: " << chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - tick).count() << " ms" << endl;
-        for (ui vi : degenOrder)
+        for (ui v : degenOrder)
         {
-
+            vi = v; // vi is class variable, other functions need it too
 #define ITERATIVE_PRUNE
 #ifdef ITERATIVE_PRUNE
             getTwoHopIterativePrunedG(vi);
