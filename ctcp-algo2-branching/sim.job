@@ -1,0 +1,51 @@
+#!/bin/bash
+# normal command for interactive session: srun --ntasks=2 --cpus-per-task=1 --mem-per-cpu=64000 --time=12:00:00 --partition=pascalnodes --job-name=GG --gres=gpu:1 --pty /bin/bash
+#SBATCH --share
+#SBATCH --partition=pascalnodes
+#
+# Name your job to make it easier for you to track
+#
+#SBATCH --job-name=linkedlist-final
+#
+# Set your error and output files
+#
+#SBATCH --error=sim.err
+#SBATCH --output=sim.out
+#SBATCH --ntasks=1
+# Tell the scheduler only need 10 minutes
+#
+#SBATCH --time=12:00:00
+#SBATCH --mem-per-cpu=96000
+#
+# Set your email address and request notification when you job is complete or if it fails
+#
+#SBATCH --mail-type=END
+#SBATCH --mail-user=akhlaque.ak@gmail.com
+module load gcc
+alias python=python3
+
+datasets='
+bitcoin
+mathoverflow
+epinions
+web-Google
+baidu
+amazon0505
+clue-web
+wiki-vote
+'
+ds=($datasets)
+cp kplex kp
+qs='10 15 15 10 15 10 35 10'
+qs=($qs)
+rm simulation.txt
+k1s='3 2 3 5 2 5 2 3'
+k1s=($k1s)
+k2s='5 2 2 3 3 3 2 5'
+k2s=($k2s)
+for i in "${!ds[@]}"
+do
+    ./kp -g ../datasets/${ds[i]}.txt -k1 ${k1s[i]} -k2 ${k2s[i]} -q ${qs[i]} >> simulation.txt
+done
+
+rm kp

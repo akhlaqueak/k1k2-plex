@@ -126,6 +126,13 @@ public:
                 reportSolution();
             return;
         }
+
+        ui vpIn, vpOut;
+        minDegreePuC(vpOut, vpIn);
+
+        if (lookAheadSolutionExists(vpOut, vpIn))
+            return;
+
         vector<ui> MOut, MIn;
         MOut.reserve(P.size());
         MIn.reserve(P.size());
@@ -139,12 +146,9 @@ public:
             return;
         }
 
-        ui vpIn, vpOut;
-        ui vc = minDegreeC(vpOut, vpIn);
+
 
         // if solution is found, it is also reported in the same function
-        if (lookAheadSolutionExists(vpOut, vpIn))
-            return;
 
         recurSearch(vc);
         CToX(vc);
@@ -416,6 +420,29 @@ public:
             if (dGout[u] < dGout[vpOut])
                 vpOut = u;
         }
+    }
+    void minDegreePuC(ui &vpOut, ui &vpIn)
+    {
+        // Find min degree vertex...
+        vpOut = vpIn = P[0];
+
+        for (ui i = 1; i < P.size(); i++)
+        {
+            ui u = P[i];
+            if (dGin[u] < dGin[vpIn])
+                vpIn = u;
+            if (dGout[u] < dGout[vpOut])
+                vpOut = u;
+        }
+        for (ui i = 0; i < C.size(); i++)
+        {
+            ui u = C[i];
+            if (dGin[u] < dGin[vpIn])
+                vpIn = u;
+            if (dGout[u] < dGout[vpOut])
+                vpOut = u;
+        }
+
     }
     bool lookAheadSolutionExists(ui vpOut, ui vpIn)
     {
