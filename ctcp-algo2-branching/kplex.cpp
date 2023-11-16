@@ -126,7 +126,7 @@ public:
                 reportSolution();
             return;
         }
-#define BRANCHING
+// #define BRANCHING
 #ifdef BRANCHING
         vector<ui> MOut, MIn;
         MOut.reserve(P.size());
@@ -140,9 +140,12 @@ public:
             multiRecurSearch(vp, dir);
             return;
         }
-#endif
         ui vpIn, vpOut;
         ui vc = minDegreeC(vpOut, vpIn);
+#else
+        ui vpIn, vpOut;
+        ui vc = minDegreePuC(vpOut, vpIn);
+#endif
 
 // if solution is found, it is also reported in the same function
 #define LOOKAHEAD
@@ -408,6 +411,32 @@ public:
         return dGin[vpIn] < dGout[vpOut] ? vpIn : vpOut;
     }
 
+    ui minDegreePuC(ui &vpOut, ui &vpIn)
+    {
+        // Find min degree vertex...
+        vpOut = vpIn = P[0];
+
+        for (ui i = 1; i < P.size(); i++)
+        {
+            ui u = P[i];
+            if (dGin[u] < dGin[vpIn])
+                vpIn = u;
+            if (dGout[u] < dGout[vpOut])
+                vpOut = u;
+        }
+        ui vc = C[0];
+        for (ui i = 0; i < C.size(); i++)
+        {
+            ui u = C[i];
+            if (dGin[u] < dGin[vpIn])
+                vpIn = u;
+            if (dGout[u] < dGout[vpOut])
+                vpOut = u;
+            if (dGout[u] < dGout[vc] or dGin[u] < dGin[vc])
+                vc = u;
+        }
+        return vc;
+    }
     void minDegreeP(ui &vpOut, ui &vpIn)
     {
         // Find min degree vertex...
