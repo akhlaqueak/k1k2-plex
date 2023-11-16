@@ -126,6 +126,8 @@ public:
                 reportSolution();
             return;
         }
+#define BRANCHING
+#ifdef BRANCHING
         vector<ui> MOut, MIn;
         MOut.reserve(P.size());
         MIn.reserve(P.size());
@@ -138,13 +140,16 @@ public:
             multiRecurSearch(vp, dir);
             return;
         }
-
+#endif
         ui vpIn, vpOut;
         ui vc = minDegreeC(vpOut, vpIn);
 
-        // if solution is found, it is also reported in the same function
+// if solution is found, it is also reported in the same function
+#define LOOKAHEAD
+#ifdef LOOKAHEAD
         if (lookAheadSolutionExists(vpOut, vpIn))
             return;
+#endif
 
         recurSearch(vc);
         CToX(vc);
