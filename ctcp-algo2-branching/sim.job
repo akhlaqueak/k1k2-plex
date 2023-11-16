@@ -23,36 +23,31 @@
 #SBATCH --mail-user=akhlaque.ak@gmail.com
 module load Valgrind
 alias python=python3
+datasets='
+bitcoin
+mathoverflow
+epinions
+baidu
+'
 
-# datasets='
-# bitcoin
-# mathoverflow
-# epinions
-# web-Google
-# baidu
-# amazon0505
-# clue-web
-# wiki-vote
-# '
-# ds=($datasets)
-# cp kplex kp
-# qs='10 15 15 10 15 10 35 10'
-# qs=($qs)
-# rm simulation.txt
-# k1s='3 2 3 5 2 5 2 3'
-# k1s=($k1s)
-# k2s='5 2 2 3 3 3 2 5'
-# k2s=($k2s)
-# for i in "${!ds[@]}"
-# do
-#     ./kp -g ../datasets/${ds[i]}.txt -k1 ${k1s[i]} -k2 ${k2s[i]} -q ${qs[i]} >> simulation.txt
-# done
+ds=($datasets)
+qs='10 15 15 15'
+qs=($qs)
+rm ablation.txt
+k1s='3 2 3 2'
+k1s=($k1s)
+k2s='3 2 2 3'
+k2s=($k2s)
+for i in "${!ds[@]}"
+do
+    ./kplex-nobranching -g ../datasets/${ds[i]}.txt -k1 ${k1s[i]} -k2 ${k2s[i]} -q ${qs[i]} >> ablation.txt
+    ./kplex-nolookahead -g ../datasets/${ds[i]}.txt -k1 ${k1s[i]} -k2 ${k2s[i]} -q ${qs[i]} >> ablation.txt
+    ./kplex-noiterative -g ../datasets/${ds[i]}.txt -k1 ${k1s[i]} -k2 ${k2s[i]} -q ${qs[i]} >> ablation.txt
+done
 
-# rm kp
-
-./kplex -g ../datasets/clue-web.txt -k1 2 -k2 2 -q 35 > mis.txt
-../naive/kplex -g ../datasets/clue-web.txt -k1 2 -k2 2 -q 35 > mis.txt
-../naive/kplex -g ../datasets/wiki-vote.txt -k1 3 -k2 5 -q 10 > mis.txt
+# ./kplex -g ../datasets/clue-web.txt -k1 2 -k2 2 -q 35 > mis.txt
+# ../naive/kplex -g ../datasets/clue-web.txt -k1 2 -k2 2 -q 35 > mis.txt
+# ../naive/kplex -g ../datasets/wiki-vote.txt -k1 3 -k2 5 -q 10 > mis.txt
 
 
 
