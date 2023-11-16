@@ -12,10 +12,10 @@ fk2=3
 # fk1=3
 # fk2=3
 
-ds='bitcoin.txt'
+ds='mathoverflow.txt'
 k1s='2 3 4 5'
 k2s='2 3 4 5'
-qs='8 9 10 11 12'
+qs='10 11 12 13 14'
 fk1=3
 fk2=3
 
