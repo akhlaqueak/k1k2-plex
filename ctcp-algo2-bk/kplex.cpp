@@ -1182,19 +1182,19 @@ private:
     void addToC(ui u)
     {
         C.add(u);
-        for (ui v : g.nsOut[u])
-            dGin[v]++;
-        for (ui v : g.nsIn[u])
-            dGout[v]++;
+        // for (ui v : g.nsOut[u])
+        //     dGin[v]++;
+        // for (ui v : g.nsIn[u])
+        //     dGout[v]++;
     }
 
     void removeFromC(ui u)
     {
         C.remove(u);
-        for (ui v : g.nsOut[u])
-            dGin[v]--;
-        for (ui v : g.nsIn[u])
-            dGout[v]--;
+        // for (ui v : g.nsOut[u])
+        //     dGin[v]--;
+        // for (ui v : g.nsIn[u])
+        //     dGout[v]--;
     }
 
     void PToC(ui u)
