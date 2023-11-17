@@ -73,13 +73,14 @@ rm fixconfig.txt
 rm ablation.txt
 
 
-for i in "${!ds[@]}"
-do
-    ./kp -g ../datasets/${ds[i]}.txt -k1 ${k1s[i]} -k2 ${k2s[i]} -q ${qs[i]} >> fixconfig.txt
-done
-rm kp
+# for i in "${!ds[@]}"
+# do
+#     ./kp -g ../datasets/${ds[i]}.txt -k1 ${k1s[i]} -k2 ${k2s[i]} -q ${qs[i]} >> ${ds[i]}.txt.res
+# done
+# rm kp
 
-
+i=6
+    ./kplex -g ../datasets/${ds[i]}.txt -k1 ${k1s[i]} -k2 ${k2s[i]} -q ${qs[i]} >> ${ds[i]}.txt.res
 
 
 
