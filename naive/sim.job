@@ -68,17 +68,17 @@ k2s='3
 3
 '
 k2s=($k2s)
-cp kplex kp
-rm fixconfig.txt
-rm ablation.txt
 
 
-for i in "${!ds[@]}"
-do
-    ./kp -g ../datasets/${ds[i]}.txt -k1 ${k1s[i]} -k2 ${k2s[i]} -q ${qs[i]} >> fixconfig.txt
-done
-rm kp
 
+# for i in "${!ds[@]}"
+# do
+#     ./kp -g ../datasets/${ds[i]}.txt -k1 ${k1s[i]} -k2 ${k2s[i]} -q ${qs[i]} >> ${ds[i]}.txt.res
+# done
+# rm kp
+
+i=7
+    ./kplex -g ../datasets/${ds[i]}.txt -k1 ${k1s[i]} -k2 ${k2s[i]} -q ${qs[i]} >> ${ds[i]}.txt.res
 
 
 
