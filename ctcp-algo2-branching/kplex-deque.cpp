@@ -58,7 +58,7 @@ class EnumKPlex
     RandList X;
     RandList P;
 
-    vector<ui> rC, rX;
+    deque<ui> rC, rX;
 
     ui p;
     Direction dir;
@@ -499,8 +499,8 @@ public:
         vBoundaryIn.reserve(_g.V);
         vBoundaryOut.reserve(_g.V);
 
-        rC.reserve(g.V);
-        rX.reserve(g.V);
+        // rC.reserve(g.V);
+        // rX.reserve(g.V);
 
         degenOrder.reserve(_g.V);
 
@@ -1120,43 +1120,37 @@ private:
 
     ui updateC()
     {
-        ui sz = rC.size();
-        ui cap = rC.capacity();
+        auto it = rC.end();
         for (ui i = 0; i < C.size(); i++)
         {
             ui u = C[i];
-            if (!canMoveToP(u))
+            if (!canMoveToP(u)){
                 rC.emplace_back(u);
+            }
         }
 
-        if (cap != rC.capacity())
-            cout << "$";
-        for (ui i = sz; i < rC.size(); i++)
-            removeFromC(rC[i]);
+       ui sz = distance(it, rC.end());
+       
+        for (; it != rC.end(); it++)
+            removeFromC(*it);
 
-        return rC.size() - sz;
+        return sz;
     }
 
     ui updateX()
     {
-        // vector<ui> rX;
-        // rX.reserve(X.size());
-        ui sz = rX.size();
-        ui cap = rX.capacity();
-
+        auto it = rX.end();
         for (ui i = 0; i < X.size(); i++)
         {
             ui u = X[i];
-            if (!canMoveToP(u))
-            {
-                rX.emplace_back(u);
-            }
+            if (!canMoveToP(u)){
+                rX.emplace_back(u);}
         }
-        if (cap != rX.capacity())
-            cout << "&";
-        for (ui i = sz; i < rX.size(); i++)
-            X.remove(rX[i]);
-        return rX.size() - sz;
+
+       ui sz = distance(it, rX.end());
+        for (; it != rX.end(); it++)
+            X.remove(*it);
+        return sz;
     }
 
     void recoverX(ui sz)

@@ -1,0 +1,86 @@
+#!/bin/bash
+# normal command for interactive session: srun --ntasks=2 --cpus-per-task=1 --mem-per-cpu=64000 --time=12:00:00 --partition=pascalnodes --job-name=GG --gres=gpu:1 --pty /bin/bash
+#SBATCH --share
+#SBATCH --partition=medium
+#
+# Name your job to make it easier for you to track
+#
+#SBATCH --job-name=linkedlist-final
+#
+# Set your error and output files
+#
+#SBATCH --error=sim.err
+#SBATCH --output=sim.out
+#SBATCH --ntasks=1
+# Tell the scheduler only need 10 minutes
+#
+#SBATCH --time=25:00:00
+#SBATCH --mem-per-cpu=200000
+#
+# Set your email address and request notification when you job is complete or if it fails
+#
+#SBATCH --mail-type=END
+#SBATCH --mail-user=akhlaque.ak@gmail.com
+module load Valgrind
+alias python=python3
+
+datasets='
+bitcoin
+mathoverflow
+epinions
+amazon0505
+wiki-vote
+clue-web
+web-Google
+baidu
+'
+
+
+ds=($datasets)
+qs='10
+15
+15
+10
+10
+35
+10
+15
+'
+qs=($qs)
+rm ablation.txt
+k1s='3
+2
+3
+5
+3
+2
+5
+2
+'
+k1s=($k1s)
+k2s='3
+2
+2
+3
+5
+2
+3
+3
+'
+k2s=($k2s)
+cp kplex kp
+rm fixconfig.txt
+rm ablation.txt
+
+
+for i in "${!ds[@]}"
+do
+    ./kp -g ../datasets/${ds[i]}.txt -k1 ${k1s[i]} -k2 ${k2s[i]} -q ${qs[i]} >> fixconfig.txt
+done
+rm kp
+
+
+
+
+
+
