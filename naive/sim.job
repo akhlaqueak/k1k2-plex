@@ -77,7 +77,7 @@ k2s=($k2s)
 # done
 # rm kp
 
-i=7
+i=6
     ./kplex -g ../datasets/${ds[i]}.txt -k1 ${k1s[i]} -k2 ${k2s[i]} -q ${qs[i]} >> ${ds[i]}.txt.res
 
 
