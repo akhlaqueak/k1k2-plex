@@ -80,6 +80,8 @@ public:
         auto tick = chrono::steady_clock::now();
 #ifdef CTCP
         // applyCoreTrussPruning();
+        #else
+        initNeighborsMapping();
 #endif
 
         ui iterative = 0;
@@ -1093,7 +1095,10 @@ private:
         }
         degenOrder.resize(k);
         cout << "Remaining vertices to process..." << k << endl;
+        initNeighborsMapping();
+    }
 
+    void initNeighborsMapping(){
         ui VV = degenOrder.size();
         edgeOut.resize(VV);
         edgeIn.resize(VV);
