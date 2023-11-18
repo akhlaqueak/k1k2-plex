@@ -25,25 +25,25 @@ module load Valgrind
 alias python=python3
 
 
-# ds='bitcoin.txt'
-# k1s='2 3 4 5'
-# k2s='2 3 4 5'
-# qs='8 9 10 11 12'
-# fk1=3
-# fk2=3
-# rm $ds.res
+ds='bitcoin.txt'
+k1s='2 3 4 5'
+k2s='2 3 4 5'
+qs='8 9 10 11 12'
+fk1=3
+fk2=3
+rm $ds.res
 
-# for k2 in $k2s; do
-#     ./kplex -g ../datasets/$ds -k1 $fk1 -k2 $k2 -q 10 >> $ds.res 
-# done
+for k2 in $k2s; do
+    ./kplex -g ../datasets/$ds -k1 $fk1 -k2 $k2 -q 10 >> $ds.res 
+done
 
-# for k1 in $k1s; do
-#     ./kplex -g ../datasets/$ds -k1 $k1 -k2 $fk2 -q 10 >> $ds.res
-# done
+for k1 in $k1s; do
+    ./kplex -g ../datasets/$ds -k1 $k1 -k2 $fk2 -q 10 >> $ds.res
+done
 
-# for q in $qs; do
-#     ./kplex -g ../datasets/$ds -k1 $fk1 -k2 $fk2 -q $q >> $ds.res
-# done
+for q in $qs; do
+    ./kplex -g ../datasets/$ds -k1 $fk1 -k2 $fk2 -q $q >> $ds.res
+done
 
 echo "Done with bitcoin"
 
@@ -54,28 +54,7 @@ qs='12 13 14 15 16 17 18'
 fk1=2
 fk2=2
 fq=15
-# rm $ds.res
-
-# for k2 in $k2s; do
-#     ./kplex -g ../datasets/$ds -k1 $fk1 -k2 $k2 -q $fq >> $ds.res 
-# done
-
-# for k1 in $k1s; do
-#     ./kplex -g ../datasets/$ds -k1 $k1 -k2 $fk2 -q $fq >> $ds.res
-# done
-
-for q in $qs; do
-    ./kplex -g ../datasets/$ds -k1 $fk1 -k2 $fk2 -q $q >> $ds.res
-done
-echo "Done with epinions"
-
-ds='wiki-vote.txt'
-k1s='2 3 4 5'
-k2s='2 3 4 5'
-qs='8 9 10 11 12'
-fk1=3
-fk2=3
-fq=10
+rm $ds.res
 
 for k2 in $k2s; do
     ./kplex -g ../datasets/$ds -k1 $fk1 -k2 $k2 -q $fq >> $ds.res 
@@ -88,12 +67,12 @@ done
 for q in $qs; do
     ./kplex -g ../datasets/$ds -k1 $fk1 -k2 $fk2 -q $q >> $ds.res
 done
-echo "Done with wiki-vote"
+echo "Done with epinions"
 
 ds='mathoverflow.txt'
 k1s='2 3 4 5'
 k2s='2 3 4 5'
-qs='10 11 12 13 14'
+qs='12 13 14 15 16 17'
 fk1=2
 fk2=2
 fq=15
@@ -111,3 +90,26 @@ for q in $qs; do
     ./kplex -g ../datasets/$ds -k1 $fk1 -k2 $fk2 -q $q >> $ds.res
 done
 echo "Done with mathoverflow"
+
+
+ds='wiki-vote.txt'
+k1s='2 3 4 5'
+k2s='2 3 4 5'
+qs='10 11 12 13 14 15'
+fk1=3
+fk2=3
+fq=10
+
+for k2 in $k2s; do
+    ./kplex -g ../datasets/$ds -k1 $fk1 -k2 $k2 -q $fq >> $ds.res 
+done
+
+for k1 in $k1s; do
+    ./kplex -g ../datasets/$ds -k1 $k1 -k2 $fk2 -q $fq >> $ds.res
+done
+
+for q in $qs; do
+    ./kplex -g ../datasets/$ds -k1 $fk1 -k2 $fk2 -q $q >> $ds.res
+done
+echo "Done with wiki-vote"
+
