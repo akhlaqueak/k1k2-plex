@@ -5,7 +5,7 @@
 #define ITERATIVE_PRUNE
 #define BRANCHING
 #define LOOKAHEAD
-// #define CTCP
+#define CTCP
 
 enum CommonNeighbors
 {
