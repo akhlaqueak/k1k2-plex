@@ -5,12 +5,12 @@
 #
 # Name your job to make it easier for you to track
 #
-#SBATCH --job-name=linkedlist-final
+#SBATCH --job-name=fixconfig
 #
 # Set your error and output files
 #
-#SBATCH --error=sim.err
-#SBATCH --output=sim.out
+#SBATCH --error=fixconfig.err
+#SBATCH --output=fixconfig.out
 #SBATCH --ntasks=1
 # Tell the scheduler only need 10 minutes
 #
@@ -26,60 +26,53 @@ alias python=python3
 
 datasets='
 bitcoin
+wiki-vote
 mathoverflow
 epinions
 amazon0505
-wiki-vote
-clue-web
 web-Google
 baidu
+clue-web
 '
 
 
 ds=($datasets)
-qs='10
+qs='
+10
+10
 15
 15
 10
 10
+15
 35
-10
-15
 '
 qs=($qs)
-rm ablation.txt
 k1s='3
+3
 2
 3
 5
-3
-2
 5
+2
 2
 '
 k1s=($k1s)
 k2s='3
-2
-2
-3
 5
 2
+2
 3
 3
+3
+2
 '
 k2s=($k2s)
-cp kplex kp
-rm fixconfig.txt
-rm ablation.txt
-
 
 for i in "${!ds[@]}"
 do
-    ./kp -g ../datasets/${ds[i]}.txt -k1 ${k1s[i]} -k2 ${k2s[i]} -q ${qs[i]} >> fixconfig.txt
+    ./kplex -g ../datasets/${ds[i]}.txt -k1 ${k1s[i]} -k2 ${k2s[i]} -q ${qs[i]} >> fixconfig.txt
 done
-rm kp
-
-
 
 
 
