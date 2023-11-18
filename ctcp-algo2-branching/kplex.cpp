@@ -78,31 +78,29 @@ public:
         degenerate();
 
         auto tick = chrono::steady_clock::now();
-        #ifdef CTCP
+#ifdef CTCP
         // applyCoreTrussPruning();
-        #else
-        compactAdjListsWithRemovedEdges();
-        #endif
+#endif
 
-            ui iterative = 0; 
+        ui iterative = 0;
 
         cout << " CTCP time: " << chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - tick).count() << " ms" << endl;
         for (ui v : degenOrder)
         {
             vi = v; // vi is class variable, other functions need it too
-        auto t1 = chrono::steady_clock::now();
+            auto t1 = chrono::steady_clock::now();
 #ifdef ITERATIVE_PRUNE
             getTwoHopIterativePrunedG(vi);
 #else
             getTwoHopG(vi);
 #endif
-        auto t2 = chrono::steady_clock::now();
-        iterative+=chrono::duration_cast<chrono::microseconds>(t2-t1).count();
+            auto t2 = chrono::steady_clock::now();
+            iterative += chrono::duration_cast<chrono::microseconds>(t2 - t1).count();
             recurSearch(vi);
             reset(); // clears C and X
         }
         cout << "Total (" << k1 << "," << k2 << ")-plexes of at least " << q << " size: " << kplexes << endl;
-        cout<<"Iterative Pruning Time (ms): "<<iterative/1000<<endl;
+        cout << "Iterative Pruning Time (ms): " << iterative / 1000 << endl;
         for (ui i = 0; i < counts.size(); i++)
             if (counts[i])
                 cout << "kplexes of size: " << i + 1 << " = " << counts[i] << endl;
@@ -1135,13 +1133,14 @@ private:
         for (ui i = 0; i < C.size(); i++)
         {
             ui u = C[i];
-            if (!canMoveToP(u)){
+            if (!canMoveToP(u))
+            {
                 rC.emplace_back(u);
             }
         }
 
-       ui sz = distance(it, rC.end());
-       
+        ui sz = distance(it, rC.end());
+
         for (; it != rC.end(); it++)
             removeFromC(*it);
 
@@ -1154,11 +1153,13 @@ private:
         for (ui i = 0; i < X.size(); i++)
         {
             ui u = X[i];
-            if (!canMoveToP(u)){
-                rX.emplace_back(u);}
+            if (!canMoveToP(u))
+            {
+                rX.emplace_back(u);
+            }
         }
 
-       ui sz = distance(it, rX.end());
+        ui sz = distance(it, rX.end());
         for (; it != rX.end(); it++)
             X.remove(*it);
         return sz;
