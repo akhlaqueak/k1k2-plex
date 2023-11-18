@@ -5,12 +5,12 @@
 #
 # Name your job to make it easier for you to track
 #
-#SBATCH --job-name=fixconfig
+#SBATCH --job-name=varyconfig
 #
 # Set your error and output files
 #
-#SBATCH --error=fixconfig.err
-#SBATCH --output=fixconfig.out
+#SBATCH --error=varyconfig.err
+#SBATCH --output=varyconfig.out
 #SBATCH --ntasks=1
 # Tell the scheduler only need 10 minutes
 #
@@ -25,25 +25,25 @@ module load Valgrind
 alias python=python3
 
 
-ds='bitcoin.txt'
-k1s='2 3 4 5'
-k2s='2 3 4 5'
-qs='8 9 10 11 12'
-fk1=3
-fk2=3
-rm $ds.res
+# ds='bitcoin.txt'
+# k1s='2 3 4 5'
+# k2s='2 3 4 5'
+# qs='8 9 10 11 12'
+# fk1=3
+# fk2=3
+# rm $ds.res
 
-for k2 in $k2s; do
-    ./kplex -g ../datasets/$ds -k1 $fk1 -k2 $k2 -q 10 >> $ds.res 
-done
+# for k2 in $k2s; do
+#     ./kplex -g ../datasets/$ds -k1 $fk1 -k2 $k2 -q 10 >> $ds.res 
+# done
 
-for k1 in $k1s; do
-    ./kplex -g ../datasets/$ds -k1 $k1 -k2 $fk2 -q 10 >> $ds.res
-done
+# for k1 in $k1s; do
+#     ./kplex -g ../datasets/$ds -k1 $k1 -k2 $fk2 -q 10 >> $ds.res
+# done
 
-for q in $qs; do
-    ./kplex -g ../datasets/$ds -k1 $fk1 -k2 $fk2 -q $q >> $ds.res
-done
+# for q in $qs; do
+#     ./kplex -g ../datasets/$ds -k1 $fk1 -k2 $fk2 -q $q >> $ds.res
+# done
 
 echo "Done with bitcoin"
 
@@ -51,8 +51,8 @@ ds='epinions.txt'
 k1s='2 3 4 5'
 k2s='2 3 4 5'
 qs='12 13 14 15 16 17 18'
-fk1=3
-fk2=3
+fk1=2
+fk2=2
 fq=15
 rm $ds.res
 
