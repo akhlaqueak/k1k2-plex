@@ -82,9 +82,10 @@ public:
     void init(){
         addToP(vi);
         for(ui u: degenOrder){
-            if(u < vi)
+            if (u==vi) continue;
+            if(peelSeq[u] < peelSeq[vi])
                 Xinit.push_back(u);
-            if(u>vi)
+            else
                 Cinit.push_back(u);
         }
     }
@@ -812,13 +813,11 @@ private:
         // update out-neighbors
         for (auto &u : g.nsOut[v])
         {
-            if (in2HopG[u])
                 neighPIn[u]++;
         }
         // update in-neighbors
         for (auto &u : g.nsIn[v])
         {
-            if (in2HopG[u])
                 neighPOut[u]++;
         }
         // update in/out-boundary-vertices
@@ -844,13 +843,11 @@ private:
         // update out-neighbors
         for (auto &u : g.nsOut[v])
         {
-            if (in2HopG[u])
                 neighPIn[u]--;
         }
         // update in-neighbors
         for (auto &u : g.nsIn[v])
         {
-            if (in2HopG[u])
                 neighPOut[u]--;
         }
         // update in/out-boundary-vertices
