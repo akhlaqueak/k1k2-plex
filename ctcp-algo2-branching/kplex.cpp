@@ -79,7 +79,7 @@ public:
 
         auto tick = chrono::steady_clock::now();
 #ifdef CTCP
-        // applyCoreTrussPruning();
+        applyCoreTrussPruning();
         #else
         initNeighborsMapping();
 #endif
@@ -1140,7 +1140,7 @@ private:
             ui u = C[i];
             if (!canMoveToP(u))
             {
-                rC.emplace_back(u);
+                rC.push_back(u);
             }
         }
 
@@ -1160,7 +1160,7 @@ private:
             ui u = X[i];
             if (!canMoveToP(u))
             {
-                rX.emplace_back(u);
+                rX.push_back(u);
             }
         }
 

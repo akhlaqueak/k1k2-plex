@@ -79,7 +79,7 @@ public:
 
         auto tick = chrono::steady_clock::now();
 #ifdef CTCP
-        // applyCoreTrussPruning();
+        applyCoreTrussPruning();
         #else
         initNeighborsMapping();
 #endif
