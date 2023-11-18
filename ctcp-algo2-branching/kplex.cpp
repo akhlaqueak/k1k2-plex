@@ -78,21 +78,25 @@ public:
 
         auto tick = chrono::steady_clock::now();
         applyCoreTrussPruning();
+            ui iterative = 0; 
 
         cout << " CTCP time: " << chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - tick).count() << " ms" << endl;
         for (ui v : degenOrder)
         {
             vi = v; // vi is class variable, other functions need it too
+        auto t1 = chrono::steady_clock::now();
 #ifdef ITERATIVE_PRUNE
             getTwoHopIterativePrunedG(vi);
 #else
             getTwoHopG(vi);
 #endif
-
+        auto t2 = chrono::steady_clock::now();
+        iterative+=chrono::duration_cast<chrono::microseconds>(t2-t1).count();
             recurSearch(vi);
             reset(); // clears C and X
         }
         cout << "Total (" << k1 << "," << k2 << ")-plexes of at least " << q << " size: " << kplexes << endl;
+        cout<<"Iterative Pruning Time (ms): "<<iterative/1000<<endl;
         for (ui i = 0; i < counts.size(); i++)
             if (counts[i])
                 cout << "kplexes of size: " << i + 1 << " = " << counts[i] << endl;
