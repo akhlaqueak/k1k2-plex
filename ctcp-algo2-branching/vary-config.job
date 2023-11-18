@@ -54,15 +54,15 @@ qs='12 13 14 15 16 17 18'
 fk1=2
 fk2=2
 fq=15
-rm $ds.res
+# rm $ds.res
 
-for k2 in $k2s; do
-    ./kplex -g ../datasets/$ds -k1 $fk1 -k2 $k2 -q $fq >> $ds.res 
-done
+# for k2 in $k2s; do
+#     ./kplex -g ../datasets/$ds -k1 $fk1 -k2 $k2 -q $fq >> $ds.res 
+# done
 
-for k1 in $k1s; do
-    ./kplex -g ../datasets/$ds -k1 $k1 -k2 $fk2 -q $fq >> $ds.res
-done
+# for k1 in $k1s; do
+#     ./kplex -g ../datasets/$ds -k1 $k1 -k2 $fk2 -q $fq >> $ds.res
+# done
 
 for q in $qs; do
     ./kplex -g ../datasets/$ds -k1 $fk1 -k2 $fk2 -q $q >> $ds.res
