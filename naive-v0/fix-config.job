@@ -5,7 +5,7 @@
 #
 # Name your job to make it easier for you to track
 #
-#SBATCH --job-name=fixconfig-naive-v0
+#SBATCH --job-name=naive-vo-fixconfig
 #
 # Set your error and output files
 #
@@ -33,6 +33,7 @@ amazon0505
 web-Google
 baidu
 clue-web
+
 '
 
 
@@ -46,9 +47,11 @@ qs='
 10
 15
 35
+
 '
 qs=($qs)
-k1s='3
+k1s='
+3
 3
 2
 3
@@ -56,9 +59,11 @@ k1s='3
 5
 2
 2
+
 '
 k1s=($k1s)
-k2s='3
+k2s='
+3
 5
 2
 2
@@ -66,6 +71,7 @@ k2s='3
 3
 3
 2
+
 '
 k2s=($k2s)
 
@@ -73,6 +79,7 @@ for i in "${!ds[@]}"
 do
     ./kplex -g ../datasets/${ds[i]}.txt -k1 ${k1s[i]} -k2 ${k2s[i]} -q ${qs[i]} >> fixconfig.txt
 done
+
 
 
 
