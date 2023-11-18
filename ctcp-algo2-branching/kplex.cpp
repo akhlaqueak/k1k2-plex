@@ -2,6 +2,10 @@
 #include "../common/command_line.h"
 #define PuCSize (P.size() + C.size())
 
+#define ITERATIVE_PRUNE
+#define BRANCHING
+#define LOOKAHEAD
+
 enum CommonNeighbors
 {
     PM,
@@ -58,7 +62,7 @@ class EnumKPlex
     RandList X;
     RandList P;
 
-    vector<ui> rC, rX;
+    deque<ui> rC, rX;
 
     ui p;
     Direction dir;
@@ -73,21 +77,14 @@ public:
         degenerate();
 
         auto tick = chrono::steady_clock::now();
-        ui twoHopTime = 0;
         applyCoreTrussPruning();
 
         cout << " CTCP time: " << chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - tick).count() << " ms" << endl;
         for (ui v : degenOrder)
         {
             vi = v; // vi is class variable, other functions need it too
-#define ITERATIVE_PRUNE
 #ifdef ITERATIVE_PRUNE
-        auto t1 = chrono::steady_clock::now();
-
             getTwoHopIterativePrunedG(vi);
-        auto t2 = chrono::steady_clock::now();
-        twoHopTime+=chrono::duration_cast<chrono::microseconds>(t2-t1).count();
-
 #else
             getTwoHopG(vi);
 #endif
@@ -96,7 +93,6 @@ public:
             reset(); // clears C and X
         }
         cout << "Total (" << k1 << "," << k2 << ")-plexes of at least " << q << " size: " << kplexes << endl;
-        cout<<"Two Hop Iterative Pruning time (ms): "<< twoHopTime / 1000 <<endl;
         for (ui i = 0; i < counts.size(); i++)
             if (counts[i])
                 cout << "kplexes of size: " << i + 1 << " = " << counts[i] << endl;
@@ -133,7 +129,6 @@ public:
                 reportSolution();
             return;
         }
-#define BRANCHING
 #ifdef BRANCHING
         vector<ui> MOut, MIn;
         MOut.reserve(P.size());
@@ -155,7 +150,6 @@ public:
 #endif
 
 // if solution is found, it is also reported in the same function
-#define LOOKAHEAD
 #ifdef LOOKAHEAD
         if (lookAheadSolutionExists(vpOut, vpIn))
             return;
@@ -506,8 +500,8 @@ public:
         vBoundaryIn.reserve(_g.V);
         vBoundaryOut.reserve(_g.V);
 
-        rC.reserve(g.V);
-        rX.reserve(g.V);
+        // rC.reserve(g.V);
+        // rX.reserve(g.V);
 
         degenOrder.reserve(_g.V);
 
@@ -1127,43 +1121,37 @@ private:
 
     ui updateC()
     {
-        ui sz = rC.size();
-        ui cap = rC.capacity();
+        auto it = rC.end();
         for (ui i = 0; i < C.size(); i++)
         {
             ui u = C[i];
-            if (!canMoveToP(u))
+            if (!canMoveToP(u)){
                 rC.emplace_back(u);
+            }
         }
 
-        if (cap != rC.capacity())
-            cout << "$";
-        for (ui i = sz; i < rC.size(); i++)
-            removeFromC(rC[i]);
+       ui sz = distance(it, rC.end());
+       
+        for (; it != rC.end(); it++)
+            removeFromC(*it);
 
-        return rC.size() - sz;
+        return sz;
     }
 
     ui updateX()
     {
-        // vector<ui> rX;
-        // rX.reserve(X.size());
-        ui sz = rX.size();
-        ui cap = rX.capacity();
-
+        auto it = rX.end();
         for (ui i = 0; i < X.size(); i++)
         {
             ui u = X[i];
-            if (!canMoveToP(u))
-            {
-                rX.emplace_back(u);
-            }
+            if (!canMoveToP(u)){
+                rX.emplace_back(u);}
         }
-        if (cap != rX.capacity())
-            cout << "&";
-        for (ui i = sz; i < rX.size(); i++)
-            X.remove(rX[i]);
-        return rX.size() - sz;
+
+       ui sz = distance(it, rX.end());
+        for (; it != rX.end(); it++)
+            X.remove(*it);
+        return sz;
     }
 
     void recoverX(ui sz)

@@ -1,7 +1,4 @@
-# ********     Author: Lijun Chang    ******
-# ******** Email: ljchang@outlook.com ******
-#
-CC=g++ -I../common/ -std=c++20
+CC=g++ -I../common/ -std=c++20 -O3
 
 all: k1k2plex
 

@@ -26,51 +26,65 @@ alias python=python3
 
 datasets='
 bitcoin
+wiki-vote
 mathoverflow
 epinions
 amazon0505
-wiki-vote
-clue-web
 web-Google
 baidu
+clue-web
+
 '
 
 
 ds=($datasets)
-qs='10
+qs='
+10
+10
 15
 15
 10
 10
+15
 35
-10
-15
+
 '
 qs=($qs)
-k1s='3
+k1s='
+3
+3
 2
 3
 5
-3
-2
 5
 2
+2
+
 '
 k1s=($k1s)
-k2s='3
-2
-2
+k2s='
 3
 5
 2
+2
 3
 3
+3
+2
+
 '
 k2s=($k2s)
 
 for i in "${!ds[@]}"
 do
     ./kplex -g ../datasets/${ds[i]}.txt -k1 ${k1s[i]} -k2 ${k2s[i]} -q ${qs[i]} >> fixconfig.txt
+done
+
+for i in "${!ds[@]}"
+do
+    ./kplex-nobranching -g ../datasets/${ds[i]}.txt -k1 ${k1s[i]} -k2 ${k2s[i]} -q ${qs[i]} >> ablation.txt
+    ./kplex-nolookahead -g ../datasets/${ds[i]}.txt -k1 ${k1s[i]} -k2 ${k2s[i]} -q ${qs[i]} >> ablation.txt
+    ./kplex-noiterative -g ../datasets/${ds[i]}.txt -k1 ${k1s[i]} -k2 ${k2s[i]} -q ${qs[i]} >> ablation.txt
 done
 
 
