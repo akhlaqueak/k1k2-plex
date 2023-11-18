@@ -63,7 +63,7 @@ class EnumKPlex
     RandList X;
     RandList P;
 
-    deque<ui> rC, rX;
+    vector<ui> rC, rX;
 
     ui p;
     Direction dir;
@@ -510,8 +510,8 @@ public:
         vBoundaryIn.reserve(_g.V);
         vBoundaryOut.reserve(_g.V);
 
-        // rC.reserve(g.V);
-        // rX.reserve(g.V);
+        rC.reserve(g.V);
+        rX.reserve(g.V);
 
         degenOrder.reserve(_g.V);
 
