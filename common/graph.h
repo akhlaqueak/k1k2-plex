@@ -102,17 +102,17 @@ void Graph::readFile(string input_file)
         auto last = std::unique(ns.begin(), ns.end());
         ns.erase(last, ns.end());
     }
-    ui maxdeg = 0;
-    for(auto& ns: nsOut)
-        if(ns.size()>maxdeg)
-            maxdeg = ns.size();
-    cout<<"Max Out Degree "<<maxdeg<<endl;
+    // ui maxdeg = 0;
+    // for(auto& ns: nsOut)
+    //     if(ns.size()>maxdeg)
+    //         maxdeg = ns.size();
+    // cout<<"Max Out Degree "<<maxdeg<<endl;
     
-    maxdeg = 0;
-    for(auto& ns: nsIn)
-        if(ns.size()>maxdeg)
-            maxdeg = ns.size();
-    cout<<"Max In Degree "<<maxdeg<<endl;
+    // maxdeg = 0;
+    // for(auto& ns: nsIn)
+    //     if(ns.size()>maxdeg)
+    //         maxdeg = ns.size();
+    // cout<<"Max In Degree "<<maxdeg<<endl;
 }
 
 Graph::Graph(std::string input_file)
