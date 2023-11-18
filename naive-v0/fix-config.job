@@ -5,7 +5,7 @@
 #
 # Name your job to make it easier for you to track
 #
-#SBATCH --job-name=fixconfig
+#SBATCH --job-name=fixconfig-naive-v0
 #
 # Set your error and output files
 #
