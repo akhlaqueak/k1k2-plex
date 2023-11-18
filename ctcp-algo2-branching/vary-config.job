@@ -75,7 +75,7 @@ k2s='2 3 4 5'
 qs='8 9 10 11 12'
 fk1=3
 fk2=3
-fq=15
+fq=10
 
 for k2 in $k2s; do
     ./kplex -g ../datasets/$ds -k1 $fk1 -k2 $k2 -q $fq >> $ds.res 
