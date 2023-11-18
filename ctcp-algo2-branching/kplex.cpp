@@ -5,6 +5,7 @@
 #define ITERATIVE_PRUNE
 #define BRANCHING
 #define LOOKAHEAD
+// #define CTCP
 
 enum CommonNeighbors
 {
@@ -77,7 +78,12 @@ public:
         degenerate();
 
         auto tick = chrono::steady_clock::now();
-        applyCoreTrussPruning();
+        #ifdef CTCP
+        // applyCoreTrussPruning();
+        #else
+        compactAdjListsWithRemovedEdges();
+        #endif
+
             ui iterative = 0; 
 
         cout << " CTCP time: " << chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - tick).count() << " ms" << endl;
@@ -619,7 +625,7 @@ private:
                 break;
         }
 
-        compactAdjListsWithRemomvedEdges();
+        compactAdjListsWithRemovedEdges();
     }
 
     void deleteEdge(ui u, ui vIndu)
@@ -1057,7 +1063,7 @@ private:
         }
     }
 
-    void compactAdjListsWithRemomvedEdges()
+    void compactAdjListsWithRemovedEdges()
     {
         for (ui u = 0; u < g.V; u++)
             g.nsIn[u].clear();
