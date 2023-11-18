@@ -75,16 +75,17 @@ k2s='
 '
 k2s=($k2s)
 
-for i in "${!ds[@]}"
-do
-    ./kplex -g ../datasets/${ds[i]}.txt -k1 ${k1s[i]} -k2 ${k2s[i]} -q ${qs[i]} >> fixconfig.txt
-done
+# for i in "${!ds[@]}"
+# do
+#     ./kplex -g ../datasets/${ds[i]}.txt -k1 ${k1s[i]} -k2 ${k2s[i]} -q ${qs[i]} >> fixconfig.txt
+# done
 
 for i in "${!ds[@]}"
 do
-    ./kplex-nobranching -g ../datasets/${ds[i]}.txt -k1 ${k1s[i]} -k2 ${k2s[i]} -q ${qs[i]} >> ablation.txt
-    ./kplex-nolookahead -g ../datasets/${ds[i]}.txt -k1 ${k1s[i]} -k2 ${k2s[i]} -q ${qs[i]} >> ablation.txt
-    ./kplex-noiterative -g ../datasets/${ds[i]}.txt -k1 ${k1s[i]} -k2 ${k2s[i]} -q ${qs[i]} >> ablation.txt
+    # ./kplex-nobranching -g ../datasets/${ds[i]}.txt -k1 ${k1s[i]} -k2 ${k2s[i]} -q ${qs[i]} >> ablation.txt
+    # ./kplex-nolookahead -g ../datasets/${ds[i]}.txt -k1 ${k1s[i]} -k2 ${k2s[i]} -q ${qs[i]} >> ablation.txt
+    # ./kplex-noiterative -g ../datasets/${ds[i]}.txt -k1 ${k1s[i]} -k2 ${k2s[i]} -q ${qs[i]} >> ablation.txt
+    ./kplex-noctcp -g ../datasets/${ds[i]}.txt -k1 ${k1s[i]} -k2 ${k2s[i]} -q ${qs[i]} >> ablation.txt
 done
 
 
