@@ -1085,6 +1085,10 @@ private:
         }
         for (ui u = 0; u < g.V; u++)
             sort(g.nsIn[u].begin(), g.nsIn[u].end());
+        initNeighborsMapping();
+    }
+
+    void initNeighborsMapping(){
         ui k = 0;
         for (ui i = 0; i < degenOrder.size(); i++)
         {
@@ -1095,10 +1099,6 @@ private:
         }
         degenOrder.resize(k);
         cout << "Remaining vertices to process..." << k << endl;
-        initNeighborsMapping();
-    }
-
-    void initNeighborsMapping(){
         ui VV = degenOrder.size();
         edgeOut.resize(VV);
         edgeIn.resize(VV);
