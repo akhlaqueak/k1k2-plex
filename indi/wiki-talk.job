@@ -24,10 +24,14 @@
 module load Valgrind
 alias python=python3
 
-../ctcp-algo2-branching/kplex -g ../datasets/wiki-Talk.txt -q 15 -k1 2	-k2 3 >> wiki-Talk.txt.res
-../ctcp-algo2-bk/kplex -g ../datasets/wiki-Talk.txt -q 15 -k1 2	-k2 3 >> wiki-Talk.txt.res
-../naive/kplex -g ../datasets/wiki-Talk.txt -q 15 -k1 2	-k2 3 >> wiki-Talk.txt.res
-../naive-v0/kplex -g ../datasets/wiki-Talk.txt -q 15 -k1 2	-k2 3 >> wiki-Talk.txt.res
+../ctcp-algo2-branching/kplex-nobranching -g ../datasets/wiki-Talk.txt -q 15 -k1 2	-k2 3 >> wiki-Talk.txt.res
+../ctcp-algo2-branching/kplex-nolookahead -g ../datasets/wiki-Talk.txt -q 15 -k1 2	-k2 3 >> wiki-Talk.txt.res
+../ctcp-algo2-branching/kplex-noiterative -g ../datasets/wiki-Talk.txt -q 15 -k1 2	-k2 3 >> wiki-Talk.txt.res
+../ctcp-algo2-branching/kplex-noctcp -g ../datasets/wiki-Talk.txt -q 15 -k1 2	-k2 3 >> wiki-Talk.txt.res
+# ../ctcp-algo2-branching/kplex -g ../datasets/wiki-Talk.txt -q 15 -k1 2	-k2 3 >> wiki-Talk.txt.res
+# ../ctcp-algo2-bk/kplex -g ../datasets/wiki-Talk.txt -q 15 -k1 2	-k2 3 >> wiki-Talk.txt.res
+# ../naive/kplex -g ../datasets/wiki-Talk.txt -q 15 -k1 2	-k2 3 >> wiki-Talk.txt.res
+# ../naive-v0/kplex -g ../datasets/wiki-Talk.txt -q 15 -k1 2	-k2 3 >> wiki-Talk.txt.res
 
 
 
