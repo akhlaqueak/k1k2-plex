@@ -42,29 +42,29 @@ class EnumKPlex
     vector<pair<ui, ui>> Qe;
     vector<ui> Qv;
 
-    thread_local vector<ui> counts;
-    thread_local vector<ui> vBoundaryIn;
-    thread_local vector<ui> vBoundaryOut;
-    thread_local vector<ui> dPin;
-    thread_local vector<ui> dPout;
+    static thread_local vector<ui> counts;
+    static thread_local vector<ui> vBoundaryIn;
+    static thread_local vector<ui> vBoundaryOut;
+    static thread_local vector<ui> dPin;
+    static thread_local vector<ui> dPout;
 
     // G is a graph induced by P \cup C
-    thread_local vector<ui> dGin;
-    thread_local vector<ui> dGout;
+    static thread_local vector<ui> dGin;
+    static thread_local vector<ui> dGout;
 
 
 
 
 
-    thread_local vector<ui> look1, look2, look3, look4, look5;
+    static thread_local vector<ui> look1, look2, look3, look4, look5;
 
-    thread_local ui vi; // current vertex in degeneracy order for which we are searching kplex
+    static thread_local ui vi; // current vertex in degeneracy order for which we are searching kplex
 
-    thread_local RandList C;
-    thread_local RandList X;
-    thread_local RandList P;
+    static thread_local RandList C;
+    static thread_local RandList X;
+    static thread_local RandList P;
 
-    thread_local vector<ui> rC, rX;
+    static thread_local vector<ui> rC, rX;
 
 
 public:
