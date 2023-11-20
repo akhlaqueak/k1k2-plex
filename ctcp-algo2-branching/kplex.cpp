@@ -5,7 +5,7 @@
 #define ITERATIVE_PRUNE
 #define BRANCHING
 #define LOOKAHEAD
-// #define CTCP
+#define CTCP
 
 enum CommonNeighbors
 {
@@ -63,7 +63,7 @@ class EnumKPlex
     RandList X;
     RandList P;
 
-    deque<ui> rC, rX;
+    vector<ui> rC, rX;
 
     ui p;
     Direction dir;
@@ -87,9 +87,9 @@ public:
         ui iterative = 0;
 
         cout << " CTCP time: " << chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - tick).count() << " ms" << endl;
-        for (ui v : degenOrder)
+        for (ui i=0;i<degenOrder.size()-q+1;i++)
         {
-            vi = v; // vi is class variable, other functions need it too
+            vi = degenOrder[i]; // vi is class variable, other functions need it too
             auto t1 = chrono::steady_clock::now();
 #ifdef ITERATIVE_PRUNE
             getTwoHopIterativePrunedG(vi);
@@ -510,8 +510,8 @@ public:
         vBoundaryIn.reserve(_g.V);
         vBoundaryOut.reserve(_g.V);
 
-        // rC.reserve(g.V);
-        // rX.reserve(g.V);
+        rC.reserve(g.V);
+        rX.reserve(g.V);
 
         degenOrder.reserve(_g.V);
 
@@ -1140,7 +1140,7 @@ private:
             ui u = C[i];
             if (!canMoveToP(u))
             {
-                rC.push_back(u);
+                rC.emplace_back(u);
             }
         }
 
@@ -1160,7 +1160,7 @@ private:
             ui u = X[i];
             if (!canMoveToP(u))
             {
-                rX.push_back(u);
+                rX.emplace_back(u);
             }
         }
 
