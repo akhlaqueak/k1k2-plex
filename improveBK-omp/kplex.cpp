@@ -1,7 +1,7 @@
 #include "../common/utils.h"
 #include "../common/command_line.h"
 #define PuCSize (P.size() + C.size())
-
+#include <omp.h>
 #define ITERATIVE_PRUNE
 #define BRANCHING
 #define LOOKAHEAD
