@@ -36,6 +36,7 @@ class EnumKPlex
     vector<vector<ui>> cnMP;
     vector<vector<ui>> cnPM;
     vector<vector<ui>> cnMM;
+    vector<vector<ui>> look1, look2;
     vector<MBitSet> deletedOutEdge;
     vector<MBitSet> edgeIn, edgeOut;
     vector<ui> recode;
@@ -43,8 +44,6 @@ class EnumKPlex
     vector<ui> Qv;
 
     static thread_local vector<ui> counts;
-    static thread_local vector<ui> vBoundaryIn;
-    static thread_local vector<ui> vBoundaryOut;
     static thread_local vector<ui> dPin;
     static thread_local vector<ui> dPout;
 
@@ -52,11 +51,7 @@ class EnumKPlex
     static thread_local vector<ui> dGin;
     static thread_local vector<ui> dGout;
 
-
-
-
-
-    static thread_local vector<ui> look1, look2, look3, look4, look5;
+    static thread_local vector<ui> looka, lookb, lookc, lookd;
 
     static thread_local ui vi; // current vertex in degeneracy order for which we are searching kplex
 
@@ -65,7 +60,6 @@ class EnumKPlex
     static thread_local RandList P;
 
     static thread_local vector<ui> rC, rX;
-
 
 public:
     void enumerate()
@@ -78,29 +72,38 @@ public:
         auto tick = chrono::steady_clock::now();
 #ifdef CTCP
         applyCoreTrussPruning();
-        #else
+#else
         initNeighborsMapping();
 #endif
 
-
         cout << " CTCP time: " << chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - tick).count() << " ms" << endl;
-        
-        #pragma omp for schedule(dynamic)        
-        for (ui i=0; i<degenOrder.size();i++)
+
+#pragma omp parallel
         {
-            vi = degenOrder[i]; // vi is class variable, other functions need it too
+            C.init(g.V);
+            P.init(g.V);
+            X.init(g.V);
+            dPin.resize(g.V);
+            dPout.resize(g.V);
+            dGin.resize(g.V);
+            dGout.resize(g.V);
+            rC.reserve(g.V);
+            rX.reserve(g.V);
+
+#pragma omp for schedule(dynamic)
+            for (ui i = 0; i < degenOrder.size(); i++)
+            {
+                vi = degenOrder[i]; // vi is class variable, other functions need it too
 #ifdef ITERATIVE_PRUNE
-            getTwoHopIterativePrunedG(vi);
+                getTwoHopIterativePrunedG(vi);
 #else
-            getTwoHopG(vi);
+                getTwoHopG(vi);
 #endif
-            recurSearch(vi);
-            reset(); // clears C and X
+                recurSearch(vi);
+                reset(); // clears C and X
+            }
         }
         cout << "Total (" << k1 << "," << k2 << ")-plexes of at least " << q << " size: " << kplexes << endl;
-        for (ui i = 0; i < counts.size(); i++)
-            if (counts[i])
-                cout << "kplexes of size: " << i + 1 << " = " << counts[i] << endl;
     }
 
     void recurSearch(ui u)
@@ -485,7 +488,6 @@ public:
 
     void reportSolution()
     {
-        counts[P.size() - 1]++;
         // print("KPlex: ", P);
         kplexes++;
         return;
@@ -493,22 +495,14 @@ public:
 
     EnumKPlex(Graph &_g, ui _k1, ui _k2, ui _q) : pruned(_g.V), peelSeq(_g.V),
                                                   g(_g), inDegree(_g.V), outDegree(_g.V),
-                                                  dPin(_g.V), dPout(_g.V),
-                                                  dGin(_g.V), dGout(_g.V),
                                                   k1(_k1), k2(_k2), q(_q), kplexes(0),
                                                   deletedOutEdge(_g.V), cnPP(_g.V), cnPM(_g.V),
                                                   cnMP(_g.V), cnMM(_g.V), look1(_g.V), look2(_g.V),
-                                                  look3(_g.V), look4(_g.V), look5(_g.V), recode(_g.V),
-                                                  P(_g.V), C(_g.V), X(_g.V),
-                                                  counts(1000)
+                                                  recode(_g.V)
     {
-        vBoundaryIn.reserve(_g.V);
-        vBoundaryOut.reserve(_g.V);
 
         rC.reserve(g.V);
         rX.reserve(g.V);
-
-        degenOrder.reserve(_g.V);
 
         for (ui i = 0; i < g.V; i++)
         {
@@ -516,7 +510,7 @@ public:
         }
         Qe.reserve(g.E / 10);
 
-        reset();
+        // reset();
     }
     void getNeighbors(auto &neigh)
     {
@@ -1092,7 +1086,8 @@ private:
         initNeighborsMapping();
     }
 
-    void initNeighborsMapping(){
+    void initNeighborsMapping()
+    {
         ui VV = degenOrder.size();
         cout << "Remaining vertices to process..." << VV << endl;
         edgeOut.resize(VV);
@@ -1189,8 +1184,8 @@ private:
         addTo2HopG(s);
         // auto inLookup = getLookup(nsIn);
         // auto outLookup = getLookup(nsOut);
-        Lookup inLookup(look1, nsIn);
-        Lookup outLookup(look2, nsOut);
+        Lookup inLookup(looka, nsIn);
+        Lookup outLookup(lookb, nsOut);
         // both in-out neighbors
         vector<ui> nsInOut;
         // exclusive in/out neighbors
@@ -1202,8 +1197,8 @@ private:
 
         // vector<ui> existsIn(g.V, 0);
         // vector<ui> existsOut(g.V, 0);
-        Lookup existsIn(look3, nsIn);
-        Lookup existsOut(look4, nsOut);
+        Lookup existsIn(lookc, nsIn);
+        Lookup existsOut(lookd, nsOut);
         ui round = 1;
 
         for (ui u : nsIn)
@@ -1296,7 +1291,7 @@ private:
         // since in/out neighbors are added, now onwards I is SI and O is SO
         // Calculate and B to two hop graph
         vector<ui> temp;
-        Lookup intersect(look4, temp);
+        Lookup intersect(lookd, temp);
         for (auto u : O)
         {
             for (auto v : g.nsOut[u])

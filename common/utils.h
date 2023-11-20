@@ -132,6 +132,18 @@ public:
 			vpos[i] = cap;
 		}
 	}
+
+	void init(int _cap)
+	{
+		cap = _cap;
+		vlist = new ui[cap];
+		vpos = new ui[cap];
+		vnum = 0;
+		for (ui i = 0; i < cap; i++)
+		{
+			vpos[i] = cap;
+		}
+	}
 	void add(int vid)
 	{
 		assert(vpos[vid] == cap);
