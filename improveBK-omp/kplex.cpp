@@ -99,7 +99,9 @@ public:
 #pragma omp for schedule(dynamic)
             for (ui i = 0; i < k; i++)
             {
+
                 vi = degenOrder[i]; // vi is class variable, other functions need it too
+                cout<<i<<": "<<omp_get_thread_num()<<endl;
 #ifdef ITERATIVE_PRUNE
                 getTwoHopIterativePrunedG(vi);
 #else
