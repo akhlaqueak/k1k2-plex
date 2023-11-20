@@ -178,12 +178,11 @@ public:
         if (lookAheadSolutionExists(vpOut, vpIn))
             return;
 #endif
-#pragma omp task firstprivate(vc)
+#pragma omp task firstprivate(vc, dPin, dPout, dGin, dGout, rC, rX, C, X, P)
         {
             recurSearch(vc);
         }
-
-#pragma omp task firstprivate(vc)
+#pragma omp task firstprivate(vc, dPin, dPout, dGin, dGout, rC, rX, C, X, P)
         {
 
             CToX(vc);
