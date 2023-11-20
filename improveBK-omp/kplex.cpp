@@ -82,8 +82,8 @@ public:
 omp_set_num_threads(20);
 #pragma omp parallel
         {
-            cout<<"N: "<<omp_get_num_threads()<<endl;
-            cout<<"id: "<<omp_get_thread_num()<<endl;
+            // cout<<"N: "<<omp_get_num_threads()<<endl;
+            // cout<<"id: "<<omp_get_thread_num()<<endl;
             C.init(g.V);
             P.init(g.V);
             X.init(g.V);
@@ -98,7 +98,7 @@ omp_set_num_threads(20);
             lookc.resize(g.V);
             lookd.resize(g.V);
 
-#pragma omp for schedule(dynamic) reduction(+:kplexes)
+#pragma omp for reduction(+:kplexes)
             for (ui i = 0; i < degenOrder.size(); i++)
             {
                 vi = degenOrder[i]; // vi is class variable, other functions need it too
