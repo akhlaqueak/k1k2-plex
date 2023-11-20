@@ -1432,7 +1432,7 @@ private:
 };
 thread_local RandList EnumKPlex::C;
 thread_local RandList EnumKPlex::P;
-thread_local RandList EnumKPlex::C;
+thread_local RandList EnumKPlex::X;
 // thread_local RandList EnumKPlex::dp
 
 int main(int argc, char *argv[])
