@@ -1,4 +1,4 @@
-CC=g++ -I../common/ -std=c++20 -fopenmp
+CC=g++ -I../common/ -std=c++20 -fopenmp -O3
 
 all: k1k2plex
 
