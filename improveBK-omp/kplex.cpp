@@ -95,12 +95,12 @@ public:
             lookb.resize(g.V);
             lookc.resize(g.V);
             lookd.resize(g.V);
-            ui k=degenOrder.size();
+            ui k = degenOrder.size();
 #pragma omp for schedule(dynamic)
             for (ui i = 0; i < k; i++)
             {
 
-                vi = degenOrder[i]; 
+                vi = degenOrder[i];
 #ifdef ITERATIVE_PRUNE
                 getTwoHopIterativePrunedG(vi);
 #else
@@ -161,9 +161,8 @@ public:
         {
             Direction dir;
             ui vp = pickvp(MOut, MIn, dir);
-            #pragma omp task firstprivate(vp, dir)
             {
-            multiRecurSearch(vp, dir);
+                multiRecurSearch(vp, dir);
             }
             return;
         }
@@ -179,12 +178,19 @@ public:
         if (lookAheadSolutionExists(vpOut, vpIn))
             return;
 #endif
+#pragma omp task firstprivate(vc)
+        {
+            recurSearch(vc);
+        }
 
-        recurSearch(vc);
-        CToX(vc);
-        branch();
-        // recover
-        XToC(vc);
+#pragma omp task firstprivate(vc)
+        {
+
+            CToX(vc);
+            branch();
+            // recover
+            XToC(vc);
+        }
         // other branch where P contains u
     }
 
