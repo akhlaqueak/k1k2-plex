@@ -161,7 +161,7 @@ public:
         {
             Direction dir;
             ui vp = pickvp(MOut, MIn, dir);
-            #pragma omp task firstprivate()
+            #pragma omp task
             {
             multiRecurSearch(vp, dir);
             }
