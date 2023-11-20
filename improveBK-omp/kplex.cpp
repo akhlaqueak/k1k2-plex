@@ -36,7 +36,7 @@ class EnumKPlex
     vector<vector<ui>> cnMP;
     vector<vector<ui>> cnPM;
     vector<vector<ui>> cnMM;
-    vector<vector<ui>> look1, look2;
+    vector<ui> look1, look2;
     vector<MBitSet> deletedOutEdge;
     vector<MBitSet> edgeIn, edgeOut;
     vector<ui> recode;
