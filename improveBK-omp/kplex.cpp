@@ -82,6 +82,8 @@ public:
 
 #pragma omp parallel
         {
+            cout<<"N: "<<omp_get_num_threads()<<endl;
+            cout<<"id: "<<omp_get_thread_num()<<endl;
             C.init(g.V);
             P.init(g.V);
             X.init(g.V);
