@@ -100,7 +100,7 @@ public:
             for (ui i = 0; i < k; i++)
             {
 
-                vi = degenOrder[i]; // vi is class variable, other functions need it too
+                vi = degenOrder[i]; 
 #ifdef ITERATIVE_PRUNE
                 getTwoHopIterativePrunedG(vi);
 #else
