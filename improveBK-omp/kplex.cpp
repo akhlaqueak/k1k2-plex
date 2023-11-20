@@ -37,12 +37,13 @@ enum Direction
     static thread_local RandList P;
 
     static thread_local vector<ui> rC, rX;
+    thread_local ui kplexes;
 
 
 class EnumKPlex
 {
     Graph &g;
-    ui kplexes;
+    // ui kplexes;
     ui k1, k2, q;
     vector<char> pruned;    // todo change it to bitset for memory efficiency
     vector<char> prePruned; // todo change it to bitset for memory efficiency
@@ -98,7 +99,7 @@ omp_set_num_threads(20);
             lookc.resize(g.V);
             lookd.resize(g.V);
 
-#pragma omp for reduction(+:kplexes)
+#pragma omp for 
             for (ui i = 0; i < degenOrder.size(); i++)
             {
                 vi = degenOrder[i]; // vi is class variable, other functions need it too
@@ -111,7 +112,13 @@ omp_set_num_threads(20);
                 reset(); // clears C and X
             }
         }
-        cout << "Total (" << k1 << "," << k2 << ")-plexes of at least " << q << " size: " << kplexes << endl;
+        ui total = 0;
+        #pragma omp parallel reduction(+:total)
+        {
+            total+=kplexes;
+        }
+
+        cout << "Total (" << k1 << "," << k2 << ")-plexes of at least " << q << " size: " << total << endl;
     }
 
     void recurSearch(ui u)
@@ -503,7 +510,7 @@ omp_set_num_threads(20);
 
     EnumKPlex(Graph &_g, ui _k1, ui _k2, ui _q) : pruned(_g.V), peelSeq(_g.V),
                                                   g(_g), inDegree(_g.V), outDegree(_g.V),
-                                                  k1(_k1), k2(_k2), q(_q), kplexes(0),
+                                                  k1(_k1), k2(_k2), q(_q),
                                                   deletedOutEdge(_g.V), cnPP(_g.V), cnPM(_g.V),
                                                   cnMP(_g.V), cnMM(_g.V), look1(_g.V), look2(_g.V),
                                                   recode(_g.V)
