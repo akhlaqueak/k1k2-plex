@@ -91,6 +91,10 @@ public:
             dGout.resize(g.V);
             rC.reserve(g.V);
             rX.reserve(g.V);
+            looka.resize(g.V);
+            lookb.resize(g.V);
+            lookc.resize(g.V);
+            lookd.resize(g.V);
 
 #pragma omp for schedule(dynamic)
             for (ui i = 0; i < degenOrder.size(); i++)
