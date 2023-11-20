@@ -21,24 +21,23 @@ enum Direction
     In
 };
 
-    static thread_local vector<ui> dPin;
-    static thread_local vector<ui> dPout;
+static thread_local vector<ui> dPin;
+static thread_local vector<ui> dPout;
 
-    // G is a graph induced by P \cup C
-    static thread_local vector<ui> dGin;
-    static thread_local vector<ui> dGout;
+// G is a graph induced by P \cup C
+static thread_local vector<ui> dGin;
+static thread_local vector<ui> dGout;
 
-    static thread_local vector<ui> looka, lookb, lookc, lookd;
+static thread_local vector<ui> looka, lookb, lookc, lookd;
 
-    static thread_local ui vi; // current vertex in degeneracy order for which we are searching kplex
+static thread_local ui vi; // current vertex in degeneracy order for which we are searching kplex
 
-    static thread_local RandList C;
-    static thread_local RandList X;
-    static thread_local RandList P;
+static thread_local RandList C;
+static thread_local RandList X;
+static thread_local RandList P;
 
-    static thread_local vector<ui> rC, rX;
-    thread_local ui kplexes;
-
+static thread_local vector<ui> rC, rX;
+thread_local ui kplexes;
 
 class EnumKPlex
 {
@@ -62,8 +61,6 @@ class EnumKPlex
     vector<pair<ui, ui>> Qe;
     vector<ui> Qv;
 
-
-
 public:
     void enumerate()
     {
@@ -80,7 +77,7 @@ public:
 #endif
 
         cout << " CTCP time: " << chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - tick).count() << " ms" << endl;
-omp_set_num_threads(20);
+        omp_set_num_threads(20);
 #pragma omp parallel
         {
             // cout<<"N: "<<omp_get_num_threads()<<endl;
@@ -99,7 +96,7 @@ omp_set_num_threads(20);
             lookc.resize(g.V);
             lookd.resize(g.V);
 
-#pragma omp for 
+#pragma omp for schedule(dynamic)
             for (ui i = 0; i < degenOrder.size(); i++)
             {
                 vi = degenOrder[i]; // vi is class variable, other functions need it too
@@ -108,14 +105,15 @@ omp_set_num_threads(20);
 #else
                 getTwoHopG(vi);
 #endif
+#pragma omp taskgroup
                 recurSearch(vi);
                 reset(); // clears C and X
             }
         }
         ui total = 0;
-        #pragma omp parallel reduction(+:total)
+#pragma omp parallel reduction(+ : total)
         {
-            total+=kplexes;
+            total += kplexes;
         }
 
         cout << "Total (" << k1 << "," << k2 << ")-plexes of at least " << q << " size: " << total << endl;
