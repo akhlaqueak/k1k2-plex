@@ -21,6 +21,24 @@ enum Direction
     In
 };
 
+    static thread_local vector<ui> dPin;
+    static thread_local vector<ui> dPout;
+
+    // G is a graph induced by P \cup C
+    static thread_local vector<ui> dGin;
+    static thread_local vector<ui> dGout;
+
+    static thread_local vector<ui> looka, lookb, lookc, lookd;
+
+    static thread_local ui vi; // current vertex in degeneracy order for which we are searching kplex
+
+    static thread_local RandList C;
+    static thread_local RandList X;
+    static thread_local RandList P;
+
+    static thread_local vector<ui> rC, rX;
+
+
 class EnumKPlex
 {
     Graph &g;
@@ -43,23 +61,7 @@ class EnumKPlex
     vector<pair<ui, ui>> Qe;
     vector<ui> Qv;
 
-    static thread_local vector<ui> counts;
-    static thread_local vector<ui> dPin;
-    static thread_local vector<ui> dPout;
 
-    // G is a graph induced by P \cup C
-    static thread_local vector<ui> dGin;
-    static thread_local vector<ui> dGout;
-
-    static thread_local vector<ui> looka, lookb, lookc, lookd;
-
-    static thread_local ui vi; // current vertex in degeneracy order for which we are searching kplex
-
-    static thread_local RandList C;
-    static thread_local RandList X;
-    static thread_local RandList P;
-
-    static thread_local vector<ui> rC, rX;
 
 public:
     void enumerate()
@@ -1430,9 +1432,7 @@ private:
         return true;
     }
 };
-thread_local RandList EnumKPlex::C;
-thread_local RandList EnumKPlex::P;
-thread_local RandList EnumKPlex::X;
+
 // thread_local RandList EnumKPlex::dp
 
 int main(int argc, char *argv[])
