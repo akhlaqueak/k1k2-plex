@@ -95,9 +95,9 @@ public:
             lookb.resize(g.V);
             lookc.resize(g.V);
             lookd.resize(g.V);
-
+            ui k=degenOrder.size();
 #pragma omp for schedule(dynamic)
-            for (ui i = 0; i < degenOrder.size(); i++)
+            for (ui i = 0; i < k; i++)
             {
                 vi = degenOrder[i]; // vi is class variable, other functions need it too
 #ifdef ITERATIVE_PRUNE
