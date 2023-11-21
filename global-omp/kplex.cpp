@@ -71,9 +71,9 @@ public:
 
     void loadThreadData()
     {
-        // P.clear();
-        // C.clear();
-        // X.clear();
+        P.clear();
+        C.clear();
+        X.clear();
         P.loadData(p);
         C.loadData(c);
         X.loadData(x);
@@ -266,8 +266,8 @@ public:
             // td->unloadThreadData();
         }
 
-//         ThreadData *td1 = new ThreadData();
-// #pragma omp task firstprivate(td1, vc, tid)
+        ThreadData *td1 = new ThreadData();
+#pragma omp task firstprivate(td1, vc)
         {
             // if (tid != omp_get_thread_num())
             // td1->loadThreadData();
