@@ -45,7 +45,6 @@ class ThreadData
     vector<pair<ui, ui>> pout;
     vector<pair<ui, ui>> gin;
     vector<pair<ui, ui>> gout;
-
     vector<ui> p, c, x;
     vector<ui> rc, rx;
 
@@ -256,21 +255,21 @@ public:
         if (lookAheadSolutionExists(vpOut, vpIn))
             return;
 #endif
-        ThreadData td = ThreadData();
+        ThreadData *td = new ThreadData();
 #pragma omp task firstprivate(td, vc)
         {
-            td.loadThreadData();
+            td->loadThreadData();
             recurSearch(vc);
-            td.unloadThreadData();
+            td->unloadThreadData();
         }
 #pragma omp task firstprivate(td, vc)
         {
-            td.loadThreadData();
+            td->loadThreadData();
             CToX(vc);
             branch();
             // recover
             XToC(vc);
-            td.unloadThreadData();
+            td->unloadThreadData();
         }
         // other branch where P contains u
     }
