@@ -57,7 +57,7 @@ public:
         x = X.getData();
         rc = rC;
         rx = rX;
-        auto load = [&](vector<ui> vec)
+        auto load = [&](vector<ui>& vec)
         {
             for (ui u : vec)
             {
@@ -80,22 +80,19 @@ public:
         P.loadData(p);
         C.loadData(c);
         X.loadData(x);
-        auto load = [&](vector<pair<ui, ui>> vec)
+        auto load = [&](auto& vec, auto& dest)
         {
-            for (pair<ui, ui> pr : vec)
+            for (auto& pr : vec)
             {
                 ui u = pr.first;
                 ui data = pr.second;
-                dPin[u] = data;
-                dPout[u] = data;
-                dGin[u] = data;
-                dGout[u] = data;
+                dest[u] = data;
             }
         };
-        load(pin);
-        load(pout);
-        load(gin);
-        load(gout);
+        load(pin, dPin);
+        load(pout, dPout);
+        load(gin, dGin);
+        load(gout, dGout);
     }
 
     void unloadThreadData()
@@ -1458,6 +1455,10 @@ private:
             addToC(u);
         // cout<<P.front()<<endl;
     }
+    bool inBlock(ui u)
+    {
+        return P.contains(u) or C.contains(u) or X.contains(u);
+    }
     void print(string msg, auto &vec)
     {
         cout << msg;
@@ -1471,18 +1472,22 @@ private:
     {
         C.add(u);
         for (ui v : g.nsOut[u])
-            dGin[v]++;
+            if (inBlock(v))
+                dGin[v]++;
         for (ui v : g.nsIn[u])
-            dGout[v]++;
+            if (inBlock(v))
+                dGout[v]++;
     }
 
     void removeFromC(ui u)
     {
         C.remove(u);
         for (ui v : g.nsOut[u])
-            dGin[v]--;
+            if (inBlock(v))
+                dGin[v]--;
         for (ui v : g.nsIn[u])
-            dGout[v]--;
+            if (inBlock(v))
+                dGout[v]--;
     }
 
     void PToC(ui u)
@@ -1490,9 +1495,11 @@ private:
         P.remove(u);
         C.add(u);
         for (ui v : g.nsOut[u])
-            dPin[v]--;
+            if (inBlock(v))
+                dPin[v]--;
         for (ui v : g.nsIn[u])
-            dPout[v]--;
+            if (inBlock(v))
+                dPout[v]--;
     }
 
     void CToP(const ui &u)
@@ -1501,9 +1508,11 @@ private:
         C.remove(u);
         P.add(u);
         for (ui v : g.nsOut[u])
-            dPin[v]++;
+            if (inBlock(v))
+                dPin[v]++;
         for (ui v : g.nsIn[u])
-            dPout[v]++;
+            if (inBlock(v))
+                dPout[v]++;
     }
 
     void CToX(const ui &u)

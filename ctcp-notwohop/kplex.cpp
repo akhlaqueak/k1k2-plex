@@ -5,7 +5,7 @@
 // #define ITERATIVE_PRUNE
 // #define BRANCHING
 // #define LOOKAHEAD
-// #define TWOHOP
+#define TWOHOP
 #define CTCP
 
 enum CommonNeighbors
@@ -94,10 +94,12 @@ public:
             auto t1 = chrono::steady_clock::now();
 #ifdef ITERATIVE_PRUNE
             getTwoHopIterativePrunedG(vi);
-#elif TWOHOP
+#else
+#ifdef TWOHOP
             getTwoHopG(vi);
 #else
             initCX(vi);
+#endif
 #endif
             auto t2 = chrono::steady_clock::now();
             iterative += chrono::duration_cast<chrono::microseconds>(t2 - t1).count();
@@ -1386,7 +1388,6 @@ private:
     void addToC(ui u)
     {
         C.add(u);
-
     }
 
     void removeFromC(ui u)
