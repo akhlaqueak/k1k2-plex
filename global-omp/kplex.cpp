@@ -3,7 +3,7 @@
 #define PuCSize (P.size() + C.size())
 #include <omp.h>
 #define ITERATIVE_PRUNE
-#define BRANCHING
+// #define BRANCHING
 #define LOOKAHEAD
 #define CTCP
 
