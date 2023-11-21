@@ -1413,6 +1413,8 @@ int main(int argc, char *argv[])
     g->applyCoreTrussPruning();
 
     cout << " CTCP time: " << chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - tick).count() << " ms" << endl;
+    cout << "starting kplex" << endl;
+    tick = chrono::steady_clock::now();
     omp_set_num_threads(20);
 #pragma omp parallel
     {
@@ -1444,8 +1446,6 @@ int main(int argc, char *argv[])
 
     cout << "Total (" << k1 << "," << k2 << ")-plexes of at least " << q << " size: " << total << endl;
 
-    cout << "starting kplex" << endl;
-    auto tick = chrono::steady_clock::now();
 
     cout << data_file << " Enumeration time: " << chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - tick).count() << " ms" << endl;
 
