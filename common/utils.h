@@ -205,6 +205,13 @@ public:
 		data.insert(data.begin(), vlist, vlist+vnum);
 		return data;
 	}
+
+	void loadData(vector<ui> data){
+		clear();
+		for(ui u: data){
+			add(u);
+		}
+	}
 	void dispose()
 	{
 		if (vlist != nullptr)
