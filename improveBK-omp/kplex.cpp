@@ -9,7 +9,6 @@
 #define CTCP
 typedef vector<ui> VecUI;
 
-KPlexGraph g;
 ui k1, k2, q;
 thread_local VecUI looka, lookb, lookc, lookd;
 thread_local ui kplexes;
@@ -762,6 +761,7 @@ public:
         cout << endl;
     }
 };
+KPlexGraph g;
 
 class EnumKPlex
 {
