@@ -21,17 +21,15 @@ enum Direction
     In
 };
 
-thread_local vector<ui> dPin;
-thread_local vector<ui> dPout;
-
-// G is a graph induced by P \cup C
-thread_local vector<ui> dGin;
-thread_local vector<ui> dGout;
-
 thread_local vector<ui> looka, lookb, lookc, lookd;
 
 thread_local ui vi; // current vertex in degeneracy order for which we are searching kplex
 
+thread_local vector<ui> dPin;
+thread_local vector<ui> dPout;
+// G is a graph induced by P \cup C
+thread_local vector<ui> dGin;
+thread_local vector<ui> dGout;
 thread_local RandList C;
 thread_local RandList X;
 thread_local RandList P;
@@ -73,9 +71,9 @@ public:
 
     void loadThreadData()
     {
-        P.clear();
-        C.clear();
-        X.clear();
+        // P.clear();
+        // C.clear();
+        // X.clear();
         P.loadData(p);
         C.loadData(c);
         X.loadData(x);
@@ -101,7 +99,7 @@ public:
         P.clear();
         C.clear();
         X.clear();
-        auto load = [&](vector<ui>& vec)
+        auto load = [&](vector<ui> &vec)
         {
             for (ui u : vec)
             {
@@ -261,23 +259,24 @@ public:
         ThreadData *td = new ThreadData();
 #pragma omp task firstprivate(td, vc, tid)
         {
-            if (tid != omp_get_thread_num())
-                td->loadThreadData();
+            // if (tid != omp_get_thread_num())
+            td->loadThreadData();
             recurSearch(vc);
-            if (tid != omp_get_thread_num())
-                td->unloadThreadData();
+            // if (tid != omp_get_thread_num())
+            td->unloadThreadData();
         }
+
         ThreadData *td1 = new ThreadData();
 #pragma omp task firstprivate(td1, vc, tid)
         {
-            if (tid != omp_get_thread_num())
-                td1->loadThreadData();
+            // if (tid != omp_get_thread_num())
+            td1->loadThreadData();
             CToX(vc);
             branch();
             // recover
             XToC(vc);
-            if (tid != omp_get_thread_num())
-                td1->unloadThreadData();
+            // if (tid != omp_get_thread_num())
+            td1->unloadThreadData();
         }
         // other branch where P contains u
     }
