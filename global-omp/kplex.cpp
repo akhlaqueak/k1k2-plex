@@ -96,20 +96,20 @@ public:
 
     void unloadThreadData()
     {
-        P.clear();
-        C.clear();
-        X.clear();
-        auto load = [&](vector<ui> vec)
-        {
-            for (ui u : vec)
-            {
+        // P.clear();
+        // C.clear();
+        // X.clear();
+        // auto load = [&](vector<ui> vec)
+        // {
+        //     for (ui u : vec)
+        //     {
 
-                dPin[u] = 0;
-                dPout[u] = 0;
-                dGin[u] = 0;
-                dGout[u] = 0;
-            }
-        };
+        //         dPin[u] = 0;
+        //         dPout[u] = 0;
+        //         dGin[u] = 0;
+        //         dGout[u] = 0;
+        //     }
+        // };
         // load(p);
         // load(c);
         // load(x);
