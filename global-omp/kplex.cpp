@@ -153,7 +153,7 @@ public:
 #endif
 
         cout << " CTCP time: " << chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - tick).count() << " ms" << endl;
-        omp_set_num_threads(1);
+        omp_set_num_threads(20);
 #pragma omp parallel
         {
             // cout<<"N: "<<omp_get_num_threads()<<endl;
@@ -185,7 +185,7 @@ public:
 // #pragma omp taskgroup
                 recurSearch(vi);
                 reset(); // clears C and X
-                cout<<vi<<" ";
+                // cout<<vi<<" ";
             }
         }
         ui total = 0;
