@@ -132,7 +132,21 @@ public:
 			vpos[i] = cap;
 		}
 	}
+	RandList(const RandList& rl)
+	{
+		cap = rl.cap;
+		vlist = new ui[cap];
+		vpos = new ui[cap];
+		vnum = rl.vnum;
+        memcpy(vlist, rl.vlist, sizeof(ui) * cap);
+        memcpy(vpos, rl.vpos, sizeof(ui) * cap);
 
+		// for (ui i = 0; i < cap; i++)
+		// {
+		// 	vpos[i] = rl.vpos[i];
+		// 	vlist[i] = rl.vlist[i];
+		// }
+	}
 	void init(int _cap)
 	{
 		cap = _cap;

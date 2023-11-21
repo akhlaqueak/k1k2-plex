@@ -1,13 +1,12 @@
 #include "../common/utils.h"
 #include "../common/command_line.h"
 #define PuCSize (P.size() + C.size())
-#define MAXSUBG 1 << 12
-#include <omp.h>
-#define ITERATIVE_PRUNE
-#define BRANCHING
-#define LOOKAHEAD
+
+// #define ITERATIVE_PRUNE
+// #define BRANCHING
+// #define LOOKAHEAD
+// #define TWOHOP
 #define CTCP
-typedef vector<ui> VecUI;
 
 enum CommonNeighbors
 {
@@ -23,84 +22,53 @@ enum Direction
     In
 };
 
-thread_local VecUI looka, lookb, lookc, lookd;
-thread_local ui kplexes;
-
-struct ThreadData
-{
-    ui vi; // current vertex in degeneracy order for which we are searching kplex
-    VecUI *dPin;
-    VecUI *dPout;
-    // G is a graph induced by P \cup C
-    VecUI *dGin;
-    VecUI *dGout;
-    RandList *C;
-    RandList *X;
-    RandList *P;
-    VecUI *rC, *rX;
-
-    ThreadData(ui pvi,
-               VecUI *pdPin, VecUI *pdPout,
-               VecUI *pdGin, VecUI *pdGout,
-               RandList *pP, RandList *pC, RandList *pX,
-               VecUI *prC, VecUI *prX) : vi(pvi),
-                                         dPin(pdPin), dPout(pdPout),
-                                         dGin(pdGin), dGout(pdGout),
-                                         P(pP), C(pC), X(pX),
-                                         rC(prC), rX(prX)
-    {
-    }
-
-    ThreadData(const ThreadData &t)
-    {
-        vi = t.vi;
-        dPin = new VecUI(*(t.dPin));
-        dPout = new VecUI(*(t.dPout));
-        dGin = new VecUI(*(t.dGin));
-        dGout = new VecUI(*(t.dGout));
-        P = new RandList(*(t.P));
-        C = new RandList(*(t.C));
-        X = new RandList(*(t.X));
-        rC = new VecUI(*(t.rC));
-        rX = new VecUI(*(t.rX));
-    }
-    ~ThreadData()
-    {
-        delete dPin;
-        delete dPout;
-        delete dGin;
-        delete dGout;
-        delete P;
-        delete C;
-        delete X;
-        delete rC;
-        delete rX;
-    }
-};
-
 class EnumKPlex
 {
     Graph &g;
-    // ui kplexes;
+    ui kplexes;
     ui k1, k2, q;
+    vector<ui> vBoundaryIn;
+    vector<ui> vBoundaryOut;
+    vector<ui> dPin;
+    vector<ui> dPout;
+
+    // G is a graph induced by P \cup C
+    vector<ui> dGin;
+    vector<ui> dGout;
+
     vector<char> pruned;    // todo change it to bitset for memory efficiency
     vector<char> prePruned; // todo change it to bitset for memory efficiency
-    VecUI degenOrder;
-    VecUI peelSeq;
-    VecUI inDegree;
-    VecUI outDegree;
-    vector<VecUI> cnPP;
-    vector<VecUI> cnMP;
-    vector<VecUI> cnPM;
-    vector<VecUI> cnMM;
-    VecUI look1, look2;
-    vector<MBitSet> deletedOutEdge;
-    vector<MBitSet> edgeIn, edgeOut;
-    VecUI recode;
-    vector<pair<ui, ui>> Qe;
-    VecUI Qv;
+    vector<ui> degenOrder;
+    vector<ui> peelSeq;
+    vector<ui> inDegree;
+    vector<ui> outDegree;
+    vector<vector<ui>> cnPP;
+    vector<vector<ui>> cnMP;
+    vector<vector<ui>> cnPM;
+    vector<vector<ui>> cnMM;
 
-    ThreadData thd;
+    vector<MBitSet> deletedOutEdge;
+
+    vector<MBitSet> edgeIn, edgeOut;
+    vector<ui> recode;
+
+    vector<pair<ui, ui>> Qe;
+    vector<ui> Qv;
+    vector<ui> counts;
+
+    vector<ui> look1, look2, look3, look4, look5;
+
+    ui vi; // current vertex in degeneracy order for which we are searching kplex
+
+    RandList C;
+    RandList X;
+    RandList P;
+
+    vector<ui> rC, rX;
+
+    ui p;
+    Direction dir;
+    ui vn;
 
 public:
     void enumerate()
@@ -117,41 +85,30 @@ public:
         initNeighborsMapping();
 #endif
 
+        ui iterative = 0;
+
         cout << " CTCP time: " << chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - tick).count() << " ms" << endl;
-        omp_set_num_threads(20);
-#pragma omp parallel
+        for (ui i = 0; i < degenOrder.size() - q + 1; i++)
         {
-            // cout<<"N: "<<omp_get_num_threads()<<endl;
-            // cout<<"id: "<<omp_get_thread_num()<<endl;
-            looka.resize(g.V);
-            lookb.resize(g.V);
-            lookc.resize(g.V);
-            lookd.resize(g.V);
-            ui k = degenOrder.size();
-#pragma omp for schedule(dynamic)
-            for (ui i = 0; i < k; i++)
-            {
-
-                vi = degenOrder[i];
+            vi = degenOrder[i]; // vi is class variable, other functions need it too
+            auto t1 = chrono::steady_clock::now();
 #ifdef ITERATIVE_PRUNE
-                getTwoHopIterativePrunedG(vi);
+            getTwoHopIterativePrunedG(vi);
+#elif TWOHOP
+            getTwoHopG(vi);
 #else
-                getTwoHopG(vi);
+            initCX(vi);
 #endif
-#pragma omp taskgroup
-                {
-                    recurSearch(vi);
-                }
-                reset(); // clears C and X
-            }
+            auto t2 = chrono::steady_clock::now();
+            iterative += chrono::duration_cast<chrono::microseconds>(t2 - t1).count();
+            recurSearch(vi);
+            reset(); // clears C and X
         }
-        ui total = 0;
-#pragma omp parallel reduction(+ : total)
-        {
-            total += kplexes;
-        }
-
-        cout << "Total (" << k1 << "," << k2 << ")-plexes of at least " << q << " size: " << total << endl;
+        cout << "Total (" << k1 << "," << k2 << ")-plexes of at least " << q << " size: " << kplexes << endl;
+        cout << "Iterative Pruning Time (ms): " << iterative / 1000 << endl;
+        for (ui i = 0; i < counts.size(); i++)
+            if (counts[i])
+                cout << "kplexes of size: " << i + 1 << " = " << counts[i] << endl;
     }
 
     void recurSearch(ui u)
@@ -186,7 +143,7 @@ public:
             return;
         }
 #ifdef BRANCHING
-        VecUI MOut, MIn;
+        vector<ui> MOut, MIn;
         MOut.reserve(P.size());
         MIn.reserve(P.size());
         calculateM(MOut, MIn);
@@ -195,9 +152,7 @@ public:
         {
             Direction dir;
             ui vp = pickvp(MOut, MIn, dir);
-            {
-                multiRecurSearch(vp, dir);
-            }
+            multiRecurSearch(vp, dir);
             return;
         }
         ui vpIn, vpOut;
@@ -213,21 +168,11 @@ public:
             return;
 #endif
 
-            // Branching in Cand...
-
-#pragma omp task firstprivate(vc)
-        {
-            recurSearch(vc);
-        }
-
-#pragma omp task firstprivate(vc)
-        {
-
-            CToX(vc);
-            branch();
-            // recover
-            XToC(vc);
-        }
+        recurSearch(vc);
+        CToX(vc);
+        branch();
+        // recover
+        XToC(vc);
         // other branch where P contains u
     }
 
@@ -236,7 +181,7 @@ public:
         if (PuCSize < q)
             return;
         ui p;
-        VecUI vpNN; // It stores {u1, u2, ..., ud} vertices
+        vector<ui> vpNN; // It stores {u1, u2, ..., ud} vertices
         vpNN.reserve(C.size());
 
         auto getNonNeigh = [&](auto &adj)
@@ -337,7 +282,7 @@ public:
         recoverC(rc);
         recoverX(rx);
     }
-    void calculateM(VecUI &MOut, VecUI &MIn)
+    void calculateM(vector<ui> &MOut, vector<ui> &MIn)
     {
         for (ui i = 0; i < P.size(); i++)
         {
@@ -348,7 +293,7 @@ public:
                 MIn.push_back(u);
         }
     }
-    ui pickvp(VecUI &MOut, VecUI &MIn, Direction &dir)
+    ui pickvp(vector<ui> &MOut, vector<ui> &MIn, Direction &dir)
     {
         ui vpOut = -1, vpIn = -1;
         for (ui u : MOut)
@@ -528,7 +473,7 @@ public:
             return false;
 
         // get a backup of C for reovery
-        VecUI ctemp = C.getData();
+        vector<ui> ctemp = C.getData();
 
         for (auto u : ctemp)
             CToP(u);
@@ -548,6 +493,7 @@ public:
 
     void reportSolution()
     {
+        counts[P.size() - 1]++;
         // print("KPlex: ", P);
         kplexes++;
         return;
@@ -555,14 +501,22 @@ public:
 
     EnumKPlex(Graph &_g, ui _k1, ui _k2, ui _q) : pruned(_g.V), peelSeq(_g.V),
                                                   g(_g), inDegree(_g.V), outDegree(_g.V),
-                                                  k1(_k1), k2(_k2), q(_q),
+                                                  dPin(_g.V), dPout(_g.V),
+                                                  dGin(_g.V), dGout(_g.V),
+                                                  k1(_k1), k2(_k2), q(_q), kplexes(0),
                                                   deletedOutEdge(_g.V), cnPP(_g.V), cnPM(_g.V),
                                                   cnMP(_g.V), cnMM(_g.V), look1(_g.V), look2(_g.V),
-                                                  recode(_g.V)
+                                                  look3(_g.V), look4(_g.V), look5(_g.V), recode(_g.V),
+                                                  P(_g.V), C(_g.V), X(_g.V),
+                                                  counts(1000)
     {
+        vBoundaryIn.reserve(_g.V);
+        vBoundaryOut.reserve(_g.V);
 
         rC.reserve(g.V);
         rX.reserve(g.V);
+
+        degenOrder.reserve(_g.V);
 
         for (ui i = 0; i < g.V; i++)
         {
@@ -570,7 +524,7 @@ public:
         }
         Qe.reserve(g.E / 10);
 
-        // reset();
+        reset();
     }
     void getNeighbors(auto &neigh)
     {
@@ -602,6 +556,15 @@ public:
         // 2nd hop neighbors are appended afterwards
         getSecondHop(C.size(), X.size());
         // getSecondHop(c1h, x1h);
+    }
+
+    void initCX(ui v)
+    {
+        for (ui u : degenOrder)
+            if (peelSeq[u] < peelSeq[v])
+                X.add(u);
+            else
+                addToC(u);
     }
 
 private:
@@ -800,17 +763,17 @@ private:
 
         for (ui u = 0; u < g.V; u++)
         {
-            cnPP[u] = VecUI(g.nsOut[u].size(), 0);
-            cnPM[u] = VecUI(g.nsOut[u].size(), 0);
-            cnMP[u] = VecUI(g.nsOut[u].size(), 0);
-            cnMM[u] = VecUI(g.nsOut[u].size(), 0);
+            cnPP[u] = vector<ui>(g.nsOut[u].size(), 0);
+            cnPM[u] = vector<ui>(g.nsOut[u].size(), 0);
+            cnMP[u] = vector<ui>(g.nsOut[u].size(), 0);
+            cnMM[u] = vector<ui>(g.nsOut[u].size(), 0);
         }
         for (ui u = 0; u < g.V; u++)
         {
             if (pruned[u])
                 continue;
-            // VecUI outLookup = getLookup(g.nsOut[u]);
-            // VecUI inLookup = getLookup(g.nsIn[u]);
+            // vector<ui> outLookup = getLookup(g.nsOut[u]);
+            // vector<ui> inLookup = getLookup(g.nsIn[u]);
 
             Lookup outLookup(look1, g.nsOut[u]);
             Lookup inLookup(look2, g.nsIn[u]);
@@ -974,10 +937,10 @@ private:
         compactAdjLists();
     }
 
-    VecUI getLookup(auto &adjList)
+    vector<ui> getLookup(auto &adjList)
     {
         // lookups contain index+1 if a vertex found, else zero
-        VecUI lookup(g.V, 0);
+        vector<ui> lookup(g.V, 0);
         for (ui i = 0; i < adjList.size(); i++)
         {
             lookup[adjList[i]] = i + 1;
@@ -993,8 +956,8 @@ private:
             return;
         pruned[u] = 1;
 
-        // VecUI outLookup = getLookup(g.nsOut[u]);
-        // VecUI inLookup = getLookup(g.nsIn[u]);
+        // vector<ui> outLookup = getLookup(g.nsOut[u]);
+        // vector<ui> inLookup = getLookup(g.nsIn[u]);
 
         Lookup outLookup(look1, g.nsOut[u]);
         Lookup inLookup(look2, g.nsIn[u]);
@@ -1244,21 +1207,21 @@ private:
         addTo2HopG(s);
         // auto inLookup = getLookup(nsIn);
         // auto outLookup = getLookup(nsOut);
-        Lookup inLookup(looka, nsIn);
-        Lookup outLookup(lookb, nsOut);
+        Lookup inLookup(look1, nsIn);
+        Lookup outLookup(look2, nsOut);
         // both in-out neighbors
-        VecUI nsInOut;
+        vector<ui> nsInOut;
         // exclusive in/out neighbors
-        VecUI I;
-        VecUI O;
+        vector<ui> I;
+        vector<ui> O;
         nsInOut.reserve(min(nsIn.size(), nsOut.size()));
         I.reserve(nsIn.size());
         O.reserve(nsOut.size());
 
-        // VecUI existsIn(g.V, 0);
-        // VecUI existsOut(g.V, 0);
-        Lookup existsIn(lookc, nsIn);
-        Lookup existsOut(lookd, nsOut);
+        // vector<ui> existsIn(g.V, 0);
+        // vector<ui> existsOut(g.V, 0);
+        Lookup existsIn(look3, nsIn);
+        Lookup existsOut(look4, nsOut);
         ui round = 1;
 
         for (ui u : nsIn)
@@ -1286,7 +1249,7 @@ private:
             inSize = I.size();
             outSize = O.size();
 
-            VecUI tempIn, tempOut;
+            vector<ui> tempIn, tempOut;
             tempIn.reserve(inSize);
             tempOut.reserve(outSize);
 
@@ -1350,8 +1313,8 @@ private:
         existsOut.erase();
         // since in/out neighbors are added, now onwards I is SI and O is SO
         // Calculate and B to two hop graph
-        VecUI temp;
-        Lookup intersect(lookd, temp);
+        vector<ui> temp;
+        Lookup intersect(look4, temp);
         for (auto u : O)
         {
             for (auto v : g.nsOut[u])
@@ -1406,9 +1369,9 @@ private:
             return;
 
         if (peelSeq[u] < peelSeq[vi])
-            X.add(recode[u]);
+            X.add(u);
         else
-            addToC(recode[u]);
+            addToC(u);
         // cout<<P.front()<<endl;
     }
     void print(string msg, auto &vec)
@@ -1423,19 +1386,12 @@ private:
     void addToC(ui u)
     {
         C.add(u);
-        for (ui v : g.nsOut[u])
-            dGin[v]++;
-        for (ui v : g.nsIn[u])
-            dGout[v]++;
+
     }
 
     void removeFromC(ui u)
     {
         C.remove(u);
-        for (ui v : g.nsOut[u])
-            dGin[v]--;
-        for (ui v : g.nsIn[u])
-            dGout[v]--;
     }
 
     void PToC(ui u)
@@ -1490,8 +1446,6 @@ private:
         return true;
     }
 };
-
-// thread_local RandList EnumKPlex::dp
 
 int main(int argc, char *argv[])
 {
