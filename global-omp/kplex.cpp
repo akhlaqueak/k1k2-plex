@@ -267,16 +267,17 @@ public:
             if (tid != omp_get_thread_num())
                 td->unloadThreadData();
         }
-#pragma omp task firstprivate(td, vc, tid)
+        ThreadData *td1 = new ThreadData();
+#pragma omp task firstprivate(td1, vc, tid)
         {
             if (tid != omp_get_thread_num())
-                td->loadThreadData();
+                td1->loadThreadData();
             CToX(vc);
             branch();
             // recover
             XToC(vc);
             if (tid != omp_get_thread_num())
-                td->unloadThreadData();
+                td1->unloadThreadData();
         }
         // other branch where P contains u
     }
