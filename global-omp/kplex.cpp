@@ -185,6 +185,7 @@ public:
 // #pragma omp taskgroup
                 recurSearch(vi);
                 reset(); // clears C and X
+                cout<<vi<<" ";
             }
         }
         ui total = 0;
