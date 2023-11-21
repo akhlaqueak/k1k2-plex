@@ -2,7 +2,7 @@
 #include "../common/command_line.h"
 #define PuCSize (P.size() + C.size())
 #include <omp.h>
-// #define ITERATIVE_PRUNE
+#define ITERATIVE_PRUNE
 // #define BRANCHING
 #define LOOKAHEAD
 #define CTCP
@@ -27,9 +27,9 @@ thread_local ui vi; // current vertex in degeneracy order for which we are searc
 
 thread_local vector<ui> dPin;
 thread_local vector<ui> dPout;
-// G is a graph induced by P \cup C
 thread_local vector<ui> dGin;
 thread_local vector<ui> dGout;
+
 thread_local RandList C;
 thread_local RandList X;
 thread_local RandList P;
@@ -153,7 +153,7 @@ public:
 #endif
 
         cout << " CTCP time: " << chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - tick).count() << " ms" << endl;
-        omp_set_num_threads(20);
+        omp_set_num_threads(1);
 #pragma omp parallel
         {
             // cout<<"N: "<<omp_get_num_threads()<<endl;
