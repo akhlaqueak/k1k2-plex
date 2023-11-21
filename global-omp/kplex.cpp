@@ -1478,10 +1478,10 @@ private:
     {
         C.add(u);
         for (ui v : g.nsOut[u])
-            if (inBlock(v))
+            //if (inBlock(v))
                 dGin[v]++;
         for (ui v : g.nsIn[u])
-            if (inBlock(v))
+            //if (inBlock(v))
                 dGout[v]++;
     }
 
@@ -1489,10 +1489,10 @@ private:
     {
         C.remove(u);
         for (ui v : g.nsOut[u])
-            if (inBlock(v))
+            //if (inBlock(v))
                 dGin[v]--;
         for (ui v : g.nsIn[u])
-            if (inBlock(v))
+            //if (inBlock(v))
                 dGout[v]--;
     }
 
@@ -1501,10 +1501,10 @@ private:
         P.remove(u);
         C.add(u);
         for (ui v : g.nsOut[u])
-            if (inBlock(v))
+            //if (inBlock(v))
                 dPin[v]--;
         for (ui v : g.nsIn[u])
-            if (inBlock(v))
+            //if (inBlock(v))
                 dPout[v]--;
     }
 
@@ -1514,10 +1514,10 @@ private:
         C.remove(u);
         P.add(u);
         for (ui v : g.nsOut[u])
-            if (inBlock(v))
+            //if (inBlock(v))
                 dPin[v]++;
         for (ui v : g.nsIn[u])
-            if (inBlock(v))
+            //if (inBlock(v))
                 dPout[v]++;
     }
 
