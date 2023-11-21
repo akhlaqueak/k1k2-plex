@@ -72,7 +72,7 @@ class Lookup
 	bool binary;
 
 public:
-	Lookup(vector<ui> &_lookup, vector<ui> &_data, bool mode = false) : lookup(_lookup), data(_data)
+	Lookup(vector<ui> &_lookup, const vector<ui> &_data, bool mode = false) : lookup(_lookup), data(_data)
 	{
 		binary = mode;
 		for (ui ind = 0; ind < data.size(); ind++)
@@ -240,3 +240,12 @@ public:
 	void printList(FILE *f = stdout){};
 #endif
 };
+
+    inline ui getLowerBound(auto &vec, ui x)
+    {
+        auto it = lower_bound(vec.begin(), vec.end(), x);
+
+        if (it == vec.end() || *it != x)
+            return vec.size();
+        return it - vec.begin();
+    }
