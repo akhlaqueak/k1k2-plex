@@ -90,8 +90,8 @@ public:
         load(pout, dPout);
         load(gin, dGin);
         load(gout, dGout);
-        rC = rc;
-        rX = rx;
+        // rC = rc;
+        // rX = rx;
     }
 
     void unloadThreadData()

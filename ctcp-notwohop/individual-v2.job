@@ -21,6 +21,7 @@
 #
 #SBATCH --mail-type=END
 #SBATCH --mail-user=akhlaque.ak@gmail.com
+i=5
 module load Valgrind
 alias python=python3
 
@@ -30,6 +31,11 @@ wiki-vote
 mathoverflow
 epinions
 amazon0505
+web-Google
+wiki-it
+baidu
+wiki-Talk
+clue-web
 
 '
 
@@ -78,10 +84,7 @@ k2s='
 '
 k2s=($k2s)
 
-for i in "${!ds[@]}"
-do
     ./kplex-v2 -g ../datasets/${ds[i]}.txt -k1 ${k1s[i]} -k2 ${k2s[i]} -q ${qs[i]} >> ${ds[i]}.v2.txt
-done
 
 
 
