@@ -2,7 +2,7 @@
 #include "../common/command_line.h"
 #define PuCSize (P.size() + C.size())
 #include <omp.h>
-#define ITERATIVE_PRUNE
+// #define ITERATIVE_PRUNE
 // #define BRANCHING
 #define LOOKAHEAD
 #define CTCP
@@ -182,7 +182,7 @@ public:
 #else
                 getTwoHopG(vi);
 #endif
-#pragma omp taskgroup
+// #pragma omp taskgroup
                 recurSearch(vi);
                 reset(); // clears C and X
             }
