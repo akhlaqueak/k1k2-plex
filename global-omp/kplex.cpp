@@ -56,7 +56,7 @@ public:
         x = X.getData();
         rc = rC;
         rx = rX;
-        auto load = [&](vector<ui>& vec)
+        auto load = [&](vector<ui> &vec)
         {
             for (ui u : vec)
             {
@@ -79,9 +79,9 @@ public:
         P.loadData(p);
         C.loadData(c);
         X.loadData(x);
-        auto load = [&](auto& vec, auto& dest)
+        auto load = [&](auto &vec, auto &dest)
         {
-            for (auto& pr : vec)
+            for (auto &pr : vec)
             {
                 ui u = pr.first;
                 ui data = pr.second;
@@ -96,23 +96,23 @@ public:
 
     void unloadThreadData()
     {
-        // P.clear();
-        // C.clear();
-        // X.clear();
-        // auto load = [&](vector<ui> vec)
-        // {
-        //     for (ui u : vec)
-        //     {
+        P.clear();
+        C.clear();
+        X.clear();
+        auto load = [&](vector<ui> vec)
+        {
+            for (ui u : vec)
+            {
 
-        //         dPin[u] = 0;
-        //         dPout[u] = 0;
-        //         dGin[u] = 0;
-        //         dGout[u] = 0;
-        //     }
-        // };
-        // load(p);
-        // load(c);
-        // load(x);
+                dPin[u] = 0;
+                dPout[u] = 0;
+                dGin[u] = 0;
+                dGout[u] = 0;
+            }
+        };
+        load(p);
+        load(c);
+        load(x);
     }
 };
 
@@ -255,21 +255,26 @@ public:
         if (lookAheadSolutionExists(vpOut, vpIn))
             return;
 #endif
+        ui tid = omp_get_thread_num();
         ThreadData *td = new ThreadData();
-#pragma omp task firstprivate(td, vc)
+#pragma omp task firstprivate(td, vc, tid)
         {
-            td->loadThreadData();
+            if (tid != omp_get_thread_num())
+                td->loadThreadData();
             recurSearch(vc);
-            td->unloadThreadData();
+            if (tid != omp_get_thread_num())
+                td->unloadThreadData();
         }
 #pragma omp task firstprivate(td, vc)
         {
-            td->loadThreadData();
+            if (tid != omp_get_thread_num())
+                td->loadThreadData();
             CToX(vc);
             branch();
             // recover
             XToC(vc);
-            td->unloadThreadData();
+            if (tid != omp_get_thread_num())
+                td->unloadThreadData();
         }
         // other branch where P contains u
     }
