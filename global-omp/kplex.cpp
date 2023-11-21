@@ -74,6 +74,9 @@ public:
 
     void loadThreadData()
     {
+        P.clear();
+        C.clear();
+        X.clear();
         P.loadData(p);
         C.loadData(c);
         X.loadData(x);
