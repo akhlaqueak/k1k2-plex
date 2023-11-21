@@ -1409,7 +1409,7 @@ int main(int argc, char *argv[])
     g->k1k2CorePrune();
     // find degeneracy order, the result is degenOrder vector
     g->degenerate();
-
+    auto tick = chrono::steady_clock::now();
     g->applyCoreTrussPruning();
 
     cout << " CTCP time: " << chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - tick).count() << " ms" << endl;
@@ -1418,11 +1418,11 @@ int main(int argc, char *argv[])
     {
         // cout<<"N: "<<omp_get_num_threads()<<endl;
         // cout<<"id: "<<omp_get_thread_num()<<endl;
-        looka.resize(raw_g.V);
-        lookb.resize(raw_g.V);
-        lookc.resize(raw_g.V);
-        lookd.resize(raw_g.V);
-        twoHopG.init(raw_g.V);
+        looka.resize(raw_g->V);
+        lookb.resize(raw_g->V);
+        lookc.resize(raw_g->V);
+        lookd.resize(raw_g->V);
+        twoHopG.init(raw_g->V);
 #pragma omp for schedule(dynamic)
         for (ui i = 0; i < g->degenOrder.size(); i++)
         {
