@@ -31,7 +31,9 @@ mathoverflow
 epinions
 amazon0505
 web-Google
+wiki-it
 baidu
+wiki-Talk
 clue-web
 
 '
@@ -46,6 +48,8 @@ qs='
 10
 10
 15
+15
+15
 35
 
 '
@@ -59,6 +63,8 @@ k1s='
 5
 2
 2
+2
+2
 
 '
 k1s=($k1s)
@@ -69,24 +75,20 @@ k2s='
 2
 3
 3
+2
+3
 3
 2
 
 '
 k2s=($k2s)
 
-# for i in "${!ds[@]}"
-# do
-#     ./kplex -g ../datasets/${ds[i]}.txt -k1 ${k1s[i]} -k2 ${k2s[i]} -q ${qs[i]} >> fixconfig.txt
-# done
-
 for i in "${!ds[@]}"
 do
-    # ./kplex-nobranching -g ../datasets/${ds[i]}.txt -k1 ${k1s[i]} -k2 ${k2s[i]} -q ${qs[i]} >> ablation.txt
-    # ./kplex-nolookahead -g ../datasets/${ds[i]}.txt -k1 ${k1s[i]} -k2 ${k2s[i]} -q ${qs[i]} >> ablation.txt
-    # ./kplex-noiterative -g ../datasets/${ds[i]}.txt -k1 ${k1s[i]} -k2 ${k2s[i]} -q ${qs[i]} >> ablation.txt
-    ./kplex-noctcp -g ../datasets/${ds[i]}.txt -k1 ${k1s[i]} -k2 ${k2s[i]} -q ${qs[i]} >> ablation.txt
+    ./kplex -g ../datasets/${ds[i]}.txt -k1 ${k1s[i]} -k2 ${k2s[i]} -q ${qs[i]} >> fixconfig.txt
 done
+
+
 
 
 
