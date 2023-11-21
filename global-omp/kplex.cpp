@@ -92,6 +92,8 @@ public:
         load(pout, dPout);
         load(gin, dGin);
         load(gout, dGout);
+        rC = rc;
+        rX = rx;
     }
 
     void unloadThreadData()
@@ -99,7 +101,7 @@ public:
         P.clear();
         C.clear();
         X.clear();
-        auto load = [&](vector<ui> vec)
+        auto load = [&](vector<ui>& vec)
         {
             for (ui u : vec)
             {
@@ -265,7 +267,7 @@ public:
             if (tid != omp_get_thread_num())
                 td->unloadThreadData();
         }
-#pragma omp task firstprivate(td, vc)
+#pragma omp task firstprivate(td, vc, tid)
         {
             if (tid != omp_get_thread_num())
                 td->loadThreadData();
