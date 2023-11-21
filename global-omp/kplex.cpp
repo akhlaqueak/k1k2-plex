@@ -103,7 +103,6 @@ public:
         {
             for (ui u : vec)
             {
-
                 dPin[u] = 0;
                 dPout[u] = 0;
                 dGin[u] = 0;
@@ -255,28 +254,28 @@ public:
         if (lookAheadSolutionExists(vpOut, vpIn))
             return;
 #endif
-        ui tid = omp_get_thread_num();
-        ThreadData *td = new ThreadData();
-#pragma omp task firstprivate(td, vc, tid)
+//         ui tid = omp_get_thread_num();
+//         ThreadData *td = new ThreadData();
+// #pragma omp task firstprivate(td, vc, tid)
         {
             // if (tid != omp_get_thread_num())
-            td->loadThreadData();
+            // td->loadThreadData();
             recurSearch(vc);
             // if (tid != omp_get_thread_num())
-            td->unloadThreadData();
+            // td->unloadThreadData();
         }
 
-        ThreadData *td1 = new ThreadData();
-#pragma omp task firstprivate(td1, vc, tid)
+//         ThreadData *td1 = new ThreadData();
+// #pragma omp task firstprivate(td1, vc, tid)
         {
             // if (tid != omp_get_thread_num())
-            td1->loadThreadData();
+            // td1->loadThreadData();
             CToX(vc);
             branch();
             // recover
             XToC(vc);
             // if (tid != omp_get_thread_num())
-            td1->unloadThreadData();
+            // td1->unloadThreadData();
         }
         // other branch where P contains u
     }
