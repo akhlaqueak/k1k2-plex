@@ -778,9 +778,9 @@ class EnumKPlex
     RandList P;
     VecUI rC, rX;
     VecUI block;
-    Lookup inBlock;
 
 public:
+    Lookup inBlock;
     EnumKPlex(VecUI blk, ui vi) : block(blk),
                                   dPin(blk.size()), dPout(blk.size()),
                                   dGin(blk.size()), dGout(blk.size()),
@@ -1432,6 +1432,7 @@ int main(int argc, char *argv[])
             twoHopG.clear();
             g->getTwoHopIterativePrunedG(vi);
             EnumKPlex kp =  EnumKPlex(twoHopG.getData(), vi);
+            vi = kp.inBlock[vi]-1;
 #pragma omp taskgroup
             {
                 kp.recurSearch(vi);
