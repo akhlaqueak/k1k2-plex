@@ -97,12 +97,12 @@ public:
             lookb.resize(g.V);
             lookc.resize(g.V);
             lookd.resize(g.V);
-            ui k = degenOrder.size();
+            ui k=degenOrder.size();
 #pragma omp for schedule(dynamic)
             for (ui i = 0; i < k; i++)
             {
 
-                vi = degenOrder[i];
+                vi = degenOrder[i]; 
 #ifdef ITERATIVE_PRUNE
                 getTwoHopIterativePrunedG(vi);
 #else
@@ -1354,14 +1354,14 @@ private:
     }
     bool in2HopG(ui u)
     {
-        return block.contains(u);
+        return X.contains(u) or C.contains(u);
     }
     void addTo2HopG(ui u)
     {
 
         if (pruned[u] or in2HopG(u))
             return;
-        block.add(u);
+
         if (peelSeq[u] < peelSeq[vi])
             X.add(u);
         else
