@@ -40,8 +40,6 @@ thread_local RandList block;
 thread_local vector<ui> rC, rX;
 thread_local ui kplexes = 0;
 
-
-
 class ThreadData
 {
     vector<pair<ui, ui>> pin;
@@ -50,7 +48,7 @@ class ThreadData
     vector<pair<ui, ui>> gout;
     vector<ui> p, c, x, blk;
     vector<ui> rc, rx;
-    
+
 public:
     ThreadData()
     {
@@ -81,6 +79,7 @@ public:
         P.clear();
         C.clear();
         X.clear();
+        block.clear();
         P.loadData(p);
         C.loadData(c);
         X.loadData(x);
@@ -263,19 +262,16 @@ public:
 
         recurSearch(vc);
         ThreadData *td = new ThreadData();
-        ui tid = omp_get_thread_num();
-#pragma omp task firstprivate(td, vc, tid)
-{
-    if(tid!=omp_get_thread_num())
-    td->loadThreadData();
-        CToX(vc);
-        branch();
-        // recover
-        XToC(vc);
-        // other branch where P contains u
-    if(tid!=omp_get_thread_num())
-    td->unloadThreadData();
-}
+#pragma omp task firstprivate(td, vc)
+        {
+            td->loadThreadData();
+            CToX(vc);
+            branch();
+            // recover
+            XToC(vc);
+            // other branch where P contains u
+            td->unloadThreadData();
+        }
     }
 
     void multiRecurSearch(ui vp, Direction dir)
