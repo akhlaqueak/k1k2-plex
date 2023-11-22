@@ -40,6 +40,88 @@ thread_local RandList block;
 thread_local vector<ui> rC, rX;
 thread_local ui kplexes = 0;
 
+
+
+class ThreadData
+{
+    vector<pair<ui, ui>> pin;
+    vector<pair<ui, ui>> pout;
+    vector<pair<ui, ui>> gin;
+    vector<pair<ui, ui>> gout;
+    vector<ui> p, c, x, blk;
+    vector<ui> rc, rx;
+    
+public:
+    ThreadData()
+    {
+        p = P.getData();
+        c = C.getData();
+        x = X.getData();
+        blk = block.getData();
+        // rc = rC;
+        // rx = rX;
+        auto load = [&](vector<ui> &vec)
+        {
+            for (ui u : vec)
+            {
+                pin.push_back({u, dPin[u]});
+                pout.push_back({u, dPout[u]});
+                gin.push_back({u, dGin[u]});
+                gout.push_back({u, dGout[u]});
+            }
+        };
+        load(blk);
+        // load(p);
+        // load(c);
+        // load(x);
+    }
+
+    void loadThreadData()
+    {
+        P.clear();
+        C.clear();
+        X.clear();
+        P.loadData(p);
+        C.loadData(c);
+        X.loadData(x);
+        block.loadData(blk);
+        auto load = [&](auto &vec, auto &dest)
+        {
+            for (auto &pr : vec)
+            {
+                ui u = pr.first;
+                ui data = pr.second;
+                dest[u] = data;
+            }
+        };
+        load(pin, dPin);
+        load(pout, dPout);
+        load(gin, dGin);
+        load(gout, dGout);
+        // rC = rc;
+        // rX = rx;
+    }
+
+    void unloadThreadData()
+    {
+        P.clear();
+        C.clear();
+        X.clear();
+        block.clear();
+        auto clear = [&](vector<ui> &vec)
+        {
+            for (ui u : vec)
+            {
+                dPin[u] = 0;
+                dPout[u] = 0;
+                dGin[u] = 0;
+                dGout[u] = 0;
+            }
+        };
+        clear(blk);
+    }
+};
+
 class EnumKPlex
 {
     Graph &g;
@@ -180,11 +262,17 @@ public:
 #endif
 
         recurSearch(vc);
+        ThreadData *td = new ThreadData();
+#pragma omp task firstprivate(td, vc)
+{
+    td->loadThreadData();
         CToX(vc);
         branch();
         // recover
         XToC(vc);
         // other branch where P contains u
+    td->unloadThreadData();
+}
     }
 
     void multiRecurSearch(ui vp, Direction dir)
