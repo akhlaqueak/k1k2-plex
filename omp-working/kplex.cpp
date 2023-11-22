@@ -47,7 +47,6 @@ class ThreadData
     vector<pair<ui, ui>> gin;
     vector<pair<ui, ui>> gout;
     vector<ui> p, c, x, blk;
-    vector<ui> rc, rx;
 
 public:
     ThreadData()
@@ -56,22 +55,14 @@ public:
         c = C.getData();
         x = X.getData();
         blk = block.getData();
-        // rc = rC;
-        // rx = rX;
-        auto load = [&](vector<ui> &vec)
+
+        for (ui u : blk)
         {
-            for (ui u : vec)
-            {
-                pin.push_back({u, dPin[u]});
-                pout.push_back({u, dPout[u]});
-                gin.push_back({u, dGin[u]});
-                gout.push_back({u, dGout[u]});
-            }
-        };
-        load(blk);
-        // load(p);
-        // load(c);
-        // load(x);
+            pin.push_back({u, dPin[u]});
+            pout.push_back({u, dPout[u]});
+            gin.push_back({u, dGin[u]});
+            gout.push_back({u, dGout[u]});
+        }
     }
 
     void loadThreadData()
@@ -81,6 +72,7 @@ public:
         C.clear();
         X.clear();
         block.clear();
+
         P.loadData(p);
         C.loadData(c);
         X.loadData(x);
