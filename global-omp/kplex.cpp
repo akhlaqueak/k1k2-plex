@@ -983,9 +983,8 @@ private:
         for (ui i = 0; i < sz; i++)
             removeFromC(C[0]);
 
-        sz = X.size();
-        for (ui i = 0; i < sz; i++)
-            X.remove(X[0]);
+        X.clear();
+        block.clear();
     }
 
     void k1k2CorePrune()
