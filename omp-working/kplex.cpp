@@ -48,12 +48,10 @@ class ThreadData
     vector<pair<ui, ui>> gout;
     vector<ui> p, c, x, blk;
     vector<ui> rc, rx;
-    bool exclude;
 
 public:
     ThreadData()
     {
-        exclude = 0;
         p = P.getData();
         c = C.getData();
         x = X.getData();
@@ -78,11 +76,7 @@ public:
 
     void loadThreadData()
     {
-        if (P.size() or C.size() or X.size())
-        {
-            exclude = 1;
-            // return;
-        }
+
         P.clear();
         C.clear();
         X.clear();
@@ -105,7 +99,6 @@ public:
         load(gin, dGin);
         load(gout, dGout);
     }
-
 };
 
 class EnumKPlex
@@ -246,8 +239,15 @@ public:
         if (lookAheadSolutionExists(vpOut, vpIn))
             return;
 #endif
+        ThreadData *td1 = new ThreadData();
+#pragma omp task firstprivate(td1, vc)
+        {
+            ThreadData *temp = new ThreadData();
+            td1->loadThreadData();
+            recurSearch(vc);
+            temp->loadThreadData();
+        }
 
-        recurSearch(vc);
         ThreadData *td = new ThreadData();
 #pragma omp task firstprivate(td, vc)
         {
