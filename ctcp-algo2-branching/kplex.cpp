@@ -62,6 +62,7 @@ class EnumKPlex
     RandList C;
     RandList X;
     RandList P;
+    RandList block;
 
     vector<ui> rC, rX;
 
@@ -80,14 +81,14 @@ public:
         auto tick = chrono::steady_clock::now();
 #ifdef CTCP
         applyCoreTrussPruning();
-        #else
+#else
         initNeighborsMapping();
 #endif
 
         ui iterative = 0;
 
         cout << " CTCP time: " << chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - tick).count() << " ms" << endl;
-        for (ui i=0;i<degenOrder.size()-q+1;i++)
+        for (ui i = 0; i < degenOrder.size() - q + 1; i++)
         {
             vi = degenOrder[i]; // vi is class variable, other functions need it too
             auto t1 = chrono::steady_clock::now();
@@ -881,6 +882,7 @@ private:
         sz = X.size();
         for (ui i = 0; i < sz; i++)
             X.remove(X[0]);
+        block.clear();
     }
 
     void k1k2CorePrune()
@@ -1097,7 +1099,8 @@ private:
         initNeighborsMapping();
     }
 
-    void initNeighborsMapping(){
+    void initNeighborsMapping()
+    {
         ui VV = degenOrder.size();
         cout << "Remaining vertices to process..." << VV << endl;
         edgeOut.resize(VV);
@@ -1307,7 +1310,7 @@ private:
             for (auto v : g.nsOut[u])
             {
                 // v is not already added in 2hop graph
-                if (!in2HopG(v))
+                if (!inBlock(v))
                 {
                     temp.push_back(v);
                     intersect[v] = 2;
@@ -1345,16 +1348,16 @@ private:
 
         intersect.erase();
     }
-    bool in2HopG(ui u)
+    bool inBlock(ui u)
     {
-        return X.contains(u) or C.contains(u);
+        return block.contains(u);
     }
     void addTo2HopG(ui u)
     {
 
-        if (pruned[u] or in2HopG(u))
+        if (pruned[u] or inBlock(u))
             return;
-
+        block.add(u);
         if (peelSeq[u] < peelSeq[vi])
             X.add(u);
         else
@@ -1374,18 +1377,22 @@ private:
     {
         C.add(u);
         for (ui v : g.nsOut[u])
-            dGin[v]++;
+            if (inBlock(v))
+                dGin[v]++;
         for (ui v : g.nsIn[u])
-            dGout[v]++;
+            if (inBlock(v))
+                dGout[v]++;
     }
 
     void removeFromC(ui u)
     {
         C.remove(u);
         for (ui v : g.nsOut[u])
-            dGin[v]--;
+            if (inBlock(v))
+                dGin[v]--;
         for (ui v : g.nsIn[u])
-            dGout[v]--;
+            if (inBlock(v))
+                dGout[v]--;
     }
 
     void PToC(ui u)
@@ -1393,9 +1400,11 @@ private:
         P.remove(u);
         C.add(u);
         for (ui v : g.nsOut[u])
-            dPin[v]--;
+            if (inBlock(v))
+                dPin[v]--;
         for (ui v : g.nsIn[u])
-            dPout[v]--;
+            if (inBlock(v))
+                dPout[v]--;
     }
 
     void CToP(const ui &u)
@@ -1404,9 +1413,11 @@ private:
         C.remove(u);
         P.add(u);
         for (ui v : g.nsOut[u])
-            dPin[v]++;
+            if (inBlock(v))
+                dPin[v]++;
         for (ui v : g.nsIn[u])
-            dPout[v]++;
+            if (inBlock(v))
+                dPout[v]++;
     }
 
     void CToX(const ui &u)
