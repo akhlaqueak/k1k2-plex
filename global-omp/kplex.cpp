@@ -1412,7 +1412,7 @@ private:
             for (auto v : g.nsOut[u])
             {
                 // v is not already added in 2hop graph
-                if (!in2HopG(v))
+                if (!inBlock(v))
                 {
                     temp.push_back(v);
                     intersect[v] = 2;
@@ -1450,14 +1450,11 @@ private:
 
         intersect.erase();
     }
-    bool in2HopG(ui u)
-    {
-        return block.contains(u);
-    }
+
     void addTo2HopG(ui u)
     {
 
-        if (pruned[u] or in2HopG(u))
+        if (pruned[u] or inBlock(u))
             return;
 
         block.add(u);
