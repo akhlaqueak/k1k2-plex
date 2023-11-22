@@ -3,7 +3,7 @@
 #define PuCSize (P.size() + C.size())
 
 #define ITERATIVE_PRUNE
-#define BRANCHING
+// #define BRANCHING
 #define LOOKAHEAD
 #define CTCP
 
