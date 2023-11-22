@@ -21,24 +21,23 @@ enum Direction
     In
 };
 
-thread_local vector<ui> dPin;
-thread_local vector<ui> dPout;
+static thread_local vector<ui> dPin;
+static thread_local vector<ui> dPout;
 
 // G is a graph induced by P \cup C
-thread_local vector<ui> dGin;
-thread_local vector<ui> dGout;
+static thread_local vector<ui> dGin;
+static thread_local vector<ui> dGout;
 
-thread_local vector<ui> looka, lookb, lookc, lookd;
+static thread_local vector<ui> looka, lookb, lookc, lookd;
 
-thread_local ui vi; // current vertex in degeneracy order for which we are searching kplex
+static thread_local ui vi; // current vertex in degeneracy order for which we are searching kplex
 
-thread_local RandList C;
-thread_local RandList X;
-thread_local RandList P;
-thread_local RandList block;
+static thread_local RandList C;
+static thread_local RandList X;
+static thread_local RandList P;
 
-thread_local vector<ui> rC, rX;
-thread_local ui kplexes = 0;
+static thread_local vector<ui> rC, rX;
+thread_local ui kplexes;
 
 class EnumKPlex
 {
@@ -86,7 +85,6 @@ public:
             C.init(g.V);
             P.init(g.V);
             X.init(g.V);
-            block.init(g.V);
             dPin.resize(g.V);
             dPout.resize(g.V);
             dGin.resize(g.V);
@@ -97,7 +95,6 @@ public:
             lookb.resize(g.V);
             lookc.resize(g.V);
             lookd.resize(g.V);
-            kplexes = 0;
             ui k=degenOrder.size();
 #pragma omp for schedule(dynamic)
             for (ui i = 0; i < k; i++)
@@ -884,8 +881,9 @@ private:
         for (ui i = 0; i < sz; i++)
             removeFromC(C[0]);
 
-        X.clear();
-        block.clear();
+        sz = X.size();
+        for (ui i = 0; i < sz; i++)
+            X.remove(X[0]);
     }
 
     void k1k2CorePrune()
@@ -1313,7 +1311,7 @@ private:
             for (auto v : g.nsOut[u])
             {
                 // v is not already added in 2hop graph
-                if (!inBlock(v))
+                if (!in2HopG(v))
                 {
                     temp.push_back(v);
                     intersect[v] = 2;
@@ -1351,17 +1349,16 @@ private:
 
         intersect.erase();
     }
-    bool inBlock(ui u)
+    bool in2HopG(ui u)
     {
-        // return block.contains(u);
-        return C.contains(u) or X.contains(u);
+        return X.contains(u) or C.contains(u);
     }
     void addTo2HopG(ui u)
     {
 
-        if (pruned[u] or inBlock(u))
+        if (pruned[u] or in2HopG(u))
             return;
-        // block.add(u);
+
         if (peelSeq[u] < peelSeq[vi])
             X.add(u);
         else
@@ -1381,10 +1378,8 @@ private:
     {
         C.add(u);
         for (ui v : g.nsOut[u])
-        // if(inBlock(v))
             dGin[v]++;
         for (ui v : g.nsIn[u])
-        // if(inBlock(v))
             dGout[v]++;
     }
 
@@ -1392,10 +1387,8 @@ private:
     {
         C.remove(u);
         for (ui v : g.nsOut[u])
-        // if(inBlock(v))
             dGin[v]--;
         for (ui v : g.nsIn[u])
-        // if(inBlock(v))
             dGout[v]--;
     }
 
@@ -1404,10 +1397,8 @@ private:
         P.remove(u);
         C.add(u);
         for (ui v : g.nsOut[u])
-        // if(inBlock(v))
             dPin[v]--;
         for (ui v : g.nsIn[u])
-        // if(inBlock(v))
             dPout[v]--;
     }
 
@@ -1417,10 +1408,8 @@ private:
         C.remove(u);
         P.add(u);
         for (ui v : g.nsOut[u])
-        // if(inBlock(v))
             dPin[v]++;
         for (ui v : g.nsIn[u])
-        // if(inBlock(v))
             dPout[v]++;
     }
 
