@@ -76,6 +76,7 @@ public:
 
     void loadThreadData()
     {
+        cout<<omp_get_thread_num()<<" : "<< P.size()<<" "<<C.size()<<" "<<X.size()<<endl;
         P.clear();
         C.clear();
         X.clear();
