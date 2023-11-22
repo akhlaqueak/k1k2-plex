@@ -92,7 +92,7 @@ public:
 
         cout << " CTCP time: " << chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - tick).count() << " ms" << endl;
         omp_set_num_threads(1);
-// #pragma omp parallel
+#pragma omp parallel
         {
             // cout<<"N: "<<omp_get_num_threads()<<endl;
             // cout<<"id: "<<omp_get_thread_num()<<endl;
@@ -111,7 +111,7 @@ public:
             lookc.resize(g.V);
             lookd.resize(g.V);
             ui k = degenOrder.size();
-// #pragma omp for schedule(dynamic)
+#pragma omp for schedule(dynamic)
             for (ui i = 0; i < k; i++)
             {
 
