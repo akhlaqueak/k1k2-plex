@@ -160,7 +160,7 @@ public:
 #endif
 
         cout << " CTCP time: " << chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - tick).count() << " ms" << endl;
-        omp_set_num_threads(20);
+        omp_set_num_threads(1);
 #pragma omp parallel
         {
             // cout<<"N: "<<omp_get_num_threads()<<endl;
