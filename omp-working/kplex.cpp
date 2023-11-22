@@ -160,7 +160,7 @@ public:
 #else
                 getTwoHopG(vi);
 #endif
-// #pragma omp taskgroup
+#pragma omp taskgroup
                 {
                     recurSearch(vi);
                 }
@@ -232,27 +232,27 @@ public:
         if (lookAheadSolutionExists(vpOut, vpIn))
             return;
 #endif
-//         ThreadData *td1 = new ThreadData();
-// #pragma omp task firstprivate(td1, vc)
-//         {
-//             ThreadData *temp = new ThreadData();
-//             td1->loadThreadData();
+        ThreadData *td1 = new ThreadData();
+#pragma omp task firstprivate(td1, vc)
+        {
+            ThreadData *temp = new ThreadData();
+            td1->loadThreadData();
             recurSearch(vc);
-        //     temp->loadThreadData();
-        // }
+            temp->loadThreadData();
+        }
 
         ThreadData *td = new ThreadData();
-// #pragma omp task firstprivate(td, vc)
-//         {
-//             ThreadData *temp = new ThreadData();
-//             td->loadThreadData();
+#pragma omp task firstprivate(td, vc)
+        {
+            ThreadData *temp = new ThreadData();
+            td->loadThreadData();
             CToX(vc);
             branch();
             // recover
             XToC(vc);
             // other branch where P contains u
-        //     temp->loadThreadData();
-        // }
+            temp->loadThreadData();
+        }
     }
 
     void multiRecurSearch(ui vp, Direction dir)
