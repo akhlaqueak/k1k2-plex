@@ -278,13 +278,14 @@ public:
         ThreadData *td = new ThreadData();
 #pragma omp task firstprivate(td, vc)
         {
+            ThreadData *temp = new ThreadData();
             td->loadThreadData();
             CToX(vc);
             branch();
             // recover
             XToC(vc);
             // other branch where P contains u
-            td->unloadThreadData();
+            temp->loadThreadData();
         }
     }
 
