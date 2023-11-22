@@ -1360,7 +1360,7 @@ private:
 
         if (pruned[u] or inBlock(u))
             return;
-        block.add(u);
+        // block.add(u);
         if (peelSeq[u] < peelSeq[vi])
             X.add(u);
         else
