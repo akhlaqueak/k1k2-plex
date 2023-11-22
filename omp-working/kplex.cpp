@@ -160,10 +160,17 @@ public:
 #else
                 getTwoHopG(vi);
 #endif
-#pragma omp taskgroup
+
+                if (C.size() > 10)
                 {
-                    recurSearch(vi);
+
+#pragma omp taskgroup
+                    {
+                        recurSearch(vi);
+                    }
                 }
+                else
+                recurSearchBasic(vi);
                 reset(); // clears C and X
             }
         }

@@ -881,10 +881,6 @@ private:
 
         X.clear();
         block.clear();
-        print("dpin", dPin);
-        print("dpout", dPout);
-        print("dgout", dGout);
-        print("dgin", dGin);
     }
 
     void k1k2CorePrune()
