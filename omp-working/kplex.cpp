@@ -48,10 +48,12 @@ class ThreadData
     vector<pair<ui, ui>> gout;
     vector<ui> p, c, x, blk;
     vector<ui> rc, rx;
+    bool exclude;
 
 public:
     ThreadData()
     {
+        exclude = 0;
         p = P.getData();
         c = C.getData();
         x = X.getData();
@@ -76,7 +78,12 @@ public:
 
     void loadThreadData()
     {
-        cout<<omp_get_thread_num()<<" : "<< P.size()<<" "<<C.size()<<" "<<X.size()<<endl;
+        if (P.size() or C.size() or X.size())
+        {
+            exclude = 1;
+            return;
+        }
+        cout << omp_get_thread_num() << " : " << P.size() << " " << C.size() << " " << X.size() << endl;
         P.clear();
         C.clear();
         X.clear();
@@ -104,6 +111,8 @@ public:
 
     void unloadThreadData()
     {
+        if (exclude)
+            return;
         P.clear();
         C.clear();
         X.clear();
