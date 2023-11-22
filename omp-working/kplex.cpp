@@ -35,9 +35,10 @@ static thread_local ui vi; // current vertex in degeneracy order for which we ar
 static thread_local RandList C;
 static thread_local RandList X;
 static thread_local RandList P;
+static thread_local RandList block;
 
 static thread_local vector<ui> rC, rX;
-thread_local ui kplexes;
+thread_local ui kplexes = 0;
 
 class EnumKPlex
 {
@@ -85,6 +86,7 @@ public:
             C.init(g.V);
             P.init(g.V);
             X.init(g.V);
+            block.init(g.V);
             dPin.resize(g.V);
             dPout.resize(g.V);
             dGin.resize(g.V);
@@ -95,12 +97,12 @@ public:
             lookb.resize(g.V);
             lookc.resize(g.V);
             lookd.resize(g.V);
-            ui k=degenOrder.size();
+            ui k = degenOrder.size();
 #pragma omp for schedule(dynamic)
             for (ui i = 0; i < k; i++)
             {
 
-                vi = degenOrder[i]; 
+                vi = degenOrder[i];
 #ifdef ITERATIVE_PRUNE
                 getTwoHopIterativePrunedG(vi);
 #else
@@ -884,6 +886,7 @@ private:
         sz = X.size();
         for (ui i = 0; i < sz; i++)
             X.remove(X[0]);
+        block.clear();
     }
 
     void k1k2CorePrune()
@@ -1351,14 +1354,14 @@ private:
     }
     bool in2HopG(ui u)
     {
-        return X.contains(u) or C.contains(u);
+        return block.contains(u);
     }
     void addTo2HopG(ui u)
     {
 
         if (pruned[u] or in2HopG(u))
             return;
-
+        block.add(u);
         if (peelSeq[u] < peelSeq[vi])
             X.add(u);
         else
