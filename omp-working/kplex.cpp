@@ -21,23 +21,23 @@ enum Direction
     In
 };
 
-static thread_local vector<ui> dPin;
-static thread_local vector<ui> dPout;
+thread_local vector<ui> dPin;
+thread_local vector<ui> dPout;
 
 // G is a graph induced by P \cup C
-static thread_local vector<ui> dGin;
-static thread_local vector<ui> dGout;
+thread_local vector<ui> dGin;
+thread_local vector<ui> dGout;
 
-static thread_local vector<ui> looka, lookb, lookc, lookd;
+thread_local vector<ui> looka, lookb, lookc, lookd;
 
-static thread_local ui vi; // current vertex in degeneracy order for which we are searching kplex
+thread_local ui vi; // current vertex in degeneracy order for which we are searching kplex
 
-static thread_local RandList C;
-static thread_local RandList X;
-static thread_local RandList P;
-static thread_local RandList block;
+thread_local RandList C;
+thread_local RandList X;
+thread_local RandList P;
+thread_local RandList block;
 
-static thread_local vector<ui> rC, rX;
+thread_local vector<ui> rC, rX;
 thread_local ui kplexes = 0;
 
 class EnumKPlex
@@ -97,12 +97,12 @@ public:
             lookb.resize(g.V);
             lookc.resize(g.V);
             lookd.resize(g.V);
-            ui k=degenOrder.size();
+            ui k = degenOrder.size();
 #pragma omp for schedule(dynamic)
             for (ui i = 0; i < k; i++)
             {
 
-                vi = degenOrder[i]; 
+                vi = degenOrder[i];
 #ifdef ITERATIVE_PRUNE
                 getTwoHopIterativePrunedG(vi);
 #else
@@ -329,32 +329,6 @@ public:
         else if (MOut.size())
             dir = Out;
         else if (MIn.size())
-            dir = In;
-        else
-            cout << "#"; // if this happens there must be a problem...
-
-        if (dir == Out)
-            return vpOut;
-        else
-            return vpIn;
-    }
-
-    ui pickvp(ui vpOut, ui vpIn, Direction &dir)
-    {
-
-        // if both of vertices doesn't support G as a kplex
-        if (dGout[vpOut] + k1 < PuCSize and dGin[vpIn] + k2 < PuCSize)
-        {
-            ui outSupport = k1 - (P.size() - dPout[vpOut]);
-            ui inSupport = k2 - (P.size() - dPin[vpIn]);
-            if (outSupport < inSupport)
-                dir = Out;
-            else
-                dir = In;
-        }
-        else if (dGout[vpOut] + k1 < PuCSize)
-            dir = Out;
-        else if (dGin[vpIn] + k2 < PuCSize)
             dir = In;
         else
             cout << "#"; // if this happens there must be a problem...
@@ -883,9 +857,7 @@ private:
         for (ui i = 0; i < sz; i++)
             removeFromC(C[0]);
 
-        sz = X.size();
-        for (ui i = 0; i < sz; i++)
-            X.remove(X[0]);
+        X.clear();
         block.clear();
     }
 
@@ -1381,22 +1353,22 @@ private:
     {
         C.add(u);
         for (ui v : g.nsOut[u])
-        if(in2HopG(v))
-            dGin[v]++;
+            if (in2HopG(v))
+                dGin[v]++;
         for (ui v : g.nsIn[u])
-        if(in2HopG(v))
-            dGout[v]++;
+            if (in2HopG(v))
+                dGout[v]++;
     }
 
     void removeFromC(ui u)
     {
         C.remove(u);
         for (ui v : g.nsOut[u])
-        if(in2HopG(v))
-            dGin[v]--;
+            if (in2HopG(v))
+                dGin[v]--;
         for (ui v : g.nsIn[u])
-        if(in2HopG(v))
-            dGout[v]--;
+            if (in2HopG(v))
+                dGout[v]--;
     }
 
     void PToC(ui u)
@@ -1404,11 +1376,11 @@ private:
         P.remove(u);
         C.add(u);
         for (ui v : g.nsOut[u])
-        if(in2HopG(v))
-            dPin[v]--;
+            if (in2HopG(v))
+                dPin[v]--;
         for (ui v : g.nsIn[u])
-        if(in2HopG(v))
-            dPout[v]--;
+            if (in2HopG(v))
+                dPout[v]--;
     }
 
     void CToP(const ui &u)
@@ -1417,11 +1389,11 @@ private:
         C.remove(u);
         P.add(u);
         for (ui v : g.nsOut[u])
-        if(in2HopG(v))
-            dPin[v]++;
+            if (in2HopG(v))
+                dPin[v]++;
         for (ui v : g.nsIn[u])
-        if(in2HopG(v))
-            dPout[v]++;
+            if (in2HopG(v))
+                dPout[v]++;
     }
 
     void CToX(const ui &u)
