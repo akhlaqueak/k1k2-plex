@@ -180,7 +180,7 @@ public:
 	void clear()
 	{
 		for (ui i = 0; i < vnum; i++)
-			vpos[i] = cap;
+			vpos[vlist[i]] = cap;
 		vnum = 0;
 	}
 	ui get(ui i)

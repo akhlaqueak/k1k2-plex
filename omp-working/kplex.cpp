@@ -1354,14 +1354,14 @@ private:
     }
     bool in2HopG(ui u)
     {
-        return X.contains(u) or C.contains(u);
+        return block.contains(u);
     }
     void addTo2HopG(ui u)
     {
 
         if (pruned[u] or in2HopG(u))
             return;
-
+        block.add(u);
         if (peelSeq[u] < peelSeq[vi])
             X.add(u);
         else
