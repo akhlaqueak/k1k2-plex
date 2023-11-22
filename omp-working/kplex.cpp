@@ -1352,7 +1352,8 @@ private:
     }
     bool inBlock(ui u)
     {
-        return block.contains(u);
+        // return block.contains(u);
+        return C.contains(u) or X.contains(u);
     }
     void addTo2HopG(ui u)
     {
