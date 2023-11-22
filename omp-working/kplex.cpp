@@ -81,7 +81,7 @@ public:
         if (P.size() or C.size() or X.size())
         {
             exclude = 1;
-            return;
+            // return;
         }
         cout << omp_get_thread_num() << " : " << P.size() << " " << C.size() << " " << X.size() << endl;
         P.clear();
@@ -105,14 +105,17 @@ public:
         load(pout, dPout);
         load(gin, dGin);
         load(gout, dGout);
+        cout << omp_get_thread_num() << " loaded : " << P.size() << " " << C.size() << " " << X.size() << endl;
+
         // rC = rc;
         // rX = rx;
     }
 
     void unloadThreadData()
     {
-        if (exclude)
-            return;
+        // if (exclude)
+        //     return;
+        cout << omp_get_thread_num() << " un-loaded : " << P.size() << " " << C.size() << " " << X.size() << endl;
         P.clear();
         C.clear();
         X.clear();
@@ -128,6 +131,7 @@ public:
             }
         };
         clear(blk);
+
     }
 };
 
