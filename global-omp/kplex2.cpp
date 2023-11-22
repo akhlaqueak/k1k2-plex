@@ -1,11 +1,28 @@
 #include "../common/utils.h"
 #include "../common/command_line.h"
 #define PuCSize (P.size() + C.size())
-
+#include <omp.h>
 #define ITERATIVE_PRUNE
 #define BRANCHING
 #define LOOKAHEAD
 #define CTCP
+
+thread_local vector<ui> looka, lookb, lookc, lookd;
+
+thread_local ui vi; // current vertex in degeneracy order for which we are searching kplex
+
+thread_local vector<ui> dPin;
+thread_local vector<ui> dPout;
+thread_local vector<ui> dGin;
+thread_local vector<ui> dGout;
+
+thread_local RandList C;
+thread_local RandList X;
+thread_local RandList P;
+thread_local RandList block;
+
+thread_local vector<ui> rC, rX;
+thread_local ui kplexes;
 
 enum CommonNeighbors
 {
@@ -73,28 +90,50 @@ public:
         initNeighborsMapping();
 #endif
 
-        ui iterative = 0;
-
         cout << " CTCP time: " << chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - tick).count() << " ms" << endl;
-        for (ui i = 0; i < degenOrder.size() - q + 1; i++)
+        omp_set_num_threads(1);
+// #pragma omp parallel
         {
-            vi = degenOrder[i]; // vi is class variable, other functions need it too
-            auto t1 = chrono::steady_clock::now();
+            // cout<<"N: "<<omp_get_num_threads()<<endl;
+            // cout<<"id: "<<omp_get_thread_num()<<endl;
+            C.init(g.V);
+            P.init(g.V);
+            X.init(g.V);
+            block.init(g.V);
+            dPin.resize(g.V);
+            dPout.resize(g.V);
+            dGin.resize(g.V);
+            dGout.resize(g.V);
+            rC.reserve(g.V);
+            rX.reserve(g.V);
+            looka.resize(g.V);
+            lookb.resize(g.V);
+            lookc.resize(g.V);
+            lookd.resize(g.V);
+            ui k = degenOrder.size();
+// #pragma omp for schedule(dynamic)
+            for (ui i = 0; i < k; i++)
+            {
+
+                vi = degenOrder[i];
 #ifdef ITERATIVE_PRUNE
-            getTwoHopIterativePrunedG(vi);
+                getTwoHopIterativePrunedG(vi);
 #else
-            getTwoHopG(vi);
+                getTwoHopG(vi);
 #endif
-            auto t2 = chrono::steady_clock::now();
-            iterative += chrono::duration_cast<chrono::microseconds>(t2 - t1).count();
-            recurSearch(vi);
-            reset(); // clears C and X
+// #pragma omp taskgroup
+                recurSearch(vi);
+                reset(); // clears C and X
+                // cout<<vi<<" ";
+            }
         }
-        cout << "Total (" << k1 << "," << k2 << ")-plexes of at least " << q << " size: " << kplexes << endl;
-        cout << "Iterative Pruning Time (ms): " << iterative / 1000 << endl;
-        for (ui i = 0; i < counts.size(); i++)
-            if (counts[i])
-                cout << "kplexes of size: " << i + 1 << " = " << counts[i] << endl;
+        ui total = 0;
+#pragma omp parallel reduction(+ : total)
+        {
+            total += kplexes;
+        }
+
+        cout << "Total (" << k1 << "," << k2 << ")-plexes of at least " << q << " size: " << total << endl;
     }
 
     void recurSearch(ui u)
@@ -487,20 +526,11 @@ public:
 
     EnumKPlex(Graph &_g, ui _k1, ui _k2, ui _q) : pruned(_g.V), peelSeq(_g.V),
                                                   g(_g), inDegree(_g.V), outDegree(_g.V),
-                                                  dPin(_g.V), dPout(_g.V),
-                                                  dGin(_g.V), dGout(_g.V),
-                                                  k1(_k1), k2(_k2), q(_q), kplexes(0),
+                                                  k1(_k1), k2(_k2), q(_q),
                                                   deletedOutEdge(_g.V), cnPP(_g.V), cnPM(_g.V),
                                                   cnMP(_g.V), cnMM(_g.V), look1(_g.V), look2(_g.V),
-                                                   recode(_g.V),
-                                                  
-                                                  counts(1000)
+                                                  recode(_g.V)
     {
-        vBoundaryIn.reserve(_g.V);
-        vBoundaryOut.reserve(_g.V);
-
-        rC.reserve(g.V);
-        rX.reserve(g.V);
 
         degenOrder.reserve(_g.V);
 
@@ -1185,8 +1215,8 @@ private:
         addTo2HopG(s);
         // auto inLookup = getLookup(nsIn);
         // auto outLookup = getLookup(nsOut);
-        Lookup inLookup(look1, nsIn);
-        Lookup outLookup(look2, nsOut);
+        Lookup inLookup(looka, nsIn);
+        Lookup outLookup(lookb, nsOut);
         // both in-out neighbors
         vector<ui> nsInOut;
         // exclusive in/out neighbors
@@ -1198,8 +1228,8 @@ private:
 
         // vector<ui> existsIn(g.V, 0);
         // vector<ui> existsOut(g.V, 0);
-        Lookup existsIn(look3, nsIn);
-        Lookup existsOut(look4, nsOut);
+        Lookup existsIn(lookc, nsIn);
+        Lookup existsOut(lookd, nsOut);
         ui round = 1;
 
         for (ui u : nsIn)
@@ -1292,7 +1322,7 @@ private:
         // since in/out neighbors are added, now onwards I is SI and O is SO
         // Calculate and B to two hop graph
         vector<ui> temp;
-        Lookup intersect(look4, temp);
+        Lookup intersect(lookd, temp);
         for (auto u : O)
         {
             for (auto v : g.nsOut[u])
