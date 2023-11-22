@@ -500,7 +500,7 @@ public:
     EnumKPlex(Graph &_g, ui _k1, ui _k2, ui _q) : pruned(_g.V), peelSeq(_g.V),
                                                   g(_g), inDegree(_g.V), outDegree(_g.V),
                                                   dPin(_g.V), dPout(_g.V),
-                                                  dGin(_g.V), dGout(_g.V),
+                                                  dGin(_g.V), dGout(_g.V), block(_g.V),
                                                   k1(_k1), k2(_k2), q(_q), kplexes(0),
                                                   deletedOutEdge(_g.V), cnPP(_g.V), cnPM(_g.V),
                                                   cnMP(_g.V), cnMM(_g.V), look1(_g.V), look2(_g.V),
