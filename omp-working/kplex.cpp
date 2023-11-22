@@ -21,24 +21,24 @@ enum Direction
     In
 };
 
-static thread_local vector<ui> dPin;
-static thread_local vector<ui> dPout;
+thread_local vector<ui> dPin;
+thread_local vector<ui> dPout;
 
 // G is a graph induced by P \cup C
-static thread_local vector<ui> dGin;
-static thread_local vector<ui> dGout;
+thread_local vector<ui> dGin;
+thread_local vector<ui> dGout;
 
-static thread_local vector<ui> looka, lookb, lookc, lookd;
+thread_local vector<ui> looka, lookb, lookc, lookd;
 
-static thread_local ui vi; // current vertex in degeneracy order for which we are searching kplex
+thread_local ui vi; // current vertex in degeneracy order for which we are searching kplex
 
-static thread_local RandList C;
-static thread_local RandList X;
-static thread_local RandList P;
-static thread_local RandList block;
+thread_local RandList C;
+thread_local RandList X;
+thread_local RandList P;
+thread_local RandList block;
 
-static thread_local vector<ui> rC, rX;
-thread_local ui kplexes;
+thread_local vector<ui> rC, rX;
+thread_local ui kplexes = 0;
 
 class EnumKPlex
 {
