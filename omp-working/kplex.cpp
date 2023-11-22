@@ -1323,6 +1323,7 @@ private:
         }
 
         intersect.erase();
+        buildBlock();
     }
     bool in2HopG(ui u)
     {
@@ -1334,10 +1335,18 @@ private:
         if (pruned[u] or in2HopG(u))
             return;
         block.add(u);
-        if (peelSeq[u] < peelSeq[vi])
-            X.add(u);
-        else
-            addToC(u);
+    }
+
+    void buildBlock()
+    {
+        for (ui i = 0; i < block.size(); i++)
+        {
+            ui u = block[i];
+            if (peelSeq[u] < peelSeq[vi])
+                X.add(u);
+            else
+                addToC(u);
+        }
         // cout<<P.front()<<endl;
     }
     void print(string msg, auto &vec)

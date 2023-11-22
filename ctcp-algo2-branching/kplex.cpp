@@ -3,7 +3,7 @@
 #define PuCSize (P.size() + C.size())
 
 #define ITERATIVE_PRUNE
-// #define BRANCHING
+#define BRANCHING
 #define LOOKAHEAD
 #define CTCP
 
@@ -881,6 +881,10 @@ private:
 
         X.clear();
         block.clear();
+        print("dpin", dPin);
+        print("dpout", dPout);
+        print("dgout", dGout);
+        print("dgin", dGin);
     }
 
     void k1k2CorePrune()
@@ -1345,6 +1349,7 @@ private:
         }
 
         intersect.erase();
+        buildBlock();
     }
     bool inBlock(ui u)
     {
@@ -1356,10 +1361,18 @@ private:
         if (pruned[u] or inBlock(u))
             return;
         block.add(u);
-        if (peelSeq[u] < peelSeq[vi])
-            X.add(u);
-        else
-            addToC(u);
+    }
+    
+    void buildBlock()
+    {
+        for (ui i = 0; i < block.size(); i++)
+        {
+            ui u = block[i];
+            if (peelSeq[u] < peelSeq[vi])
+                X.add(u);
+            else
+                addToC(u);
+        }
         // cout<<P.front()<<endl;
     }
     void print(string msg, auto &vec)
@@ -1376,10 +1389,10 @@ private:
         C.add(u);
         for (ui v : g.nsOut[u])
             if (inBlock(v))
-                dGin[v]++;
+            dGin[v]++;
         for (ui v : g.nsIn[u])
             if (inBlock(v))
-                dGout[v]++;
+            dGout[v]++;
     }
 
     void removeFromC(ui u)
@@ -1387,10 +1400,10 @@ private:
         C.remove(u);
         for (ui v : g.nsOut[u])
             if (inBlock(v))
-                dGin[v]--;
+            dGin[v]--;
         for (ui v : g.nsIn[u])
             if (inBlock(v))
-                dGout[v]--;
+            dGout[v]--;
     }
 
     void PToC(ui u)
@@ -1399,10 +1412,10 @@ private:
         C.add(u);
         for (ui v : g.nsOut[u])
             if (inBlock(v))
-                dPin[v]--;
+            dPin[v]--;
         for (ui v : g.nsIn[u])
             if (inBlock(v))
-                dPout[v]--;
+            dPout[v]--;
     }
 
     void CToP(const ui &u)
@@ -1412,10 +1425,10 @@ private:
         P.add(u);
         for (ui v : g.nsOut[u])
             if (inBlock(v))
-                dPin[v]++;
+            dPin[v]++;
         for (ui v : g.nsIn[u])
             if (inBlock(v))
-                dPout[v]++;
+            dPout[v]++;
     }
 
     void CToX(const ui &u)
