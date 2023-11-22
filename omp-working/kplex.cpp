@@ -83,7 +83,6 @@ public:
             exclude = 1;
             // return;
         }
-        cout << omp_get_thread_num() << " : " << P.size() << " " << C.size() << " " << X.size() << endl;
         P.clear();
         C.clear();
         X.clear();
@@ -105,34 +104,8 @@ public:
         load(pout, dPout);
         load(gin, dGin);
         load(gout, dGout);
-        cout << omp_get_thread_num() << " loaded : " << P.size() << " " << C.size() << " " << X.size() << endl;
-
-        // rC = rc;
-        // rX = rx;
     }
 
-    void unloadThreadData()
-    {
-        // if (exclude)
-        //     return;
-        cout << omp_get_thread_num() << " un-loaded : " << P.size() << " " << C.size() << " " << X.size() << endl;
-        P.clear();
-        C.clear();
-        X.clear();
-        block.clear();
-        auto clear = [&](vector<ui> &vec)
-        {
-            for (ui u : vec)
-            {
-                dPin[u] = 0;
-                dPout[u] = 0;
-                dGin[u] = 0;
-                dGout[u] = 0;
-            }
-        };
-        clear(blk);
-
-    }
 };
 
 class EnumKPlex
@@ -173,7 +146,7 @@ public:
 #endif
 
         cout << " CTCP time: " << chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - tick).count() << " ms" << endl;
-        omp_set_num_threads(10);
+        omp_set_num_threads(20);
 #pragma omp parallel
         {
             // cout<<"N: "<<omp_get_num_threads()<<endl;
