@@ -617,8 +617,7 @@ public:
                                                   recode(_g.V)
     {
 
-        rC.reserve(g.V);
-        rX.reserve(g.V);
+
 
         for (ui i = 0; i < g.V; i++)
         {
