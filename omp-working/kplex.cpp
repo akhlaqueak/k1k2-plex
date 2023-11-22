@@ -884,7 +884,7 @@ private:
             removeFromC(C[0]);
 
         X.clear();
-        block.clear()
+        block.clear();
     }
 
     void k1k2CorePrune()
