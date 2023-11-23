@@ -67,17 +67,11 @@ public:
         blk = block.getData();
         gin = giIn;
         gout = giOut;
-        ui sz = blk.size();
-        dpin.resize(sz);
-        dpout.resize(sz);
-        dgin.resize(sz);
-        dgout.resize(sz);
-        for (ui i = 0; i < sz; i++)
-        {
-            dpin[i] = dPin[i];
-            dpout[i] = dPout[i];
-            dgin[i] = dGin[i];
-            dgout[i] = dGout[i];
+        for(ui i=0;i<blk.size();i++){
+            dpin.push_back(dPin[i]);
+            dpout.push_back(dPout[i]);
+            dgin.push_back(dGin[i]);
+            dgout.push_back(dGout[i]);
         }
         // for (ui u : blk)
         // {
@@ -102,8 +96,8 @@ public:
         block.loadData(blk);
         auto load = [&](auto &vec, auto &dest)
         {
-            for (ui i = 0; i < vec.size(); i++)
-            {
+            for (ui i=0;i<vec.size();i++)
+            {   
                 dest[i] = vec[i];
             }
         };
@@ -112,7 +106,7 @@ public:
         load(dgin, dGin);
         load(dgout, dGout);
         giIn = gin;
-        giOut = gout;
+        giOut =gout;
     }
 };
 
@@ -137,7 +131,7 @@ class EnumKPlex
     vector<ui> recode;
     vector<pair<ui, ui>> Qe;
     vector<ui> Qv;
-    vector<vector<ui>> dGIn, dGOut;
+    vector<vector<ui>> GIn, GOut;
 
 public:
     void enumerate()
@@ -159,10 +153,9 @@ public:
         {
             // cout<<"N: "<<omp_get_num_threads()<<endl;
             // cout<<"id: "<<omp_get_thread_num()<<endl;
-            init(); // initializes thread local vectors...
-            ui k = degenOrder.size();
+            init(); // initializes thread local vectors... 
 #pragma omp for schedule(dynamic)
-            for (ui i = 0; i < dGOut.size() - q + 1; i++)
+        for (ui i = 0; i < GOut.size() - q + 1; i++)
             {
 
                 vi = i;
@@ -745,7 +738,7 @@ private:
         rC.reserve(g.V);
         rX.reserve(g.V);
 
-        ui ds = dGOut.size();
+        ui ds = GOut.size();
         dPin.resize(ds);
         dPout.resize(ds);
         dGin.resize(ds);
@@ -775,8 +768,8 @@ private:
             k++;
         }
         degenOrder.resize(k);
-        dGOut.resize(k);
-        dGIn.resize(k);
+        GOut.resize(k);
+        GIn.resize(k);
         for (ui u = 0; u < g.V; u++)
         {
             if (pruned[u])
@@ -789,17 +782,17 @@ private:
                     continue;
                 ui ru = peelSeq[u];
                 ui rv = peelSeq[v];
-                dGOut[ru].push_back(rv);
-                dGIn[rv].push_back(ru);
+                GOut[ru].push_back(rv);
+                GIn[rv].push_back(ru);
             }
         }
 
-        for (auto &adj : dGOut)
+        for (auto &adj : GOut)
         {
             sort(adj.begin(), adj.end());
             // print("out: ", adj);
         }
-        for (auto &adj : dGIn)
+        for (auto &adj : GIn)
         {
             sort(adj.begin(), adj.end());
             // print("in: ", adj);
@@ -1242,8 +1235,8 @@ private:
 
     void getTwoHopIterativePrunedG(ui s)
     {
-        auto &nsIn = dGIn[s];
-        auto &nsOut = dGOut[s];
+        auto &nsIn = GIn[s];
+        auto &nsOut = GOut[s];
         addTo2HopG(s);
         // auto inLookup = getLookup(nsIn);
         // auto outLookup = getLookup(nsOut);
@@ -1301,7 +1294,7 @@ private:
             }
             for (auto u : O)
             {
-                for (auto v : dGOut[u])
+                for (auto v : GOut[u])
                 {
                     if (existsIn[v] == round)
                     {
@@ -1313,7 +1306,7 @@ private:
 
             for (auto u : I)
             {
-                for (auto v : dGIn[u])
+                for (auto v : GIn[u])
                 {
                     // does it exist in last iteration of O
                     if (existsOut[v] == round)
@@ -1357,7 +1350,7 @@ private:
         Lookup intersect(lookc, temp);
         for (auto u : O)
         {
-            for (auto v : dGOut[u])
+            for (auto v : GOut[u])
             {
                 // v is not already added in 2hop graph
                 if (!inBlock(v))
@@ -1369,7 +1362,7 @@ private:
         }
         for (auto u : O)
         {
-            for (auto v : dGIn[u])
+            for (auto v : GIn[u])
             {
                 if (intersect[v] == 2)
                 {
@@ -1379,7 +1372,7 @@ private:
         }
         for (auto u : I)
         {
-            for (auto v : dGOut[u])
+            for (auto v : GOut[u])
             {
                 if (intersect[v] == 3)
                     intersect[v] = 4;
@@ -1387,7 +1380,7 @@ private:
         }
         for (auto u : I)
         {
-            for (auto v : dGIn[u])
+            for (auto v : GIn[u])
             {
                 if (intersect[v] == 4)
                 {
@@ -1427,13 +1420,13 @@ private:
         for (ui i = 0; i < block.size(); i++)
         {
             ui u = block[i];
-            for (ui v : dGOut[u])
+            for (ui v : GOut[u])
             {
                 if (inBlock(v))
                     giOut[i].push_back(block.getIndex(v));
             }
 
-            for (ui v : dGIn[u])
+            for (ui v : GIn[u])
             {
                 if (inBlock(v))
                     giIn[i].push_back(block.getIndex(v));
@@ -1465,22 +1458,18 @@ private:
     {
         C.add(u);
         for (ui v : giOut[u])
-            if (inBlock(v))
-                dGin[v]++;
+            dGin[v]++;
         for (ui v : giIn[u])
-            if (inBlock(v))
-                dGout[v]++;
+            dGout[v]++;
     }
 
     void removeFromC(ui u)
     {
         C.remove(u);
         for (ui v : giOut[u])
-            if (inBlock(v))
-                dGin[v]--;
+            dGin[v]--;
         for (ui v : giIn[u])
-            if (inBlock(v))
-                dGout[v]--;
+            dGout[v]--;
     }
 
     void PToC(ui u)
@@ -1488,11 +1477,9 @@ private:
         P.remove(u);
         C.add(u);
         for (ui v : giOut[u])
-            if (inBlock(v))
-                dPin[v]--;
+            dPin[v]--;
         for (ui v : giIn[u])
-            if (inBlock(v))
-                dPout[v]--;
+            dPout[v]--;
     }
 
     void CToP(const ui &u)
@@ -1501,11 +1488,9 @@ private:
         C.remove(u);
         P.add(u);
         for (ui v : giOut[u])
-            if (inBlock(v))
-                dPin[v]++;
+            dPin[v]++;
         for (ui v : giIn[u])
-            if (inBlock(v))
-                dPout[v]++;
+            dPout[v]++;
     }
 
     void CToX(const ui &u)
@@ -1539,7 +1524,7 @@ private:
         }
         return true;
     }
-
+    
     ui updateC()
     {
         auto it = rC.end();
