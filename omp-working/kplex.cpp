@@ -204,7 +204,7 @@ public:
 
     void doBranch(auto start)
     {
-        branch(start);
+        branchBase(start);
         // if (isTimeout(start) and C.size() > GRAIN_SIZE)
         //     branch(start);
         // else
