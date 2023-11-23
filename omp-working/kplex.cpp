@@ -63,13 +63,13 @@ class ThreadData
 public:
     ThreadData()
     {
+        auto tick = TIME_NOW;
         p = P.getData();
         c = C.getData();
         x = X.getData();
         blk = block.getData();
         gin = giIn;
         gout = giOut;
-        auto tick = TIME_NOW;
         for (ui i = 0; i < blk.size(); i++)
         {
             dpin.push_back(dPin[i]);
