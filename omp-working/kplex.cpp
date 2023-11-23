@@ -9,7 +9,7 @@
 #define LOOKAHEAD
 #define CTCP
 // time theshold in microseconds...
-#define TIMEOUT_THRESH 100000
+#define TIMEOUT_THRESH 100
 bool isTimeout(auto start_t)
 {
     return duration_cast<microseconds>(steady_clock::now() - start_t).count() > TIMEOUT_THRESH;
