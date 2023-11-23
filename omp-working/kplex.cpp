@@ -63,14 +63,14 @@ class ThreadData
 public:
     ThreadData()
     {
+        auto tick = TIME_NOW;
         p = P.getData();
         c = C.getData();
         x = X.getData();
         blk = block.getData();
-        auto tick = TIME_NOW;
+            ttime += chrono::duration_cast<chrono::microseconds>(TIME_NOW - tick).count();
         gin = giIn;
         gout = giOut;
-            ttime += chrono::duration_cast<chrono::microseconds>(TIME_NOW - tick).count();
         for (ui i = 0; i < blk.size(); i++)
         {
             dpin.push_back(dPin[i]);
