@@ -8,7 +8,11 @@
 #define BRANCHING
 #define LOOKAHEAD
 #define CTCP
-
+#define TIMEOUT_THRESH 1
+        bool isTimeout(auto start_t)
+        {
+            return duration_cast<milliseconds>(steady_clock::now() - start_t).count() > TIMEOUT_THRESH;
+        }
 enum CommonNeighbors
 {
     PM,

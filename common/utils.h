@@ -1,10 +1,6 @@
 #include "graph.h"
 
-#define TIMEOUT_THRESH 10
-        bool isTimeout(auto start_t)
-        {
-            return duration_cast<milliseconds>(steady_clock::now() - start_t).count() > TIMEOUT_THRESH;
-        }
+
 class MBitSet
 {
 private:

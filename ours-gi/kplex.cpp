@@ -1351,12 +1351,14 @@ private:
             for (ui v : g.nsOut[u])
             {
                 ui rv = peelSeq[v];
+                if(rv==-1) continue;
                 if (inBlock(rv))
                     giOut[i].push_back(block.getIndex(rv));
             }
             for (ui v : g.nsIn[u])
             {
                 ui rv = peelSeq[v];
+                if(rv==-1) continue;
                 if (inBlock(rv))
                     giIn[i].push_back(block.getIndex(rv));
             }
