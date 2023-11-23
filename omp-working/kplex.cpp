@@ -150,7 +150,7 @@ public:
         {
             // cout<<"N: "<<omp_get_num_threads()<<endl;
             // cout<<"id: "<<omp_get_thread_num()<<endl;
-
+            init(); // initializes thread local vectors... 
             ui k = degenOrder.size();
 #pragma omp for schedule(dynamic)
         for (ui i = 0; i < dGOut.size() - q + 1; i++)
