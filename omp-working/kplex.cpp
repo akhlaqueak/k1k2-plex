@@ -1524,6 +1524,61 @@ private:
         }
         return true;
     }
+    
+    ui updateC()
+    {
+        auto it = rC.end();
+        for (ui i = 0; i < C.size(); i++)
+        {
+            ui u = C[i];
+            if (!canMoveToP(u))
+            {
+                rC.emplace_back(u);
+            }
+        }
+
+        ui sz = distance(it, rC.end());
+
+        for (; it != rC.end(); it++)
+            removeFromC(*it);
+
+        return sz;
+    }
+
+    ui updateX()
+    {
+        auto it = rX.end();
+        for (ui i = 0; i < X.size(); i++)
+        {
+            ui u = X[i];
+            if (!canMoveToP(u))
+            {
+                rX.emplace_back(u);
+            }
+        }
+
+        ui sz = distance(it, rX.end());
+        for (; it != rX.end(); it++)
+            X.remove(*it);
+        return sz;
+    }
+
+    void recoverX(ui sz)
+    {
+        for (ui i = 0; i < sz; i++)
+        {
+            X.add(rX.back());
+            rX.pop_back();
+        }
+    }
+    void recoverC(ui sz)
+    {
+        for (ui i = 0; i < sz; i++)
+        {
+            addToC(rC.back());
+            rC.pop_back();
+        }
+    }
 };
 
 // thread_local RandList EnumKPlex::dp
