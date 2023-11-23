@@ -3,6 +3,7 @@
 
 #include <bits/stdc++.h>
 using namespace std;
+using namespace chrono;
 typedef unsigned int ui;
 
 #define DS_LOC string("")
