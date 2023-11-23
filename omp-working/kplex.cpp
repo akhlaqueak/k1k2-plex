@@ -69,6 +69,7 @@ public:
         blk = block.getData();
         gin = giIn;
         gout = giOut;
+        auto tick = TIME_NOW;
         for (ui i = 0; i < blk.size(); i++)
         {
             dpin.push_back(dPin[i]);
@@ -76,6 +77,7 @@ public:
             dgin.push_back(dGin[i]);
             dgout.push_back(dGout[i]);
         }
+            ttime += chrono::duration_cast<chrono::microseconds>(TIME_NOW - tick).count();
         // for (ui u : blk)
         // {
         //     dpin.push_back({u, dPin[u]});
