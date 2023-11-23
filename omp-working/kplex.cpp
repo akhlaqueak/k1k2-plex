@@ -213,7 +213,7 @@ public:
         else
             branchBase(start);
 #else
-        // branchBase(start);
+        branchBase(start);
 #endif
     }
 
