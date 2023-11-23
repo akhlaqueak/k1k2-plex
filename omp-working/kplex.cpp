@@ -1,7 +1,7 @@
 #include "../common/utils.h"
 #include "../common/command_line.h"
 #include <omp.h>
-#define GRAIN_SIZE 5
+#define GRAIN_SIZE 10
 #define TIME_NOW chrono::steady_clock::now()
 #define PuCSize (P.size() + C.size())
 #define ITERATIVE_PRUNE
@@ -250,21 +250,21 @@ public:
             return;
 #endif
         ThreadData *td1 = new ThreadData();
-#pragma omp task firstprivate(td1, vc, start)
+#pragma omp task firstprivate(td1, vc)
         {
             ThreadData *temp = new ThreadData();
             td1->loadThreadData();
-            recurSearch(vc, start);
+            recurSearch(vc, TIME_NOW);
             temp->loadThreadData();
         }
 
         ThreadData *td = new ThreadData();
-#pragma omp task firstprivate(td, vc, start)
+#pragma omp task firstprivate(td, vc)
         {
             ThreadData *temp = new ThreadData();
             td->loadThreadData();
             CToX(vc);
-            branch(start);
+            branch(TIME_NOW);
             // recover
             XToC(vc);
             // other branch where P contains u
