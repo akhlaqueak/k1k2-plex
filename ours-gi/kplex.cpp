@@ -26,8 +26,7 @@ class EnumKPlex
     Graph &g;
     ui kplexes;
     ui k1, k2, q;
-    vector<ui> vBoundaryIn;
-    vector<ui> vBoundaryOut;
+
     vector<ui> dPin;
     vector<ui> dPout;
 
@@ -48,8 +47,6 @@ class EnumKPlex
 
     vector<MBitSet> deletedOutEdge;
 
-    vector<MBitSet> edgeIn, edgeOut;
-    vector<ui> recode;
 
     vector<pair<ui, ui>> Qe;
     vector<ui> Qv;
@@ -85,6 +82,17 @@ public:
 #else
         initNeighborsMapping();
 #endif
+        ui ds = degenOrder.size();
+        dPin.resize(ds);
+        dPout.resize(ds);
+        dGin.resize(ds);
+        dGout.resize(ds);
+        dPout.resize(ds);
+        C.init(ds);
+        X.init(ds);
+        P.init(ds);
+        block.init(ds);
+
 
         ui iterative = 0;
 
@@ -498,22 +506,19 @@ public:
 
     EnumKPlex(Graph &_g, ui _k1, ui _k2, ui _q) : pruned(_g.V), peelSeq(_g.V),
                                                   g(_g), inDegree(_g.V), outDegree(_g.V),
-                                                  dPin(_g.V), dPout(_g.V),
-                                                  dGin(_g.V), dGout(_g.V), block(_g.V),
+                                                //   dPin(_g.V), dPout(_g.V),
+                                                //   dGin(_g.V), dGout(_g.V), block(_g.V),
                                                   k1(_k1), k2(_k2), q(_q), kplexes(0),
                                                   deletedOutEdge(_g.V), cnPP(_g.V), cnPM(_g.V),
                                                   cnMP(_g.V), cnMM(_g.V), look1(_g.V), look2(_g.V),
-                                                  look3(_g.V), look4(_g.V), look5(_g.V), recode(_g.V),
-                                                  P(_g.V), C(_g.V), X(_g.V),
+                                                  look3(_g.V), look4(_g.V), look5(_g.V), 
+                                                //   P(_g.V), C(_g.V), X(_g.V),
                                                   counts(1000)
     {
-        vBoundaryIn.reserve(_g.V);
-        vBoundaryOut.reserve(_g.V);
 
         rC.reserve(g.V);
         rX.reserve(g.V);
 
-        degenOrder.reserve(_g.V);
 
         for (ui i = 0; i < g.V; i++)
         {
@@ -1093,32 +1098,9 @@ private:
             degenOrder[k++] = u;
         }
         degenOrder.resize(k);
-        initNeighborsMapping();
     }
 
-    void initNeighborsMapping()
-    {
-        ui VV = degenOrder.size();
-        cout << "Remaining vertices to process..." << VV << endl;
-        edgeOut.resize(VV);
-        edgeIn.resize(VV);
-        for (ui i = 0; i < VV; i++)
-        {
-            edgeOut[i] = MBitSet(VV);
-            edgeIn[i] = MBitSet(VV);
-            recode[degenOrder[i]] = i;
-        }
-        for (ui i = 0; i < VV; i++)
-        {
-            ui u = degenOrder[i];
-            ui ru = recode[u];
-            for (ui j = 0; j < g.nsOut[u].size(); j++)
-                edgeOut[ru].set(recode[g.nsOut[u][j]]);
 
-            for (ui j = 0; j < g.nsIn[u].size(); j++)
-                edgeIn[ru].set(recode[g.nsIn[u][j]]);
-        }
-    }
 
     bool intersectsAll(auto &X, auto &Y)
     {
