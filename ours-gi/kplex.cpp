@@ -47,7 +47,6 @@ class EnumKPlex
 
     vector<MBitSet> deletedOutEdge;
 
-
     vector<pair<ui, ui>> Qe;
     vector<ui> Qv;
     vector<ui> counts;
@@ -60,7 +59,7 @@ class EnumKPlex
     RandList X;
     RandList P;
     RandList block;
-    vector<vector<ui> > giIn, giOut;
+    vector<vector<ui>> giIn, giOut;
 
     vector<ui> rC, rX;
 
@@ -88,11 +87,10 @@ public:
         dGin.resize(ds);
         dGout.resize(ds);
         dPout.resize(ds);
-        C.init(ds);
-        X.init(ds);
-        P.init(ds);
-        block.init(ds);
-
+        // C.init(ds);
+        // X.init(ds);
+        // P.init(ds);
+        // block.init(ds);
 
         ui iterative = 0;
 
@@ -506,19 +504,18 @@ public:
 
     EnumKPlex(Graph &_g, ui _k1, ui _k2, ui _q) : pruned(_g.V), peelSeq(_g.V),
                                                   g(_g), inDegree(_g.V), outDegree(_g.V),
-                                                //   dPin(_g.V), dPout(_g.V),
-                                                //   dGin(_g.V), dGout(_g.V), block(_g.V),
+                                                  //   dPin(_g.V), dPout(_g.V),
+                                                  //   dGin(_g.V), dGout(_g.V),
                                                   k1(_k1), k2(_k2), q(_q), kplexes(0),
                                                   deletedOutEdge(_g.V), cnPP(_g.V), cnPM(_g.V),
                                                   cnMP(_g.V), cnMM(_g.V), look1(_g.V), look2(_g.V),
-                                                  look3(_g.V), look4(_g.V), look5(_g.V), 
-                                                //   P(_g.V), C(_g.V), X(_g.V),
+                                                  look3(_g.V), look4(_g.V), look5(_g.V),
+                                                  P(_g.V), C(_g.V), X(_g.V), block(_g.V),
                                                   counts(1000)
     {
 
         rC.reserve(g.V);
         rX.reserve(g.V);
-
 
         for (ui i = 0; i < g.V; i++)
         {
@@ -1100,8 +1097,6 @@ private:
         degenOrder.resize(k);
     }
 
-
-
     bool intersectsAll(auto &X, auto &Y)
     {
         // checkes that every element in X is in Y
@@ -1339,25 +1334,26 @@ private:
             return;
         block.add(u);
     }
-    
+
     void buildBlock()
     {
         giIn.clear();
         giOut.clear();
         giIn.resize(block.size());
         giOut.resize(block.size());
-        for(ui i=0;i<block.size();i++){
+        for (ui i = 0; i < block.size(); i++)
+        {
             ui u = block[i];
-            for(ui v: g.nsOut[u])
-                if(inBlock(v))
+            for (ui v : g.nsOut[u])
+                if (inBlock(v))
                     giOut[i].push_back(block.getIndex(v));
-            for(ui v: g.nsIn[u])
-                if(inBlock(v))
-                    giIn[i].push_back(block.getIndex(v));   
+            for (ui v : g.nsIn[u])
+                if (inBlock(v))
+                    giIn[i].push_back(block.getIndex(v));
         }
-        for(auto& adj: giIn)
+        for (auto &adj : giIn)
             sort(adj.begin(), adj.end());
-        for(auto& adj: giOut)
+        for (auto &adj : giOut)
             sort(adj.begin(), adj.end());
         for (ui i = 0; i < block.size(); i++)
         {
