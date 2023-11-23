@@ -8,7 +8,7 @@
 #define BRANCHING
 #define LOOKAHEAD
 #define CTCP
-// time theshold in microseconds... 
+// time theshold in microseconds...
 #define TIMEOUT_THRESH 10000
 bool isTimeout(auto start_t)
 {
@@ -35,7 +35,7 @@ thread_local vector<ui> dPout;
 thread_local vector<ui> dGin;
 thread_local vector<ui> dGout;
 
-thread_local vector<vector<ui>>
+thread_local vector<vector<ui>> giIn, giOut;
 
 thread_local vector<ui> looka, lookb, lookc, lookd;
 
@@ -51,11 +51,12 @@ thread_local ui kplexes = 0;
 
 class ThreadData
 {
-    vector<pair<ui, ui>> pin;
-    vector<pair<ui, ui>> pout;
-    vector<pair<ui, ui>> gin;
-    vector<pair<ui, ui>> gout;
+    vector<pair<ui, ui>> dpin;
+    vector<pair<ui, ui>> dpout;
+    vector<pair<ui, ui>> dgin;
+    vector<pair<ui, ui>> dgout;
     vector<ui> p, c, x, blk;
+    vector<vector<ui>> gin, gout;
 
 public:
     ThreadData()
@@ -64,13 +65,15 @@ public:
         c = C.getData();
         x = X.getData();
         blk = block.getData();
+        gin = giIn;
+        gout = giOut;
 
         for (ui u : blk)
         {
-            pin.push_back({u, dPin[u]});
-            pout.push_back({u, dPout[u]});
-            gin.push_back({u, dGin[u]});
-            gout.push_back({u, dGout[u]});
+            dpin.push_back({u, dPin[u]});
+            dpout.push_back({u, dPout[u]});
+            dgin.push_back({u, dGin[u]});
+            dgout.push_back({u, dGout[u]});
         }
     }
 
@@ -95,10 +98,12 @@ public:
                 dest[u] = data;
             }
         };
-        load(pin, dPin);
-        load(pout, dPout);
-        load(gin, dGin);
-        load(gout, dGout);
+        load(dpin, dPin);
+        load(dpout, dPout);
+        load(dgin, dGin);
+        load(dgout, dGout);
+        giIn = gin;
+        giOut =gout;
     }
 };
 
@@ -123,6 +128,7 @@ class EnumKPlex
     vector<ui> recode;
     vector<pair<ui, ui>> Qe;
     vector<ui> Qv;
+    vector<vector<ui>> dGIn, dGOut;
 
 public:
     void enumerate()
@@ -136,7 +142,7 @@ public:
 #ifdef CTCP
         applyCoreTrussPruning();
 #else
-        initNeighborsMapping();
+        shrinkGraph();
 #endif
 
         cout << " CTCP time: " << chrono::duration_cast<chrono::milliseconds>(TIME_NOW - tick).count() << " ms" << endl;
@@ -144,26 +150,13 @@ public:
         {
             // cout<<"N: "<<omp_get_num_threads()<<endl;
             // cout<<"id: "<<omp_get_thread_num()<<endl;
-            C.init(g.V);
-            P.init(g.V);
-            X.init(g.V);
-            block.init(g.V);
-            dPin.resize(g.V);
-            dPout.resize(g.V);
-            dGin.resize(g.V);
-            dGout.resize(g.V);
-            rC.reserve(g.V);
-            rX.reserve(g.V);
-            looka.resize(g.V);
-            lookb.resize(g.V);
-            lookc.resize(g.V);
-            lookd.resize(g.V);
+
             ui k = degenOrder.size();
 #pragma omp for schedule(dynamic)
-            for (ui i = 0; i < k; i++)
+        for (ui i = 0; i < dGOut.size() - q + 1; i++)
             {
 
-                vi = degenOrder[i];
+                vi = i;
 #ifdef ITERATIVE_PRUNE
                 getTwoHopIterativePrunedG(vi);
 #else
@@ -172,7 +165,7 @@ public:
 
 #pragma omp taskgroup
                 {
-                    recurSearch(vi, TIME_NOW);
+                    recurSearch(0, TIME_NOW);
                 }
                 reset(); // clears C and X
             }
@@ -737,7 +730,73 @@ private:
                 break;
         }
 
-        compactAdjListsWithRemovedEdges();
+        shrinkGraph();
+    }
+
+    void init()
+    {
+        rC.reserve(g.V);
+        rX.reserve(g.V);
+
+        ui ds = dGOut.size();
+        dPin.resize(ds);
+        dPout.resize(ds);
+        dGin.resize(ds);
+        dGout.resize(ds);
+        dPout.resize(ds);
+        C.init(ds);
+        X.init(ds);
+        P.init(ds);
+        block.init(ds);
+        looka.resize(ds);
+        lookb.resize(ds);
+        lookc.resize(ds);
+        lookd.resize(ds);
+    }
+    void shrinkGraph()
+    {
+        ui k = 0;
+        for (ui i = 0; i < degenOrder.size(); i++)
+        {
+            ui u = degenOrder[i];
+            if (pruned[u])
+            {
+                continue;
+            }
+            peelSeq[u] = k;
+            degenOrder[k] = u;
+            k++;
+        }
+        degenOrder.resize(k);
+        dGOut.resize(k);
+        dGIn.resize(k);
+        for (ui u = 0; u < g.V; u++)
+        {
+            if (pruned[u])
+                continue;
+
+            for (ui j = 0; j < g.nsOut[u].size(); j++)
+            {
+                ui v = g.nsOut[u][j];
+                if (pruned[v] or deletedOutEdge[u].test(j))
+                    continue;
+                ui ru = peelSeq[u];
+                ui rv = peelSeq[v];
+                dGOut[ru].push_back(rv);
+                dGIn[rv].push_back(ru);
+            }
+        }
+
+        for (auto &adj : dGOut)
+        {
+            sort(adj.begin(), adj.end());
+            // print("out: ", adj);
+        }
+        for (auto &adj : dGIn)
+        {
+            sort(adj.begin(), adj.end());
+            // print("in: ", adj);
+        }
     }
 
     void deleteEdge(ui u, ui vIndu)
@@ -1174,135 +1233,10 @@ private:
         }
     }
 
-    void compactAdjListsWithRemovedEdges()
-    {
-        for (ui u = 0; u < g.V; u++)
-            g.nsIn[u].clear();
-
-        for (ui u = 0; u < g.V; u++)
-        {
-            if (pruned[u])
-            {
-                continue;
-            }
-            // out nieghbors are pruned by deleted edges as well
-            // compact(g.nsOut[u], deletedOutEdge[u]);
-            compact(g.nsOut[u], deletedOutEdge[u]);
-
-            for (ui v : g.nsOut[u])
-            {
-                g.nsIn[v].push_back(u);
-            }
-        }
-        for (ui u = 0; u < g.V; u++)
-            sort(g.nsIn[u].begin(), g.nsIn[u].end());
-        ui k = 0;
-        for (ui i = 0; i < degenOrder.size(); i++)
-        {
-            ui u = degenOrder[i];
-            if (pruned[u])
-                continue;
-            degenOrder[k++] = u;
-        }
-        degenOrder.resize(k);
-        initNeighborsMapping();
-    }
-
-    void initNeighborsMapping()
-    {
-        ui VV = degenOrder.size();
-        cout << "Remaining vertices to process..." << VV << endl;
-        edgeOut.resize(VV);
-        edgeIn.resize(VV);
-        for (ui i = 0; i < VV; i++)
-        {
-            edgeOut[i] = MBitSet(VV);
-            edgeIn[i] = MBitSet(VV);
-            recode[degenOrder[i]] = i;
-        }
-        for (ui i = 0; i < VV; i++)
-        {
-            ui u = degenOrder[i];
-            ui ru = recode[u];
-            for (ui j = 0; j < g.nsOut[u].size(); j++)
-                edgeOut[ru].set(recode[g.nsOut[u][j]]);
-
-            for (ui j = 0; j < g.nsIn[u].size(); j++)
-                edgeIn[ru].set(recode[g.nsIn[u][j]]);
-        }
-    }
-
-    bool intersectsAll(auto &X, auto &Y)
-    {
-        // checkes that every element in X is in Y
-        // ? do we need to care about pruned vertices? probably not, because pruned vertices can't be in X
-        for (auto x : X)
-        {
-            if (!binary_search(Y.begin(), Y.end(), x))
-                return false;
-        }
-        return true;
-    }
-
-    ui updateC()
-    {
-        auto it = rC.end();
-        for (ui i = 0; i < C.size(); i++)
-        {
-            ui u = C[i];
-            if (!canMoveToP(u))
-            {
-                rC.emplace_back(u);
-            }
-        }
-
-        ui sz = distance(it, rC.end());
-
-        for (; it != rC.end(); it++)
-            removeFromC(*it);
-
-        return sz;
-    }
-
-    ui updateX()
-    {
-        auto it = rX.end();
-        for (ui i = 0; i < X.size(); i++)
-        {
-            ui u = X[i];
-            if (!canMoveToP(u))
-            {
-                rX.emplace_back(u);
-            }
-        }
-
-        ui sz = distance(it, rX.end());
-        for (; it != rX.end(); it++)
-            X.remove(*it);
-        return sz;
-    }
-
-    void recoverX(ui sz)
-    {
-        for (ui i = 0; i < sz; i++)
-        {
-            X.add(rX.back());
-            rX.pop_back();
-        }
-    }
-    void recoverC(ui sz)
-    {
-        for (ui i = 0; i < sz; i++)
-        {
-            addToC(rC.back());
-            rC.pop_back();
-        }
-    }
-    // calculates two-hop iterative pruned graph according to Algo 2
     void getTwoHopIterativePrunedG(ui s)
     {
-        auto &nsIn = g.nsIn[s];
-        auto &nsOut = g.nsOut[s];
+        auto &nsIn = dGIn[s];
+        auto &nsOut = dGOut[s];
         addTo2HopG(s);
         // auto inLookup = getLookup(nsIn);
         // auto outLookup = getLookup(nsOut);
@@ -1360,7 +1294,7 @@ private:
             }
             for (auto u : O)
             {
-                for (auto v : g.nsOut[u])
+                for (auto v : dGOut[u])
                 {
                     if (existsIn[v] == round)
                     {
@@ -1372,7 +1306,7 @@ private:
 
             for (auto u : I)
             {
-                for (auto v : g.nsIn[u])
+                for (auto v : dGIn[u])
                 {
                     // does it exist in last iteration of O
                     if (existsOut[v] == round)
@@ -1413,13 +1347,13 @@ private:
         // since in/out neighbors are added, now onwards I is SI and O is SO
         // Calculate and B to two hop graph
         vector<ui> temp;
-        Lookup intersect(lookd, temp);
+        Lookup intersect(lookc, temp);
         for (auto u : O)
         {
-            for (auto v : g.nsOut[u])
+            for (auto v : dGOut[u])
             {
                 // v is not already added in 2hop graph
-                if (!in2HopG(v))
+                if (!inBlock(v))
                 {
                     temp.push_back(v);
                     intersect[v] = 2;
@@ -1428,7 +1362,7 @@ private:
         }
         for (auto u : O)
         {
-            for (auto v : g.nsIn[u])
+            for (auto v : dGIn[u])
             {
                 if (intersect[v] == 2)
                 {
@@ -1438,7 +1372,7 @@ private:
         }
         for (auto u : I)
         {
-            for (auto v : g.nsOut[u])
+            for (auto v : dGOut[u])
             {
                 if (intersect[v] == 3)
                     intersect[v] = 4;
@@ -1446,7 +1380,7 @@ private:
         }
         for (auto u : I)
         {
-            for (auto v : g.nsIn[u])
+            for (auto v : dGIn[u])
             {
                 if (intersect[v] == 4)
                 {
@@ -1458,27 +1392,57 @@ private:
         intersect.erase();
         buildBlock();
     }
-    bool in2HopG(ui u)
+    bool inBlock(ui u)
     {
         return block.contains(u);
     }
     void addTo2HopG(ui u)
     {
-
-        if (pruned[u] or in2HopG(u))
+        if (inBlock(u))
             return;
         block.add(u);
     }
 
     void buildBlock()
     {
+        giIn.resize(block.size());
+        giOut.resize(block.size());
+        for (auto &adj : giIn)
+        {
+            adj.clear();
+            adj.reserve(block.size());
+        }
+        for (auto &adj : giOut)
+        {
+            adj.clear();
+            adj.reserve(block.size());
+        }
         for (ui i = 0; i < block.size(); i++)
         {
             ui u = block[i];
-            if (peelSeq[u] < peelSeq[vi])
-                X.add(u);
+            for (ui v : dGOut[u])
+            {
+                if (inBlock(v))
+                    giOut[i].push_back(block.getIndex(v));
+            }
+
+            for (ui v : dGIn[u])
+            {
+                if (inBlock(v))
+                    giIn[i].push_back(block.getIndex(v));
+            }
+        }
+        for (auto &adj : giIn)
+            sort(adj.begin(), adj.end());
+        for (auto &adj : giOut)
+            sort(adj.begin(), adj.end());
+        for (ui i = 0; i < block.size(); i++)
+        {
+            ui u = block[i];
+            if (u < vi)
+                X.add(i);
             else
-                addToC(u);
+                addToC(i);
         }
         // cout<<P.front()<<endl;
     }
@@ -1486,43 +1450,36 @@ private:
     {
         cout << msg;
         for (auto u : vec)
-            if (u)
-                cout << u << " ";
+            cout << u << " ";
         cout << endl;
     }
 
     void addToC(ui u)
     {
         C.add(u);
-        for (ui v : g.nsOut[u])
-            if (in2HopG(v))
-                dGin[v]++;
-        for (ui v : g.nsIn[u])
-            if (in2HopG(v))
-                dGout[v]++;
+        for (ui v : giOut[u])
+            dGin[v]++;
+        for (ui v : giIn[u])
+            dGout[v]++;
     }
 
     void removeFromC(ui u)
     {
         C.remove(u);
-        for (ui v : g.nsOut[u])
-            if (in2HopG(v))
-                dGin[v]--;
-        for (ui v : g.nsIn[u])
-            if (in2HopG(v))
-                dGout[v]--;
+        for (ui v : giOut[u])
+            dGin[v]--;
+        for (ui v : giIn[u])
+            dGout[v]--;
     }
 
     void PToC(ui u)
     {
         P.remove(u);
         C.add(u);
-        for (ui v : g.nsOut[u])
-            if (in2HopG(v))
-                dPin[v]--;
-        for (ui v : g.nsIn[u])
-            if (in2HopG(v))
-                dPout[v]--;
+        for (ui v : giOut[u])
+            dPin[v]--;
+        for (ui v : giIn[u])
+            dPout[v]--;
     }
 
     void CToP(const ui &u)
@@ -1530,12 +1487,10 @@ private:
         // assert(Cand.contains(u));
         C.remove(u);
         P.add(u);
-        for (ui v : g.nsOut[u])
-            if (in2HopG(v))
-                dPin[v]++;
-        for (ui v : g.nsIn[u])
-            if (in2HopG(v))
-                dPout[v]++;
+        for (ui v : giOut[u])
+            dPin[v]++;
+        for (ui v : giIn[u])
+            dPout[v]++;
     }
 
     void CToX(const ui &u)
@@ -1557,13 +1512,14 @@ private:
         for (ui i = 0; i < P.size(); i++)
         {
             ui v = P.get(i);
-            ui ru = recode[u];
-            ui rv = recode[v];
+            // ui ru = recode[u];
+            // ui rv = recode[v];
             // should be in-connected to every out-boundary vertex
-            if (dPout[v] + k1 == P.size() && !edgeIn[ru].test(rv))
+            // if (dPout[v] + k1 == P.size() && !edgeIn[ru].test(rv))
+            if (dPout[v] + k1 == P.size() && !binary_search(giIn[u].begin(), giIn[u].end(), v))
                 return false;
             // should be out-connected to every in-boundary vertex
-            if (dPin[v] + k2 == P.size() && !edgeOut[ru].test(rv))
+            if (dPin[v] + k2 == P.size() && !binary_search(giOut[u].begin(), giOut[u].end(), v))
                 return false;
         }
         return true;
