@@ -165,7 +165,7 @@ public:
                 getTwoHopG(vi);
 #endif
 
-#pragma omp taskgroup
+// #pragma omp taskgroup
                 {
                     recurSearch(0, TIME_NOW);
                 }
@@ -204,10 +204,11 @@ public:
 
     void doBranch(auto start)
     {
-        if (isTimeout(start) and C.size() > GRAIN_SIZE)
-            branch(start);
-        else
-            branchBase(start);
+        branch(start);
+        // if (isTimeout(start) and C.size() > GRAIN_SIZE)
+        //     branch(start);
+        // else
+        //     branchBase(start);
     }
 
     void branch(auto start)
@@ -743,11 +744,12 @@ private:
         dPout.resize(ds);
         dGin.resize(ds);
         dGout.resize(ds);
-        dPout.resize(ds);
+
         C.init(ds);
         X.init(ds);
         P.init(ds);
         block.init(ds);
+
         looka.resize(ds);
         lookb.resize(ds);
         lookc.resize(ds);
