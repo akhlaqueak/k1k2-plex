@@ -49,7 +49,7 @@ thread_local RandList block;
 
 thread_local vector<ui> rC, rX;
 thread_local ui kplexes = 0;
-thread_local ui tm = 0;
+thread_local ui ttime = 0;
 
 class ThreadData
 {
@@ -168,7 +168,7 @@ public:
                 getTwoHopG(vi);
 #endif
 
-        cout<<"copy time ns"<<tm<<endl;
+        cout<<"copy time ns"<<ttime<<endl;
 #ifdef TASKGROUP
 #pragma omp taskgroup
 #endif
@@ -259,28 +259,28 @@ public:
 #endif
         auto tick = TIME_NOW;
         ThreadData *td1 = new ThreadData();
-        tm += chrono::duration_cast<chrono::microseconds>(TIME_NOW - tick).count();
+        ttime += chrono::duration_cast<chrono::microseconds>(TIME_NOW - tick).count();
 
 #pragma omp task firstprivate(td1, vc)
         {
             tick = TIME_NOW;
             ThreadData *temp = new ThreadData();
             td1->loadThreadData();
-            tm += chrono::duration_cast<chrono::microseconds>(TIME_NOW - tick).count();
+            ttime += chrono::duration_cast<chrono::microseconds>(TIME_NOW - tick).count();
             recurSearch(vc, TIME_NOW);
             tick = TIME_NOW;
             temp->loadThreadData();
-            tm += chrono::duration_cast<chrono::microseconds>(TIME_NOW - tick).count();
+            ttime += chrono::duration_cast<chrono::microseconds>(TIME_NOW - tick).count();
         }
         tick = TIME_NOW;
         ThreadData *td = new ThreadData();
-        tm += chrono::duration_cast<chrono::microseconds>(TIME_NOW - tick).count();
+        ttime += chrono::duration_cast<chrono::microseconds>(TIME_NOW - tick).count();
 #pragma omp task firstprivate(td, vc)
         {
             tick = TIME_NOW;
             ThreadData *temp = new ThreadData();
             td->loadThreadData();
-            tm += chrono::duration_cast<chrono::microseconds>(TIME_NOW - tick).count();
+            ttime += chrono::duration_cast<chrono::microseconds>(TIME_NOW - tick).count();
             CToX(vc);
             branch(TIME_NOW);
             // recover
@@ -288,7 +288,7 @@ public:
             // other branch where P contains u
             tick = TIME_NOW;
             temp->loadThreadData();
-            tm += chrono::duration_cast<chrono::microseconds>(TIME_NOW - tick).count();
+            ttime += chrono::duration_cast<chrono::microseconds>(TIME_NOW - tick).count();
         }
     }
     void branchBase(auto start)
