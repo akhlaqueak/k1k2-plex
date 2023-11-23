@@ -165,7 +165,7 @@ public:
                 getTwoHopG(vi);
 #endif
 
-// #pragma omp taskgroup
+#pragma omp taskgroup
                 {
                     recurSearch(0, TIME_NOW);
                 }
