@@ -10,7 +10,7 @@
 #define CTCP
 // time theshold in microseconds...
 #define TIMEOUT_THRESH 100
-// #define TASKGROUP
+#define TASKGROUP
 bool isTimeout(auto start_t)
 {
     return duration_cast<microseconds>(steady_clock::now() - start_t).count() > TIMEOUT_THRESH;
@@ -49,6 +49,7 @@ thread_local RandList block;
 
 thread_local vector<ui> rC, rX;
 thread_local ui kplexes = 0;
+thread_local ui tm = 0;
 
 class ThreadData
 {
@@ -255,26 +256,38 @@ public:
         if (lookAheadSolutionExists(vpOut, vpIn))
             return;
 #endif
+        auto tick = TIME_NOW;
         ThreadData *td1 = new ThreadData();
+        tm += chrono::duration_cast<chrono::microseconds>(TIME_NOW - tick).count();
+
 #pragma omp task firstprivate(td1, vc)
         {
+            tick = TIME_NOW;
             ThreadData *temp = new ThreadData();
             td1->loadThreadData();
+            tm += chrono::duration_cast<chrono::microseconds>(TIME_NOW - tick).count();
             recurSearch(vc, TIME_NOW);
+            tick = TIME_NOW;
             temp->loadThreadData();
+            tm += chrono::duration_cast<chrono::microseconds>(TIME_NOW - tick).count();
         }
-
+        tick = TIME_NOW;
         ThreadData *td = new ThreadData();
+        tm += chrono::duration_cast<chrono::microseconds>(TIME_NOW - tick).count();
 #pragma omp task firstprivate(td, vc)
         {
+            tick = TIME_NOW;
             ThreadData *temp = new ThreadData();
             td->loadThreadData();
+            tm += chrono::duration_cast<chrono::microseconds>(TIME_NOW - tick).count();
             CToX(vc);
             branch(TIME_NOW);
             // recover
             XToC(vc);
             // other branch where P contains u
+            tick = TIME_NOW;
             temp->loadThreadData();
+            tm += chrono::duration_cast<chrono::microseconds>(TIME_NOW - tick).count();
         }
     }
     void branchBase(auto start)
