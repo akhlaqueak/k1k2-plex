@@ -8,6 +8,7 @@
 #define BRANCHING
 #define LOOKAHEAD
 #define CTCP
+// time theshold in microseconds... 
 #define TIMEOUT_THRESH 10000
 bool isTimeout(auto start_t)
 {
@@ -33,6 +34,8 @@ thread_local vector<ui> dPout;
 // G is a graph induced by P \cup C
 thread_local vector<ui> dGin;
 thread_local vector<ui> dGout;
+
+thread_local vector<vector<ui>>
 
 thread_local vector<ui> looka, lookb, lookc, lookd;
 

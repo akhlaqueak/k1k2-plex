@@ -60,7 +60,7 @@ class EnumKPlex
     RandList P;
     RandList block;
     vector<vector<ui>> giIn, giOut; // two-hop graph
-    vector<vector<ui>> GIn, GOut; // shrinked graph
+    vector<vector<ui>> GIn, GOut;   // shrinked graph
 
     vector<ui> rC, rX;
 
@@ -80,18 +80,8 @@ public:
 #ifdef CTCP
         applyCoreTrussPruning();
 #else
-        initNeighborsMapping();
+        shrinkGraph();
 #endif
-        ui ds = GOut.size();
-        dPin.resize(ds);
-        dPout.resize(ds);
-        dGin.resize(ds);
-        dGout.resize(ds);
-        dPout.resize(ds);
-        C.init(ds);
-        X.init(ds);
-        P.init(ds);
-        block.init(ds);
 
         ui iterative = 0;
 
@@ -107,7 +97,8 @@ public:
 #endif
             auto t2 = chrono::steady_clock::now();
             iterative += chrono::duration_cast<chrono::microseconds>(t2 - t1).count();
-            recurSearch(block.getIndex(vi));
+            // start from first vertex
+            recurSearch(0);
             reset(); // clears C and X
         }
         cout << "Total (" << k1 << "," << k2 << ")-plexes of at least " << q << " size: " << kplexes << endl;
@@ -628,7 +619,7 @@ private:
                 break;
         }
 
-        compactAdjListsWithRemovedEdges();
+        shrinkGraph();
     }
 
     void deleteEdge(ui u, ui vIndu)
@@ -1065,7 +1056,7 @@ private:
         }
     }
 
-    void compactAdjListsWithRemovedEdges()
+    void shrinkGraph()
     {
         ui k = 0;
         for (ui i = 0; i < degenOrder.size(); i++)
@@ -1099,14 +1090,27 @@ private:
             }
         }
 
-        for (auto &adj : GOut){
+        for (auto &adj : GOut)
+        {
             sort(adj.begin(), adj.end());
             // print("out: ", adj);
         }
-        for (auto &adj : GIn){
+        for (auto &adj : GIn)
+        {
             sort(adj.begin(), adj.end());
             // print("in: ", adj);
         }
+
+        ui ds = GOut.size();
+        dPin.resize(ds);
+        dPout.resize(ds);
+        dGin.resize(ds);
+        dGout.resize(ds);
+        dPout.resize(ds);
+        C.init(ds);
+        X.init(ds);
+        P.init(ds);
+        block.init(ds);
     }
 
     bool intersectsAll(auto &X, auto &Y)
@@ -1348,10 +1352,16 @@ private:
 
     void buildBlock()
     {
-        giIn.clear();
-        giOut.clear();
         giIn.resize(block.size());
         giOut.resize(block.size());
+        for (auto &adj : giIn){
+            adj.clear();
+            adj.reserve(block.size());
+        }
+        for (auto &adj : giOut){
+            adj.clear();
+            adj.reserve(block.size());
+        }
         for (ui i = 0; i < block.size(); i++)
         {
             ui u = block[i];
@@ -1366,7 +1376,6 @@ private:
                 if (inBlock(v))
                     giIn[i].push_back(block.getIndex(v));
             }
-
         }
         for (auto &adj : giIn)
             sort(adj.begin(), adj.end());
@@ -1386,7 +1395,7 @@ private:
     {
         cout << msg;
         for (auto u : vec)
-                cout << u << " ";
+            cout << u << " ";
         cout << endl;
     }
 
