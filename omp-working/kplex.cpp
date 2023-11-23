@@ -168,6 +168,7 @@ public:
                 getTwoHopG(vi);
 #endif
 
+        cout<<"copy time ns"<<tm<<endl;
 #ifdef TASKGROUP
 #pragma omp taskgroup
 #endif
@@ -176,7 +177,6 @@ public:
                 }
                 reset(); // clears C and X
             }
-        cout<<"copy time ns"<<tm<<endl;
         }
         ui total = 0;
 #pragma omp parallel reduction(+ : total)
