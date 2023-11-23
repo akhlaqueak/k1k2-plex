@@ -5,7 +5,7 @@
 #define TIME_NOW chrono::steady_clock::now()
 #define PuCSize (P.size() + C.size())
 #define ITERATIVE_PRUNE
-#define BRANCHING
+// #define BRANCHING
 #define LOOKAHEAD
 #define CTCP
 // time theshold in microseconds...
@@ -466,62 +466,6 @@ public:
             return vpIn;
     }
 
-    ui pickvpFromP(ui vp, Direction &dir)
-    {
-
-        ui vpOut = -1, vpIn = -1;
-        ui vpOutDegree = 0, vpInDegree = 0;
-
-        for (ui i = 0; i < P.size(); i++)
-        {
-            ui u = P[i];
-            if (dGout[u] + k1 < PuCSize)
-            {
-                if (vpOut == -1 or dGout[u] < vpOutDegree)
-                {
-                    vpOut = u;
-                    vpOutDegree = dGout[u];
-                }
-            }
-
-            if (dGin[u] + k2 < PuCSize)
-            {
-                if (vpIn == -1 or dGin[u] < vpInDegree)
-                {
-                    vpIn = u;
-                    vpInDegree = dGin[u];
-                }
-            }
-        }
-        if (vpOut != -1 and vpIn != -1)
-        {
-            ui outSupport = k1 - (P.size() - dPout[vpOut]);
-            ui inSupport = k2 - (P.size() - dPin[vpIn]);
-            if (outSupport < inSupport)
-            {
-                dir = Out;
-                vp = vpOut;
-            }
-            else
-            {
-                dir = In;
-                vp = vpIn;
-            }
-        }
-        else if (vpOut != -1)
-        {
-            vp = vpOut;
-            dir = Out;
-        }
-        else if (vpIn != -1)
-        {
-            vp = vpIn;
-            dir = In;
-        }
-        // else vp is unchanged...
-
-        return vp;
-    }
 
     ui minDegreeC(ui &vpOut, ui &vpIn)
     {
