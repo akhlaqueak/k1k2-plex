@@ -9,7 +9,7 @@
 #define LOOKAHEAD
 #define CTCP
 // time theshold in microseconds...
-#define TIMEOUT_THRESH 10000
+#define TIMEOUT_THRESH 100
 bool isTimeout(auto start_t)
 {
     return duration_cast<microseconds>(steady_clock::now() - start_t).count() > TIMEOUT_THRESH;
@@ -205,10 +205,10 @@ public:
     void doBranch(auto start)
     {
         branchBase(start);
-        // if (isTimeout(start) and C.size() > GRAIN_SIZE)
-        //     branch(start);
-        // else
-        //     branchBase(start);
+        if (isTimeout(start) and C.size() > GRAIN_SIZE)
+            branch(start);
+        else
+            branchBase(start);
     }
 
     void branch(auto start)
