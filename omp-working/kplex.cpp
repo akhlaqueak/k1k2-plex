@@ -51,10 +51,10 @@ thread_local ui kplexes = 0;
 
 class ThreadData
 {
-    vector<pair<ui, ui>> dpin;
-    vector<pair<ui, ui>> dpout;
-    vector<pair<ui, ui>> dgin;
-    vector<pair<ui, ui>> dgout;
+    vector<ui> dpin;
+    vector<ui> dpout;
+    vector<ui> dgin;
+    vector<ui> dgout;
     vector<ui> p, c, x, blk;
     vector<vector<ui>> gin, gout;
 
@@ -67,14 +67,20 @@ public:
         blk = block.getData();
         gin = giIn;
         gout = giOut;
-
-        for (ui u : blk)
+        for (ui i = 0; i < blk.size(); i++)
         {
-            dpin.push_back({u, dPin[u]});
-            dpout.push_back({u, dPout[u]});
-            dgin.push_back({u, dGin[u]});
-            dgout.push_back({u, dGout[u]});
+            dpin.push_back(dPin[i]);
+            dpout.push_back(dPin[i]);
+            dgin.push_back(dPin[i]);
+            dgout.push_back(dPin[i]);
         }
+        // for (ui u : blk)
+        // {
+        //     dpin.push_back({u, dPin[u]});
+        //     dpout.push_back({u, dPout[u]});
+        //     dgin.push_back({u, dGin[u]});
+        //     dgout.push_back({u, dGout[u]});
+        // }
     }
 
     void loadThreadData()
@@ -91,11 +97,9 @@ public:
         block.loadData(blk);
         auto load = [&](auto &vec, auto &dest)
         {
-            for (auto &pr : vec)
+            for (ui i = 0; i < vec.size(); i++)
             {
-                ui u = pr.first;
-                ui data = pr.second;
-                dest[u] = data;
+                dest[i] = vec[i];
             }
         };
         load(dpin, dPin);
@@ -103,7 +107,7 @@ public:
         load(dgin, dGin);
         load(dgout, dGout);
         giIn = gin;
-        giOut =gout;
+        giOut = gout;
     }
 };
 
@@ -150,10 +154,10 @@ public:
         {
             // cout<<"N: "<<omp_get_num_threads()<<endl;
             // cout<<"id: "<<omp_get_thread_num()<<endl;
-            init(); // initializes thread local vectors... 
+            init(); // initializes thread local vectors...
             ui k = degenOrder.size();
 #pragma omp for schedule(dynamic)
-        for (ui i = 0; i < dGOut.size() - q + 1; i++)
+            for (ui i = 0; i < dGOut.size() - q + 1; i++)
             {
 
                 vi = i;
@@ -1456,22 +1460,22 @@ private:
     {
         C.add(u);
         for (ui v : giOut[u])
-        if(inBlock(v))
-            dGin[v]++;
+            if (inBlock(v))
+                dGin[v]++;
         for (ui v : giIn[u])
-        if(inBlock(v))
-            dGout[v]++;
+            if (inBlock(v))
+                dGout[v]++;
     }
 
     void removeFromC(ui u)
     {
         C.remove(u);
         for (ui v : giOut[u])
-        if(inBlock(v))
-            dGin[v]--;
+            if (inBlock(v))
+                dGin[v]--;
         for (ui v : giIn[u])
-        if(inBlock(v))
-            dGout[v]--;
+            if (inBlock(v))
+                dGout[v]--;
     }
 
     void PToC(ui u)
@@ -1479,11 +1483,11 @@ private:
         P.remove(u);
         C.add(u);
         for (ui v : giOut[u])
-        if(inBlock(v))
-            dPin[v]--;
+            if (inBlock(v))
+                dPin[v]--;
         for (ui v : giIn[u])
-        if(inBlock(v))
-            dPout[v]--;
+            if (inBlock(v))
+                dPout[v]--;
     }
 
     void CToP(const ui &u)
@@ -1492,11 +1496,11 @@ private:
         C.remove(u);
         P.add(u);
         for (ui v : giOut[u])
-        if(inBlock(v))
-            dPin[v]++;
+            if (inBlock(v))
+                dPin[v]++;
         for (ui v : giIn[u])
-        if(inBlock(v))
-            dPout[v]++;
+            if (inBlock(v))
+                dPout[v]++;
     }
 
     void CToX(const ui &u)
@@ -1530,7 +1534,7 @@ private:
         }
         return true;
     }
-    
+
     ui updateC()
     {
         auto it = rC.end();

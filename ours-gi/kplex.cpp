@@ -1359,8 +1359,8 @@ private:
             adj.reserve(block.size());
         }
         for (auto &adj : giOut){
-            adj.clear();
             adj.reserve(block.size());
+            adj.clear();
         }
         for (ui i = 0; i < block.size(); i++)
         {
