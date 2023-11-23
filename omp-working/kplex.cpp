@@ -1362,21 +1362,21 @@ private:
 
     void buildBlock()
     {
-        giIn.clear();
-        giOut.clear();
+        // giIn.clear();
+        // giOut.clear();
         
         giIn.resize(block.size());
         giOut.resize(block.size());
-        // for (auto &adj : giIn)
-        // {
-        //     adj.clear();
-        //     adj.reserve(block.size());
-        // }
-        // for (auto &adj : giOut)
-        // {
-        //     adj.clear();
-        //     adj.reserve(block.size());
-        // }
+        for (auto &adj : giIn)
+        {
+            adj.clear();
+            // adj.reserve(block.size());
+        }
+        for (auto &adj : giOut)
+        {
+            adj.clear();
+            // adj.reserve(block.size());
+        }
         for (ui i = 0; i < block.size(); i++)
         {
             ui u = block[i];
