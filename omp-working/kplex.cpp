@@ -73,7 +73,7 @@ public:
         for (ui i = 0; i < blk.size(); i++)
         {
             gin[i]=giIn[i];
-            gin[i]=giIn[i];
+            gout[i]=giOut[i];
         }
             ttime += chrono::duration_cast<chrono::microseconds>(TIME_NOW - tick).count();
         for (ui i = 0; i < blk.size(); i++)
