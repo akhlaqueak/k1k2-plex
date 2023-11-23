@@ -60,6 +60,7 @@ class EnumKPlex
     RandList P;
     RandList block;
     vector<vector<ui>> giIn, giOut;
+    vector<vector<ui>> GIn, GOut;
 
     vector<ui> rC, rX;
 
@@ -81,7 +82,7 @@ public:
 #else
         initNeighborsMapping();
 #endif
-        ui ds = degenOrder.size();
+        ui ds = GOut.size();
         dPin.resize(ds);
         dPout.resize(ds);
         dGin.resize(ds);
@@ -95,12 +96,12 @@ public:
         ui iterative = 0;
 
         cout << " CTCP time: " << chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - tick).count() << " ms" << endl;
-        for (ui i = 0; i < degenOrder.size() - q + 1; i++)
+        for (ui i = 0; i < GOut.size() - q + 1; i++)
         {
-            vi = degenOrder[i]; // vi is class variable, other functions need it too
             auto t1 = chrono::steady_clock::now();
+            vi = i;
 #ifdef ITERATIVE_PRUNE
-            getTwoHopIterativePrunedG(vi);
+            getTwoHopIterativePrunedG(i);
 #else
             getTwoHopG(vi);
 #endif
@@ -1066,35 +1067,40 @@ private:
 
     void compactAdjListsWithRemovedEdges()
     {
-        for (ui u = 0; u < g.V; u++)
-            g.nsIn[u].clear();
-
-        for (ui u = 0; u < g.V; u++)
-        {
-            if (pruned[u])
-            {
-                continue;
-            }
-            // out nieghbors are pruned by deleted edges as well
-            // compact(g.nsOut[u], deletedOutEdge[u]);
-            compact(g.nsOut[u], deletedOutEdge[u]);
-
-            for (ui v : g.nsOut[u])
-            {
-                g.nsIn[v].push_back(u);
-            }
-        }
-        for (ui u = 0; u < g.V; u++)
-            sort(g.nsIn[u].begin(), g.nsIn[u].end());
         ui k = 0;
         for (ui i = 0; i < degenOrder.size(); i++)
         {
             ui u = degenOrder[i];
             if (pruned[u])
+            {
                 continue;
+            }
+            peelSeq[u] = k;
             degenOrder[k++] = u;
         }
         degenOrder.resize(k);
+        GOut.resize(k);
+        GIn.resize(k);
+        for (ui u = 0; u < g.V; u++)
+        {
+            if (pruned[u])
+                continue;
+            for (ui j = 0; j < g.nsOut[u].size(); j++)
+            {
+                ui v = g.nsOut[u][j];
+                if (pruned[v] or deletedOutEdge[u].test(j))
+                    continue;
+                ui ru = peelSeq[u];
+                ui rv = peelSeq[v];
+                GOut[ru].push_back(rv);
+                GIn[rv].push_back(ru);
+            }
+        }
+
+        for (auto &adj : GOut)
+            sort(adj.begin(), adj.end());
+        for (auto &adj : GIn)
+            sort(adj.begin(), adj.end());
     }
 
     bool intersectsAll(auto &X, auto &Y)
@@ -1166,8 +1172,8 @@ private:
     // calculates two-hop iterative pruned graph according to Algo 2
     void getTwoHopIterativePrunedG(ui s)
     {
-        auto &nsIn = g.nsIn[s];
-        auto &nsOut = g.nsOut[s];
+        auto &nsIn = GIn[s];
+        auto &nsOut = GOut[s];
         addTo2HopG(s);
         // auto inLookup = getLookup(nsIn);
         // auto outLookup = getLookup(nsOut);
@@ -1329,10 +1335,6 @@ private:
     }
     void addTo2HopG(ui u)
     {
-
-        if (pruned[u])
-            return;
-        u = peelSeq[u];
         if (inBlock(u))
             return;
         block.add(u);
@@ -1347,21 +1349,18 @@ private:
         for (ui i = 0; i < block.size(); i++)
         {
             ui u = block[i];
-            u = degenOrder[u];
-            for (ui v : g.nsOut[u])
+            for (ui v : GOut[u])
             {
-                ui rv = peelSeq[v];
-                if(rv==-1) continue;
-                if (inBlock(rv))
-                    giOut[i].push_back(block.getIndex(rv));
+                if (inBlock(v))
+                    giOut[i].push_back(block.getIndex(v));
             }
-            for (ui v : g.nsIn[u])
+
+            for (ui v : GIn[u])
             {
-                ui rv = peelSeq[v];
-                if(rv==-1) continue;
-                if (inBlock(rv))
-                    giIn[i].push_back(block.getIndex(rv));
+                if (inBlock(v))
+                    giIn[i].push_back(block.getIndex(v));
             }
+
         }
         for (auto &adj : giIn)
             sort(adj.begin(), adj.end());
@@ -1370,7 +1369,7 @@ private:
         for (ui i = 0; i < block.size(); i++)
         {
             ui u = block[i];
-            if (peelSeq[u] < peelSeq[vi])
+            if (u < vi)
                 X.add(i);
             else
                 addToC(i);
