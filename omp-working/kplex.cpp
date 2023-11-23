@@ -68,8 +68,13 @@ public:
         x = X.getData();
         blk = block.getData();
         auto tick = TIME_NOW;
-        gin = giIn;
-        gout = giOut;
+        gin.resize(block.size());
+        gout.resize(block.size());
+        for (ui i = 0; i < blk.size(); i++)
+        {
+            gin[i]=giIn[i];
+            gin[i]=giIn[i];
+        }
             ttime += chrono::duration_cast<chrono::microseconds>(TIME_NOW - tick).count();
         for (ui i = 0; i < blk.size(); i++)
         {
