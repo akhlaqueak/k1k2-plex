@@ -257,38 +257,27 @@ public:
         if (lookAheadSolutionExists(vpOut, vpIn))
             return;
 #endif
-        auto tick = TIME_NOW;
         ThreadData *td1 = new ThreadData();
-        ttime += chrono::duration_cast<chrono::microseconds>(TIME_NOW - tick).count();
 
 #pragma omp task firstprivate(td1, vc)
         {
-            tick = TIME_NOW;
             ThreadData *temp = new ThreadData();
             td1->loadThreadData();
-            ttime += chrono::duration_cast<chrono::microseconds>(TIME_NOW - tick).count();
             recurSearch(vc, TIME_NOW);
-            tick = TIME_NOW;
             temp->loadThreadData();
-            ttime += chrono::duration_cast<chrono::microseconds>(TIME_NOW - tick).count();
         }
-        tick = TIME_NOW;
+
         ThreadData *td = new ThreadData();
-        ttime += chrono::duration_cast<chrono::microseconds>(TIME_NOW - tick).count();
 #pragma omp task firstprivate(td, vc)
         {
-            tick = TIME_NOW;
             ThreadData *temp = new ThreadData();
             td->loadThreadData();
-            ttime += chrono::duration_cast<chrono::microseconds>(TIME_NOW - tick).count();
             CToX(vc);
             branch(TIME_NOW);
             // recover
             XToC(vc);
             // other branch where P contains u
-            tick = TIME_NOW;
             temp->loadThreadData();
-            ttime += chrono::duration_cast<chrono::microseconds>(TIME_NOW - tick).count();
         }
     }
     void branchBase(auto start)
