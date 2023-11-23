@@ -67,12 +67,17 @@ public:
         blk = block.getData();
         gin = giIn;
         gout = giOut;
-        for (ui i = 0; i < blk.size(); i++)
+        ui sz = blk.size();
+        dpin.resize(sz);
+        dpout.resize(sz);
+        dgin.resize(sz);
+        dgout.resize(sz);
+        for (ui i = 0; i < sz; i++)
         {
-            dpin.push_back(dPin[i]);
-            dpout.push_back(dPin[i]);
-            dgin.push_back(dPin[i]);
-            dgout.push_back(dPin[i]);
+            dpin[i] = dPin[i];
+            dpout[i] = dPout[i];
+            dgin[i] = dGin[i];
+            dgout[i] = dGout[i];
         }
         // for (ui u : blk)
         // {
