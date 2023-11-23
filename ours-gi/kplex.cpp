@@ -59,8 +59,8 @@ class EnumKPlex
     RandList X;
     RandList P;
     RandList block;
-    vector<vector<ui>> giIn, giOut;
-    vector<vector<ui>> GIn, GOut;
+    vector<vector<ui>> giIn, giOut; // two-hop graph
+    vector<vector<ui>> GIn, GOut; // shrinked graph
 
     vector<ui> rC, rX;
 
@@ -88,10 +88,10 @@ public:
         dGin.resize(ds);
         dGout.resize(ds);
         dPout.resize(ds);
-        // C.init(ds);
-        // X.init(ds);
-        // P.init(ds);
-        // block.init(ds);
+        C.init(ds);
+        X.init(ds);
+        P.init(ds);
+        block.init(ds);
 
         ui iterative = 0;
 
@@ -1076,7 +1076,8 @@ private:
                 continue;
             }
             peelSeq[u] = k;
-            degenOrder[k++] = u;
+            degenOrder[k] = u;
+            k++;
         }
         degenOrder.resize(k);
         GOut.resize(k);
@@ -1100,11 +1101,12 @@ private:
 
         for (auto &adj : GOut){
             sort(adj.begin(), adj.end());
-            print("out: ", adj);
+            // print("out: ", adj);
         }
-        for (auto &adj : GIn)
+        for (auto &adj : GIn){
             sort(adj.begin(), adj.end());
-        
+            // print("in: ", adj);
+        }
     }
 
     bool intersectsAll(auto &X, auto &Y)
@@ -1235,7 +1237,7 @@ private:
             }
             for (auto u : O)
             {
-                for (auto v : g.nsOut[u])
+                for (auto v : GOut[u])
                 {
                     if (existsIn[v] == round)
                     {
@@ -1247,7 +1249,7 @@ private:
 
             for (auto u : I)
             {
-                for (auto v : g.nsIn[u])
+                for (auto v : GIn[u])
                 {
                     // does it exist in last iteration of O
                     if (existsOut[v] == round)
@@ -1291,7 +1293,7 @@ private:
         Lookup intersect(look4, temp);
         for (auto u : O)
         {
-            for (auto v : g.nsOut[u])
+            for (auto v : GOut[u])
             {
                 // v is not already added in 2hop graph
                 if (!inBlock(v))
@@ -1303,7 +1305,7 @@ private:
         }
         for (auto u : O)
         {
-            for (auto v : g.nsIn[u])
+            for (auto v : GIn[u])
             {
                 if (intersect[v] == 2)
                 {
@@ -1313,7 +1315,7 @@ private:
         }
         for (auto u : I)
         {
-            for (auto v : g.nsOut[u])
+            for (auto v : GOut[u])
             {
                 if (intersect[v] == 3)
                     intersect[v] = 4;
@@ -1321,7 +1323,7 @@ private:
         }
         for (auto u : I)
         {
-            for (auto v : g.nsIn[u])
+            for (auto v : GIn[u])
             {
                 if (intersect[v] == 4)
                 {
@@ -1353,7 +1355,6 @@ private:
         for (ui i = 0; i < block.size(); i++)
         {
             ui u = block[i];
-            cout<<u<<" "<<GOut.size()<<endl;
             for (ui v : GOut[u])
             {
                 if (inBlock(v))
@@ -1385,7 +1386,6 @@ private:
     {
         cout << msg;
         for (auto u : vec)
-            if (u)
                 cout << u << " ";
         cout << endl;
     }
