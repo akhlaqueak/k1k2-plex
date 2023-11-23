@@ -209,6 +209,7 @@ public:
 	}
 	bool contains(int vid)
 	{
+		if(vid>=cap) return false;
 		return vpos[vid] != cap;
 	}
 	bool empty() { return vnum == 0; }

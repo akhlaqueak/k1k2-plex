@@ -502,7 +502,7 @@ public:
         return;
     }
 
-    EnumKPlex(Graph &_g, ui _k1, ui _k2, ui _q) : pruned(_g.V), peelSeq(_g.V),
+    EnumKPlex(Graph &_g, ui _k1, ui _k2, ui _q) : pruned(_g.V), peelSeq(_g.V, -1),
                                                   g(_g), inDegree(_g.V), outDegree(_g.V),
                                                   //   dPin(_g.V), dPout(_g.V),
                                                   //   dGin(_g.V), dGout(_g.V),
@@ -1330,7 +1330,10 @@ private:
     void addTo2HopG(ui u)
     {
 
-        if (pruned[u] or inBlock(u))
+        if (pruned[u])
+            return;
+        u = peelSeq[u];
+        if (inBlock(u))
             return;
         block.add(u);
     }
@@ -1344,12 +1347,19 @@ private:
         for (ui i = 0; i < block.size(); i++)
         {
             ui u = block[i];
+            u = degenOrder[u];
             for (ui v : g.nsOut[u])
-                if (inBlock(v))
-                    giOut[i].push_back(block.getIndex(v));
+            {
+                ui rv = peelSeq[v];
+                if (inBlock(rv))
+                    giOut[i].push_back(block.getIndex(rv));
+            }
             for (ui v : g.nsIn[u])
-                if (inBlock(v))
-                    giIn[i].push_back(block.getIndex(v));
+            {
+                ui rv = peelSeq[v];
+                if (inBlock(rv))
+                    giIn[i].push_back(block.getIndex(rv));
+            }
         }
         for (auto &adj : giIn)
             sort(adj.begin(), adj.end());
