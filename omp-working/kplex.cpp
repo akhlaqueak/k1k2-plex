@@ -176,6 +176,7 @@ public:
                 }
                 reset(); // clears C and X
             }
+        cout<<"copy time ns"<<tm<<endl;
         }
         ui total = 0;
 #pragma omp parallel reduction(+ : total)
@@ -184,7 +185,6 @@ public:
         }
 
         cout << "Total (" << k1 << "," << k2 << ")-plexes of at least " << q << " size: " << total << endl;
-        cout<<"copy time ns"<<tm<<endl;
     }
 
     void recurSearch(ui u, auto start)
