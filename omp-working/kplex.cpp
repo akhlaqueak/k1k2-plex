@@ -326,20 +326,18 @@ public:
             for (ui i = 0; i < C.size(); i++)
             {
                 ui u = C[i];
-                ui ru = recode[u];
-                if (!adj.test(ru))
+                if (!binary_search(adj.begin(), adj.end(), u))
                     vpNN.push_back(u);
             }
         };
-        ui rvp = recode[vp];
         if (dir == Out)
         {
-            getNonNeigh(edgeOut[rvp]);
+            getNonNeigh(giOut[vp]);
             p = k1 - (P.size() - dPout[vp]);
         }
         else
         {
-            getNonNeigh(edgeIn[rvp]);
+            getNonNeigh(giIn[vp]);
             p = k2 - (P.size() - dPin[vp]);
         }
         // cout<<vpNN.size()<<" "<<p<<endl;
