@@ -101,7 +101,7 @@ public:
             auto t1 = chrono::steady_clock::now();
             vi = i;
 #ifdef ITERATIVE_PRUNE
-            getTwoHopIterativePrunedG(i);
+            getTwoHopIterativePrunedG(vi);
 #else
             getTwoHopG(vi);
 #endif
@@ -1085,6 +1085,7 @@ private:
         {
             if (pruned[u])
                 continue;
+
             for (ui j = 0; j < g.nsOut[u].size(); j++)
             {
                 ui v = g.nsOut[u][j];
@@ -1097,10 +1098,13 @@ private:
             }
         }
 
-        for (auto &adj : GOut)
+        for (auto &adj : GOut){
             sort(adj.begin(), adj.end());
+            print("out: ", adj);
+        }
         for (auto &adj : GIn)
             sort(adj.begin(), adj.end());
+        
     }
 
     bool intersectsAll(auto &X, auto &Y)
@@ -1349,6 +1353,7 @@ private:
         for (ui i = 0; i < block.size(); i++)
         {
             ui u = block[i];
+            cout<<u<<" "<<GOut.size()<<endl;
             for (ui v : GOut[u])
             {
                 if (inBlock(v))
