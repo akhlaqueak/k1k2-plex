@@ -10,6 +10,7 @@
 #define CTCP
 // time theshold in microseconds...
 #define TIMEOUT_THRESH 100
+// #define TASKGROUP
 bool isTimeout(auto start_t)
 {
     return duration_cast<microseconds>(steady_clock::now() - start_t).count() > TIMEOUT_THRESH;
@@ -67,7 +68,8 @@ public:
         blk = block.getData();
         gin = giIn;
         gout = giOut;
-        for(ui i=0;i<blk.size();i++){
+        for (ui i = 0; i < blk.size(); i++)
+        {
             dpin.push_back(dPin[i]);
             dpout.push_back(dPout[i]);
             dgin.push_back(dGin[i]);
@@ -96,8 +98,8 @@ public:
         block.loadData(blk);
         auto load = [&](auto &vec, auto &dest)
         {
-            for (ui i=0;i<vec.size();i++)
-            {   
+            for (ui i = 0; i < vec.size(); i++)
+            {
                 dest[i] = vec[i];
             }
         };
@@ -106,7 +108,7 @@ public:
         load(dgin, dGin);
         load(dgout, dGout);
         giIn = gin;
-        giOut =gout;
+        giOut = gout;
     }
 };
 
@@ -153,9 +155,9 @@ public:
         {
             // cout<<"N: "<<omp_get_num_threads()<<endl;
             // cout<<"id: "<<omp_get_thread_num()<<endl;
-            init(); // initializes thread local vectors... 
+            init(); // initializes thread local vectors...
 #pragma omp for schedule(dynamic)
-        for (ui i = 0; i < GOut.size() - q + 1; i++)
+            for (ui i = 0; i < GOut.size() - q + 1; i++)
             {
 
                 vi = i;
@@ -164,8 +166,9 @@ public:
 #else
                 getTwoHopG(vi);
 #endif
-
+#ifdef TASKGROUP
 #pragma omp taskgroup
+#endif
                 {
                     recurSearch(0, TIME_NOW);
                 }
@@ -204,11 +207,14 @@ public:
 
     void doBranch(auto start)
     {
-        // branchBase(start);
+#ifdef TASKGROUP
         if (isTimeout(start) and C.size() > GRAIN_SIZE)
             branch(start);
         else
             branchBase(start);
+#else
+        // branchBase(start);
+#endif
     }
 
     void branch(auto start)
@@ -465,7 +471,6 @@ public:
         else
             return vpIn;
     }
-
 
     ui minDegreeC(ui &vpOut, ui &vpIn)
     {
@@ -1470,7 +1475,7 @@ private:
         }
         return true;
     }
-    
+
     ui updateC()
     {
         auto it = rC.end();
