@@ -5,7 +5,7 @@
 #define TIME_NOW chrono::steady_clock::now()
 #define PuCSize (P.size() + C.size())
 #define ITERATIVE_PRUNE
-// #define BRANCHING
+#define BRANCHING
 #define LOOKAHEAD
 #define CTCP
 // time theshold in microseconds...
@@ -166,6 +166,7 @@ public:
 #else
                 getTwoHopG(vi);
 #endif
+
 #ifdef TASKGROUP
 #pragma omp taskgroup
 #endif
