@@ -194,6 +194,14 @@ public:
 		assert(i < vnum);
 		return vlist[i];
 	}
+
+	ui getIndex(ui vid)
+	{
+		assert(contains(vid));
+		return vpos[vid];
+	}
+
+	
 	ui operator[](ui i)
 	{
 		assert(i < vnum);

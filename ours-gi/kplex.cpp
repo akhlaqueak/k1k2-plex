@@ -63,6 +63,7 @@ class EnumKPlex
     RandList X;
     RandList P;
     RandList block;
+    vector<vector<ui> > giIn, giOut;
 
     vector<ui> rC, rX;
 
@@ -99,7 +100,7 @@ public:
 #endif
             auto t2 = chrono::steady_clock::now();
             iterative += chrono::duration_cast<chrono::microseconds>(t2 - t1).count();
-            recurSearch(vi);
+            recurSearch(block.getIndex(vi));
             reset(); // clears C and X
         }
         cout << "Total (" << k1 << "," << k2 << ")-plexes of at least " << q << " size: " << kplexes << endl;
@@ -187,20 +188,18 @@ public:
             for (ui i = 0; i < C.size(); i++)
             {
                 ui u = C[i];
-                ui ru = recode[u];
-                if (!adj.test(ru))
+                if (!binary_search(adj.begin(), adj.end(), u))
                     vpNN.push_back(u);
             }
         };
-        ui rvp = recode[vp];
         if (dir == Out)
         {
-            getNonNeigh(edgeOut[rvp]);
+            getNonNeigh(giOut[vp]);
             p = k1 - (P.size() - dPout[vp]);
         }
         else
         {
-            getNonNeigh(edgeIn[rvp]);
+            getNonNeigh(giIn[vp]);
             p = k2 - (P.size() - dPin[vp]);
         }
         // cout<<vpNN.size()<<" "<<p<<endl;
@@ -1361,13 +1360,30 @@ private:
     
     void buildBlock()
     {
+        giIn.clear();
+        giOut.clear();
+        giIn.resize(block.size());
+        giOut.resize(block.size());
+        for(ui i=0;i<block.size();i++){
+            ui u = block[i];
+            for(ui v: g.nsOut[u])
+                if(inBlock(v))
+                    giOut[i].push_back(block.getIndex(v));
+            for(ui v: g.nsIn[u])
+                if(inBlock(v))
+                    giIn[i].push_back(block.getIndex(v));   
+        }
+        for(auto& adj: giIn)
+            sort(adj.begin(), adj.end());
+        for(auto& adj: giOut)
+            sort(adj.begin(), adj.end());
         for (ui i = 0; i < block.size(); i++)
         {
             ui u = block[i];
             if (peelSeq[u] < peelSeq[vi])
-                X.add(u);
+                X.add(i);
             else
-                addToC(u);
+                addToC(i);
         }
         // cout<<P.front()<<endl;
     }
@@ -1383,22 +1399,18 @@ private:
     void addToC(ui u)
     {
         C.add(u);
-        for (ui v : g.nsOut[u])
-            if (inBlock(v))
+        for (ui v : giOut[u])
             dGin[v]++;
-        for (ui v : g.nsIn[u])
-            if (inBlock(v))
+        for (ui v : giIn[u])
             dGout[v]++;
     }
 
     void removeFromC(ui u)
     {
         C.remove(u);
-        for (ui v : g.nsOut[u])
-            if (inBlock(v))
+        for (ui v : giOut[u])
             dGin[v]--;
-        for (ui v : g.nsIn[u])
-            if (inBlock(v))
+        for (ui v : giIn[u])
             dGout[v]--;
     }
 
@@ -1406,11 +1418,9 @@ private:
     {
         P.remove(u);
         C.add(u);
-        for (ui v : g.nsOut[u])
-            if (inBlock(v))
+        for (ui v : giOut[u])
             dPin[v]--;
-        for (ui v : g.nsIn[u])
-            if (inBlock(v))
+        for (ui v : giIn[u])
             dPout[v]--;
     }
 
@@ -1419,11 +1429,9 @@ private:
         // assert(Cand.contains(u));
         C.remove(u);
         P.add(u);
-        for (ui v : g.nsOut[u])
-            if (inBlock(v))
+        for (ui v : giOut[u])
             dPin[v]++;
-        for (ui v : g.nsIn[u])
-            if (inBlock(v))
+        for (ui v : giIn[u])
             dPout[v]++;
     }
 
@@ -1446,13 +1454,14 @@ private:
         for (ui i = 0; i < P.size(); i++)
         {
             ui v = P.get(i);
-            ui ru = recode[u];
-            ui rv = recode[v];
+            // ui ru = recode[u];
+            // ui rv = recode[v];
             // should be in-connected to every out-boundary vertex
-            if (dPout[v] + k1 == P.size() && !edgeIn[ru].test(rv))
+            // if (dPout[v] + k1 == P.size() && !edgeIn[ru].test(rv))
+            if (dPout[v] + k1 == P.size() && !binary_search(giIn[u].begin(), giIn[u].end(), v))
                 return false;
             // should be out-connected to every in-boundary vertex
-            if (dPin[v] + k2 == P.size() && !edgeOut[ru].test(rv))
+            if (dPin[v] + k2 == P.size() && !binary_search(giOut[u].begin(), giOut[u].end(), v))
                 return false;
         }
         return true;
