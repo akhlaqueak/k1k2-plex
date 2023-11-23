@@ -16,7 +16,7 @@
 # Tell the scheduler only need 10 minutes
 #
 #SBATCH --time=1:00:00
-#SBATCH --mem-per-cpu=200000
+#SBATCH --mem-per-cpu=32000
 #
 # Set your email address and request notification when you job is complete or if it fails
 #
