@@ -404,7 +404,7 @@ public:
             CToP(u);
             rc += updateC();
             rx += updateX();
-            branch();
+            doBranch(start);
         }
         // cout<<vpNN.size()<<" "<<p<<" "<<P.size()<<" "<<C.size()<<endl;
 
