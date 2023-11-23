@@ -1365,8 +1365,8 @@ private:
         giIn.clear();
         giOut.clear();
         
-        // giIn.resize(block.size());
-        // giOut.resize(block.size());
+        giIn.resize(block.size());
+        giOut.resize(block.size());
         // for (auto &adj : giIn)
         // {
         //     adj.clear();
