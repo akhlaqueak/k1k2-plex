@@ -11,7 +11,7 @@
 // time theshold in microseconds...
 #define TIMEOUT_THRESH 10
 #define TASKGROUP
-#define MAX_SIZE 20000
+#define MAX_SIZE 2000
 bool isTimeout(auto start_t)
 {
     return duration_cast<microseconds>(steady_clock::now() - start_t).count() > TIMEOUT_THRESH;
