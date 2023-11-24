@@ -1413,13 +1413,13 @@ private:
             for (ui v : GOut[u])
             {
                 if (inBlock(v))
-                    giOut[i].push_back(block->getIndex(v));
+                    giOut->at(i).push_back(block->getIndex(v));
             }
 
             for (ui v : GIn[u])
             {
                 if (inBlock(v))
-                    giIn[i].push_back(block->getIndex(v));
+                    giIn->at(i).push_back(block->getIndex(v));
             }
         }
         for (auto &adj : *giIn)
