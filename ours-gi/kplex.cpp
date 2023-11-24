@@ -1,16 +1,21 @@
 #include "../common/utils.h"
 #include "../common/command_line.h"
 #define PuCSize (P.size() + C.size())
-#define TIME_NOW chrono::steady_clock::now()
+
 // one of these three options should be selected, deciding how Gi is calculated
 // #define ITERATIVE_PRUNE
 // #define TWO_HOP
-#define NO_TWO_HOP
-
+#define NAIVE
 
 // #define BRANCHING
 // #define LOOKAHEAD
 // #define CTCP
+
+#define TIME_NOW chrono::steady_clock::now()
+// cutoff time is in seconds
+#define CUTOFF_TIME 900
+auto clk = TIME_NOW;
+#define TIME_OUT (chrono::duration_cast<chrono::seconds>(TIME_NOW - clk).count() > CUTOFF_TIME)
 
 enum CommonNeighbors
 {
@@ -107,7 +112,7 @@ public:
             pruningCost += chrono::duration_cast<chrono::microseconds>(TIME_NOW - t1).count();
             recurSearch(0);
 #else
-#ifdef NO_TWO_HOP
+#ifdef NAIVE
             buildBlockFromG();
             recurSearch(vi);
 #endif
@@ -146,7 +151,8 @@ public:
     void branch()
     {
         // cout<<"("<<P.size()<< ","<<C.size()<<")";
-
+        if (TIME_OUT)
+            return;
         if (PuCSize < q)
             return;
         if (C.empty())
@@ -512,13 +518,13 @@ public:
 
     EnumKPlex(Graph &_g, ui _k1, ui _k2, ui _q) : pruned(_g.V), peelSeq(_g.V, -1),
                                                   g(_g), inDegree(_g.V), outDegree(_g.V),
-                                                  
+
                                                   k1(_k1), k2(_k2), q(_q), kplexes(0),
-                                                  deletedOutEdge(_g.V), 
+                                                  deletedOutEdge(_g.V),
                                                   cnPP(_g.V), cnPM(_g.V),
                                                   cnMP(_g.V), cnMM(_g.V),
                                                   look1(_g.V), look2(_g.V),
-                                                  look3(_g.V), look4(_g.V), 
+                                                  look3(_g.V), look4(_g.V),
                                                   counts(1000)
     {
 
@@ -531,7 +537,7 @@ public:
         }
         Qe.reserve(g.E / 10);
 
-        reset();
+        // reset();
     }
     void getNeighbors(auto &neigh)
     {
@@ -628,7 +634,6 @@ private:
             else
                 break;
         }
-
     }
 
     void deleteEdge(ui u, ui vIndu)
@@ -1064,7 +1069,8 @@ private:
             }
         }
     }
-void init(){
+    void init()
+    {
         ui ds = GOut.size();
         dPin.resize(ds);
         dPout.resize(ds);
@@ -1075,12 +1081,12 @@ void init(){
         X.init(ds);
         P.init(ds);
         block.init(ds);
-        
-#ifdef NO_TWO_HOP
+
+#ifdef NAIVE
         giIn = GIn;
         giOut = GOut;
 #endif
-}
+    }
     void shrinkGraph()
     {
         ui k = 0;
@@ -1110,7 +1116,7 @@ void init(){
                     continue;
                 ui ru = peelSeq[u];
                 ui rv = peelSeq[v];
-                // G is degeneracy ordered graph... 
+                // G is degeneracy ordered graph...
                 GOut[ru].push_back(rv);
                 GIn[rv].push_back(ru);
             }
@@ -1125,7 +1131,7 @@ void init(){
         {
             sort(adj.begin(), adj.end());
             // print("in: ", adj);
-        }                                                                                               
+        }
     }
 
     bool intersectsAll(auto &X, auto &Y)
@@ -1535,7 +1541,10 @@ int main(int argc, char *argv[])
 
     EnumKPlex kp(g, k1, k2, q);
     kp.enumerate();
-    cout << data_file << " Enumeration time: " << chrono::duration_cast<chrono::milliseconds>(TIME_NOW - tick).count() << " ms" << endl;
+    if (TIME_OUT)
+        cout << data_file << " Timed Out" << endl;
+    else
+        cout << data_file << " Enumeration time: " << chrono::duration_cast<chrono::milliseconds>(TIME_NOW - tick).count() << " ms" << endl;
 
     cout << endl;
     return 0;
