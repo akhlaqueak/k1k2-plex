@@ -71,11 +71,13 @@ public:
         blk = block.getData();
         gin.resize(block.size());
         gout.resize(block.size());
+        auto tick=TIME_NOW;
         for (ui i = 0; i < blk.size(); i++)
         {
             gin[i] = giIn[i];
             gout[i] = giOut[i];
         }
+        ttime += chrono::duration_cast<chrono::microseconds>(TIME_NOW - tick).count();
         for (ui i = 0; i < blk.size(); i++)
         {
             dpin.push_back(dPin[i]);
