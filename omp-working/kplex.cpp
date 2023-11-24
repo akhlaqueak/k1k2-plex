@@ -171,13 +171,16 @@ public:
             // cout<<"N: "<<omp_get_num_threads()<<endl;
             // cout<<"id: "<<omp_get_thread_num()<<endl;
             init(); // initializes thread local vectors...
+            ui itprTime = 0;
 #pragma omp for schedule(dynamic)
             for (ui i = 0; i < GOut.size() - q + 1; i++)
             {
 
                 vi = i;
+                auto tick =TIME_NOW;
 #ifdef ITERATIVE_PRUNE
                 getTwoHopIterativePrunedG(vi);
+                itprTime+=chrono::duration_cast<chrono::microseconds>(TIME_NOW - tick).count();
 #else
                 getTwoHopG(vi);
 #endif
@@ -190,14 +193,14 @@ public:
                 }
                 reset(); // clears C and X
             }
-            cout << "copy time ns" << ttime << endl;
+            cout << "copy time ns" << itprTime << endl;
+        // cout<<"it "<<
         }
         ui total = 0;
 #pragma omp parallel reduction(+ : total)
         {
             total += kplexes;
         }
-
         cout << "Total (" << k1 << "," << k2 << ")-plexes of at least " << q << " size: " << total << endl;
     }
 
