@@ -1,7 +1,7 @@
 #include "../common/utils.h"
 #include "../common/command_line.h"
 #include <omp.h>
-#define GRAIN_SIZE 100
+#define GRAIN_SIZE 10
 #define TIME_NOW chrono::steady_clock::now()
 #define PuCSize (P.size() + C.size())
 #define ITERATIVE_PRUNE
@@ -9,7 +9,7 @@
 #define LOOKAHEAD
 #define CTCP
 // time theshold in microseconds...
-#define TIMEOUT_THRESH 10
+#define TIMEOUT_THRESH 100
 #define TASKGROUP
 #define MAX_SIZE 2000
 bool isTimeout(auto start_t)
