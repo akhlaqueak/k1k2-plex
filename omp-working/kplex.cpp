@@ -1,7 +1,7 @@
 #include "../common/utils.h"
 #include "../common/command_line.h"
 #include <omp.h>
-#define GRAIN_SIZE 5
+#define GRAIN_SIZE 1
 #define TIME_NOW chrono::steady_clock::now()
 #define PuCSize (P.size() + C.size())
 #define ITERATIVE_PRUNE
