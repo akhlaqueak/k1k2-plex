@@ -65,25 +65,25 @@ class ThreadData
 public:
     ThreadData()
     {
+        auto tick=TIME_NOW;
         p = P.getData();
         c = C.getData();
         x = X.getData();
         blk = block.getData();
         gin.resize(block.size());
         gout.resize(block.size());
-        auto tick=TIME_NOW;
-        for (ui i = 0; i < blk.size(); i++)
-        {
-            gin[i] = giIn[i];
-            gout[i] = giOut[i];
-        }
-        ttime += chrono::duration_cast<chrono::microseconds>(TIME_NOW - tick).count();
         for (ui i = 0; i < blk.size(); i++)
         {
             dpin.push_back(dPin[i]);
             dpout.push_back(dPout[i]);
             dgin.push_back(dGin[i]);
             dgout.push_back(dGout[i]);
+        }
+        ttime += chrono::duration_cast<chrono::microseconds>(TIME_NOW - tick).count();
+        for (ui i = 0; i < blk.size(); i++)
+        {
+            gin[i] = giIn[i];
+            gout[i] = giOut[i];
         }
         // for (ui u : blk)
         // {
@@ -97,6 +97,7 @@ public:
     void loadThreadData()
     {
 
+        auto tick = TIME_NOW;
         P.clear();
         C.clear();
         X.clear();
@@ -117,10 +118,9 @@ public:
         load(dpout, dPout);
         load(dgin, dGin);
         load(dgout, dGout);
-        auto tick = TIME_NOW;
+        ttime += chrono::duration_cast<chrono::microseconds>(TIME_NOW - tick).count();
         giIn = gin;
         giOut = gout;
-        ttime += chrono::duration_cast<chrono::microseconds>(TIME_NOW - tick).count();
     }
 };
 
