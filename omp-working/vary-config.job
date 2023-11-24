@@ -5,17 +5,18 @@
 #
 # Name your job to make it easier for you to track
 #
-#SBATCH --job-name=varyconfig
+#SBATCH --job-name=parallel
 #
 # Set your error and output files
 #
-#SBATCH --error=varyconfig.err
-#SBATCH --output=varyconfig.out
+#SBATCH --error=parallel.err
+#SBATCH --output=parallel.out
 #SBATCH --ntasks=1
+#--cpus-per-task=32
 # Tell the scheduler only need 10 minutes
 #
-#SBATCH --time=25:00:00
-#SBATCH --mem-per-cpu=100000
+#SBATCH --time=5:00:00
+#SBATCH --mem-per-cpu=10000
 #
 # Set your email address and request notification when you job is complete or if it fails
 #
@@ -24,92 +25,13 @@
 module load Valgrind
 alias python=python3
 
-
-ds='bitcoin.txt'
-k1s='2 3 4 5'
-k2s='2 3 4 5'
-qs='8 9 10 11 12'
-fk1=3
-fk2=3
-rm $ds.res
-
-for k2 in $k2s; do
-    ./kplex -g ../datasets/$ds -k1 $fk1 -k2 $k2 -q 10 >> $ds.res 
-done
-
-for k1 in $k1s; do
-    ./kplex -g ../datasets/$ds -k1 $k1 -k2 $fk2 -q 10 >> $ds.res
-done
-
-for q in $qs; do
-    ./kplex -g ../datasets/$ds -k1 $fk1 -k2 $fk2 -q $q >> $ds.res
-done
-
-echo "Done with bitcoin"
-
-ds='epinions.txt'
-k1s='2 3 4 5'
-k2s='2 3 4 5'
-qs='12 13 14 15 16 17 18'
-fk1=2
-fk2=2
-fq=15
-rm $ds.res
-
-for k2 in $k2s; do
-    ./kplex -g ../datasets/$ds -k1 $fk1 -k2 $k2 -q $fq >> $ds.res 
-done
-
-for k1 in $k1s; do
-    ./kplex -g ../datasets/$ds -k1 $k1 -k2 $fk2 -q $fq >> $ds.res
-done
-
-for q in $qs; do
-    ./kplex -g ../datasets/$ds -k1 $fk1 -k2 $fk2 -q $q >> $ds.res
-done
-echo "Done with epinions"
-
-ds='mathoverflow.txt'
-k1s='2 3 4 5'
-k2s='2 3 4 5'
-qs='12 13 14 15 16 17'
-fk1=2
-fk2=2
-fq=15
+export OMP_NUM_THREADS=32
+./kplex -g ../datasets/wiki-it.txt -k1 3 -k2 3 -q 12 > wikit-it-32.out
 
 
-for k2 in $k2s; do
-    ./kplex -g ../datasets/$ds -k1 $fk1 -k2 $k2 -q 10 >> $ds.res 
-done
-
-for k1 in $k1s; do
-    ./kplex -g ../datasets/$ds -k1 $k1 -k2 $fk2 -q 10 >> $ds.res
-done
-
-for q in $qs; do
-    ./kplex -g ../datasets/$ds -k1 $fk1 -k2 $fk2 -q $q >> $ds.res
-done
-echo "Done with mathoverflow"
+export OMP_NUM_THREADS=16
+./kplex -g ../datasets/wiki-it.txt -k1 3 -k2 3 -q 12 > wikit-it-16.out
 
 
-ds='wiki-vote.txt'
-k1s='3 4 5 6'
-k2s='3 4 5 6'
-qs='8 9 10 11 12'
-fk1=3
-fk2=3
-fq=10
-
-for k2 in $k2s; do
-    ./kplex -g ../datasets/$ds -k1 $fk1 -k2 $k2 -q $fq >> $ds.res 
-done
-
-for k1 in $k1s; do
-    ./kplex -g ../datasets/$ds -k1 $k1 -k2 $fk2 -q $fq >> $ds.res
-done
-
-for q in $qs; do
-    ./kplex -g ../datasets/$ds -k1 $fk1 -k2 $fk2 -q $q >> $ds.res
-done
-echo "Done with wiki-vote"
-
+export OMP_NUM_THREADS=8
+./kplex -g ../datasets/wiki-it.txt -k1 3 -k2 3 -q 12 > wikit-it-8.out
