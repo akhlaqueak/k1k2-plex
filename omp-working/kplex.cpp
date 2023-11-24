@@ -9,7 +9,7 @@
 #define LOOKAHEAD
 #define CTCP
 // time theshold in microseconds...
-#define TIMEOUT_THRESH 100
+#define TIMEOUT_THRESH 1000
 #define TASKGROUP
 bool isTimeout(auto start_t)
 {
@@ -183,7 +183,7 @@ public:
                 }
                 reset(); // clears C and X
             }
-        cout<<"copy time ns"<<ttime<<endl;
+        // cout<<"copy time ns"<<ttime<<endl;
         }
         ui total = 0;
 #pragma omp parallel reduction(+ : total)
