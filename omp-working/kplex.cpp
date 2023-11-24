@@ -158,17 +158,17 @@ public:
         // find degeneracy order, the result is degenOrder vector
         degenerate();
 
-        auto tick = TIME_NOW;
 #ifdef CTCP
+        auto tick = TIME_NOW;
         applyCoreTrussPruning();
+        cout << " CTCP time: " << chrono::duration_cast<chrono::milliseconds>(TIME_NOW - tick).count() << " ms" << endl;
 #else
         shrinkGraph();
 #endif
 
-        cout << " CTCP time: " << chrono::duration_cast<chrono::milliseconds>(TIME_NOW - tick).count() << " ms" << endl;
+            // cout<<"No. of Threads: "<<omp_get_num_threads()<<endl;
 #pragma omp parallel
         {
-            // cout<<"N: "<<omp_get_num_threads()<<endl;
             // cout<<"id: "<<omp_get_thread_num()<<endl;
             init(); // initializes thread local vectors...
             ui itprTime = 0;
@@ -193,7 +193,7 @@ public:
                 }
                 reset(); // clears C and X
             }
-            cout << "copy time ns" << ttime << endl;
+            cout << "thread data copy time" << ttime << endl;
         // cout<<"it "<<
         }
         ui total = 0;

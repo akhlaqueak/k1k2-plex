@@ -12,7 +12,7 @@
 #define CTCP
 
 #define TIME_NOW chrono::steady_clock::now()
-// cutoff time is in seconds
+// cutoff time is in minutes
 #define CUTOFF_TIME (180)
 auto clk = TIME_NOW;
 #define TIME_OUT (chrono::duration_cast<chrono::minutes>(TIME_NOW - clk).count() > CUTOFF_TIME)
@@ -97,6 +97,8 @@ public:
 
         ui pruningCost = 0;
 
+        if(GOut.size()<q) return;
+
         for (ui i = 0; i < GOut.size() - q + 1; i++)
         {
             vi = i;
@@ -122,7 +124,7 @@ public:
             // start from first vertex
             reset(); // clears C and X
         }
-        cout << "pruning cost (ms): " << pruningCost / 1000 << endl;
+        cout << "iterative pruning cost (ms): " << pruningCost / 1000 << endl;
         cout << "Total (" << k1 << "," << k2 << ")-plexes of at least " << q << " size: " << kplexes << endl;
         for (ui i = 0; i < counts.size(); i++)
             if (counts[i])
@@ -1101,6 +1103,7 @@ private:
             degenOrder[k] = u;
             k++;
         }
+        cout<<"vertices in shrinked graph: "<<k<<endl;
         degenOrder.resize(k);
         GOut.resize(k);
         GIn.resize(k);
