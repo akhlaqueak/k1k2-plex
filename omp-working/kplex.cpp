@@ -364,12 +364,12 @@ public:
         };
         if (dir == Out)
         {
-            getNonNeigh(giOut[vp]);
+            getNonNeigh(giOut->(vp));
             p = k1 - (P.size() - dPout[vp]);
         }
         else
         {
-            getNonNeigh(giIn[vp]);
+            getNonNeigh(giIn->at(vp));
             p = k2 - (P.size() - dPin[vp]);
         }
         // cout<<vpNN.size()<<" "<<p<<endl;
