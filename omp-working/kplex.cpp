@@ -37,8 +37,7 @@ thread_local vector<ui> dPout;
 thread_local vector<ui> dGin;
 thread_local vector<ui> dGout;
 
-thread_local vector<vector<ui>> giIn, giOut;
-thread_local vector<vector<ui>> tempIn, tempOut;
+thread_local vector<vector<ui>> *giIn, *giOut;
 
 thread_local vector<ui> looka, lookb, lookc, lookd;
 
@@ -47,7 +46,7 @@ thread_local ui vi; // current vertex in degeneracy order for which we are searc
 thread_local RandList C;
 thread_local RandList X;
 thread_local RandList P;
-thread_local RandList block;
+thread_local RandList *block;
 
 thread_local vector<ui> rC, rX;
 thread_local ui kplexes = 0;
@@ -59,8 +58,9 @@ class ThreadData
     vector<ui> dpout;
     vector<ui> dgin;
     vector<ui> dgout;
-    vector<ui> p, c, x, blk;
-    vector<vector<ui>> gin, gout;
+    vector<ui> p, c, x;
+    RandList *blk;
+    vector<vector<ui>> *gin, *gout;
 
 public:
     ThreadData()
@@ -69,10 +69,10 @@ public:
         p = P.getData();
         c = C.getData();
         x = X.getData();
-        blk = block.getData();
-        gin.resize(block.size());
-        gout.resize(block.size());
-        for (ui i = 0; i < blk.size(); i++)
+        blk = block;
+        gin = giIn;
+        gout = giOut;
+        for (ui i = 0; i < blk->size(); i++)
         {
             dpin.push_back(dPin[i]);
             dpout.push_back(dPout[i]);
@@ -80,11 +80,11 @@ public:
             dgout.push_back(dGout[i]);
         }
         ttime += chrono::duration_cast<chrono::microseconds>(TIME_NOW - tick).count();
-        for (ui i = 0; i < blk.size(); i++)
-        {
-            gin[i] = giIn[i];
-            gout[i] = giOut[i];
-        }
+        // for (ui i = 0; i < blk.size(); i++)
+        // {
+        //     gin[i] = giIn->at(i);
+        //     gout[i] = giOut->at(i);
+        // }
         // for (ui u : blk)
         // {
         //     dpin.push_back({u, dPin[u]});
@@ -101,12 +101,12 @@ public:
         P.clear();
         C.clear();
         X.clear();
-        block.clear();
+        
 
         P.loadData(p);
         C.loadData(c);
         X.loadData(x);
-        block.loadData(blk);
+        block=blk;
         auto load = [&](auto &vec, auto &dest)
         {
             for (ui i = 0; i < vec.size(); i++)
@@ -720,7 +720,9 @@ private:
         C.init(ds);
         X.init(ds);
         P.init(ds);
-        block.init(ds);
+        block= new RandList(ds);
+        giIn=new vector<vector<ui>>();
+        giOut=new vector<vector<ui>>();
 
         looka.resize(ds);
         lookb.resize(ds);
@@ -734,10 +736,8 @@ private:
         // todo check with ds rather than max_size
         for (ui i = 0; i < MAX_SIZE; i++)
         {
-            giIn.push_back(vector<ui>(MAX_SIZE));
-            giOut.push_back(vector<ui>(MAX_SIZE));
-            tempIn.push_back(vector<ui>(MAX_SIZE));
-            tempOut.push_back(vector<ui>(MAX_SIZE));
+            giIn->push_back(vector<ui>(MAX_SIZE));
+            giOut->push_back(vector<ui>(MAX_SIZE));
         }
     }
     void shrinkGraph()
@@ -1381,13 +1381,13 @@ private:
     }
     bool inBlock(ui u)
     {
-        return block.contains(u);
+        return block->contains(u);
     }
     void addTo2HopG(ui u)
     {
         if (inBlock(u))
             return;
-        block.add(u);
+        block->add(u);
     }
 
     void buildBlock()
@@ -1395,40 +1395,40 @@ private:
         // giIn.clear();
         // giOut.clear();
 
-        giIn.resize(block.size());
-        giOut.resize(block.size());
-        for (auto &adj : giIn)
+        giIn->resize(block->size());
+        giOut->resize(block->size());
+        for (auto &adj : *giIn)
         {
             adj.clear();
             // adj.reserve(block.size());
         }
-        for (auto &adj : giOut)
+        for (auto &adj : *giOut)
         {
             adj.clear();
             // adj.reserve(block.size());
         }
-        for (ui i = 0; i < block.size(); i++)
+        for (ui i = 0; i < block->size(); i++)
         {
-            ui u = block[i];
+            ui u = block->get(i);
             for (ui v : GOut[u])
             {
                 if (inBlock(v))
-                    giOut[i].push_back(block.getIndex(v));
+                    giOut[i].push_back(block->getIndex(v));
             }
 
             for (ui v : GIn[u])
             {
                 if (inBlock(v))
-                    giIn[i].push_back(block.getIndex(v));
+                    giIn[i].push_back(block->getIndex(v));
             }
         }
-        for (auto &adj : giIn)
+        for (auto &adj : *giIn)
             sort(adj.begin(), adj.end());
-        for (auto &adj : giOut)
+        for (auto &adj : *giOut)
             sort(adj.begin(), adj.end());
-        for (ui i = 0; i < block.size(); i++)
+        for (ui i = 0; i < block->size(); i++)
         {
-            ui u = block[i];
+            ui u = block->get(i);
             if (u < vi)
                 X.add(i);
             else
@@ -1447,18 +1447,18 @@ private:
     void addToC(ui u)
     {
         C.add(u);
-        for (ui v : giOut[u])
+        for (ui v : giOut->at(u))
             dGin[v]++;
-        for (ui v : giIn[u])
+        for (ui v : giIn->at(u))
             dGout[v]++;
     }
 
     void removeFromC(ui u)
     {
         C.remove(u);
-        for (ui v : giOut[u])
+        for (ui v : giOut->at(u))
             dGin[v]--;
-        for (ui v : giIn[u])
+        for (ui v : giIn->at(u))
             dGout[v]--;
     }
 
@@ -1466,9 +1466,9 @@ private:
     {
         P.remove(u);
         C.add(u);
-        for (ui v : giOut[u])
+        for (ui v : giOut->at(u))
             dPin[v]--;
-        for (ui v : giIn[u])
+        for (ui v : giIn->at(u))
             dPout[v]--;
     }
 
@@ -1477,9 +1477,9 @@ private:
         // assert(Cand.contains(u));
         C.remove(u);
         P.add(u);
-        for (ui v : giOut[u])
+        for (ui v : giOut->at(u))
             dPin[v]++;
-        for (ui v : giIn[u])
+        for (ui v : giIn->at(u))
             dPout[v]++;
     }
 
@@ -1506,10 +1506,10 @@ private:
             // ui rv = recode[v];
             // should be in-connected to every out-boundary vertex
             // if (dPout[v] + k1 == P.size() && !edgeIn[ru].test(rv))
-            if (dPout[v] + k1 == P.size() && !binary_search(giIn[u].begin(), giIn[u].end(), v))
+            if (dPout[v] + k1 == P.size() && !binary_search(giIn->at(u).begin(), giIn->at(u).end(), v))
                 return false;
             // should be out-connected to every in-boundary vertex
-            if (dPin[v] + k2 == P.size() && !binary_search(giOut[u].begin(), giOut[u].end(), v))
+            if (dPin[v] + k2 == P.size() && !binary_search(giOut->at(u).begin(), giOut->at(u).end(), v))
                 return false;
         }
         return true;
