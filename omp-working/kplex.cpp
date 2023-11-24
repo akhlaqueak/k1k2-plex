@@ -9,7 +9,7 @@
 #define LOOKAHEAD
 #define CTCP
 // time theshold in microseconds...
-#define TIMEOUT_THRESH 1
+#define TIMEOUT_THRESH 10
 #define TASKGROUP
 bool isTimeout(auto start_t)
 {
