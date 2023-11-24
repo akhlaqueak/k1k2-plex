@@ -183,7 +183,7 @@ public:
                 }
                 reset(); // clears C and X
             }
-        // cout<<"copy time ns"<<ttime<<endl;
+        cout<<"copy time ns"<<ttime<<endl;
         }
         ui total = 0;
 #pragma omp parallel reduction(+ : total)
@@ -219,11 +219,9 @@ public:
     {
 #ifdef TASKGROUP
         if (isTimeout(start) and C.size() > GRAIN_SIZE){
-            cout<<"T ";
             branch(start);
         }
         else{
-            cout<<"B ";
             branchBase(start);
         }
 #else
