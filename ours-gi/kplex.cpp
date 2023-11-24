@@ -1,11 +1,16 @@
 #include "../common/utils.h"
 #include "../common/command_line.h"
 #define PuCSize (P.size() + C.size())
+#define TIME_NOW chrono::steady_clock::now()
+// one of these three options should be selected, deciding how Gi is calculated
+// #define ITERATIVE_PRUNE
+// #define TWO_HOP
+#define NO_TWO_HOP
 
-#define ITERATIVE_PRUNE
-#define BRANCHING
-#define LOOKAHEAD
-#define CTCP
+
+// #define BRANCHING
+// #define LOOKAHEAD
+// #define CTCP
 
 enum CommonNeighbors
 {
@@ -51,7 +56,7 @@ class EnumKPlex
     vector<ui> Qv;
     vector<ui> counts;
 
-    vector<ui> look1, look2, look3, look4, look5;
+    vector<ui> look1, look2, look3, look4;
 
     ui vi; // current vertex in degeneracy order for which we are searching kplex
 
@@ -76,33 +81,44 @@ public:
         // find degeneracy order, the result is degenOrder vector
         degenerate();
 
-        auto tick = chrono::steady_clock::now();
 #ifdef CTCP
+        auto tick = TIME_NOW;
         applyCoreTrussPruning();
-#else
-        shrinkGraph();
+        cout << "ctcp cost (ms): " << chrono::duration_cast<chrono::milliseconds>(TIME_NOW - tick).count() << " ms" << endl;
 #endif
+        // some nodes are pruned in k1k2CorePrune, so graph will be shrinked in case ctcp is not applied
+        shrinkGraph();
+        init(); // initilize G, and other vectors
 
-        ui iterative = 0;
+        ui pruningCost = 0;
 
-        cout << " CTCP time: " << chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - tick).count() << " ms" << endl;
         for (ui i = 0; i < GOut.size() - q + 1; i++)
         {
-            auto t1 = chrono::steady_clock::now();
             vi = i;
 #ifdef ITERATIVE_PRUNE
+            auto t1 = TIME_NOW;
             getTwoHopIterativePrunedG(vi);
-#else
-            getTwoHopG(vi);
-#endif
-            auto t2 = chrono::steady_clock::now();
-            iterative += chrono::duration_cast<chrono::microseconds>(t2 - t1).count();
-            // start from first vertex
+            pruningCost += chrono::duration_cast<chrono::microseconds>(TIME_NOW - t1).count();
             recurSearch(0);
+#else
+#ifdef TWO_HOP
+            auto t1 = TIME_NOW;
+            getTwoHopG(vi);
+            pruningCost += chrono::duration_cast<chrono::microseconds>(TIME_NOW - t1).count();
+            recurSearch(0);
+#else
+#ifdef NO_TWO_HOP
+            buildBlockFromG();
+            recurSearch(vi);
+#endif
+#endif
+#endif
+            auto t2 = TIME_NOW;
+            // start from first vertex
             reset(); // clears C and X
         }
+        cout << "pruning cost (ms): " << pruningCost / 1000 << endl;
         cout << "Total (" << k1 << "," << k2 << ")-plexes of at least " << q << " size: " << kplexes << endl;
-        cout << "Iterative Pruning Time (ms): " << iterative / 1000 << endl;
         for (ui i = 0; i < counts.size(); i++)
             if (counts[i])
                 cout << "kplexes of size: " << i + 1 << " = " << counts[i] << endl;
@@ -496,13 +512,13 @@ public:
 
     EnumKPlex(Graph &_g, ui _k1, ui _k2, ui _q) : pruned(_g.V), peelSeq(_g.V, -1),
                                                   g(_g), inDegree(_g.V), outDegree(_g.V),
-                                                  //   dPin(_g.V), dPout(_g.V),
-                                                  //   dGin(_g.V), dGout(_g.V),
+                                                  
                                                   k1(_k1), k2(_k2), q(_q), kplexes(0),
-                                                  deletedOutEdge(_g.V), cnPP(_g.V), cnPM(_g.V),
-                                                  cnMP(_g.V), cnMM(_g.V), look1(_g.V), look2(_g.V),
-                                                  look3(_g.V), look4(_g.V), look5(_g.V),
-                                                  P(_g.V), C(_g.V), X(_g.V), block(_g.V),
+                                                  deletedOutEdge(_g.V), 
+                                                  cnPP(_g.V), cnPM(_g.V),
+                                                  cnMP(_g.V), cnMM(_g.V),
+                                                  look1(_g.V), look2(_g.V),
+                                                  look3(_g.V), look4(_g.V), 
                                                   counts(1000)
     {
 
@@ -523,30 +539,24 @@ public:
             addTo2HopG(neigh[i]);
     }
 
-    void getFirstHop(ui u)
-    {
-        getNeighbors(g.nsOut[u]);
-        getNeighbors(g.nsIn[u]);
-    }
-
-    void getSecondHop(ui c1h, ui x1h)
-    {
-        for (size_t i = 0; i < c1h; i++)
-            getFirstHop(C[i]);
-        for (size_t i = 0; i < x1h; i++)
-            getFirstHop(X[i]);
-    }
-
     void getTwoHopG(ui u)
     {
         addTo2HopG(u);
 
-        getFirstHop(u);
+        getNeighbors(GOut[u]);
+        getNeighbors(GIn[u]);
 
-        // get 2nd hop neighbors, first hop neighbors are found until c1h, x1h
+        // get 2nd hop neighbors, first hop neighbors are already placed in block
         // 2nd hop neighbors are appended afterwards
-        getSecondHop(C.size(), X.size());
-        // getSecondHop(c1h, x1h);
+        ui sz = block.size();
+        // block[0] is u, so not including it for 2hop
+        for (size_t i = 1; i < sz; i++)
+        {
+            ui v = block[i];
+            getNeighbors(GOut[v]);
+            getNeighbors(GIn[v]);
+        }
+        buildBlock();
     }
 
 private:
@@ -619,7 +629,6 @@ private:
                 break;
         }
 
-        shrinkGraph();
     }
 
     void deleteEdge(ui u, ui vIndu)
@@ -1055,7 +1064,23 @@ private:
             }
         }
     }
+void init(){
+        ui ds = GOut.size();
+        dPin.resize(ds);
+        dPout.resize(ds);
+        dGin.resize(ds);
+        dGout.resize(ds);
 
+        C.init(ds);
+        X.init(ds);
+        P.init(ds);
+        block.init(ds);
+        
+#ifdef NO_TWO_HOP
+        giIn = GIn;
+        giOut = GOut;
+#endif
+}
     void shrinkGraph()
     {
         ui k = 0;
@@ -1085,6 +1110,7 @@ private:
                     continue;
                 ui ru = peelSeq[u];
                 ui rv = peelSeq[v];
+                // G is degeneracy ordered graph... 
                 GOut[ru].push_back(rv);
                 GIn[rv].push_back(ru);
             }
@@ -1099,18 +1125,7 @@ private:
         {
             sort(adj.begin(), adj.end());
             // print("in: ", adj);
-        }
-
-        ui ds = GOut.size();
-        dPin.resize(ds);
-        dPout.resize(ds);
-        dGin.resize(ds);
-        dGout.resize(ds);
-        dPout.resize(ds);
-        C.init(ds);
-        X.init(ds);
-        P.init(ds);
-        block.init(ds);
+        }                                                                                               
     }
 
     bool intersectsAll(auto &X, auto &Y)
@@ -1350,15 +1365,28 @@ private:
         block.add(u);
     }
 
+    void buildBlockFromG()
+    {
+        for (ui i = 0; i < giOut.size(); i++)
+        {
+            if (i < vi)
+                X.add(i);
+            else
+                addToC(i);
+        }
+    }
+
     void buildBlock()
     {
         giIn.resize(block.size());
         giOut.resize(block.size());
-        for (auto &adj : giIn){
+        for (auto &adj : giIn)
+        {
             adj.clear();
             adj.reserve(block.size());
         }
-        for (auto &adj : giOut){
+        for (auto &adj : giOut)
+        {
             adj.reserve(block.size());
             adj.clear();
         }
@@ -1503,11 +1531,11 @@ int main(int argc, char *argv[])
     cout << "Loading Done" << endl;
 
     cout << "starting kplex" << endl;
-    auto tick = chrono::steady_clock::now();
+    auto tick = TIME_NOW;
 
     EnumKPlex kp(g, k1, k2, q);
     kp.enumerate();
-    cout << data_file << " Enumeration time: " << chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - tick).count() << " ms" << endl;
+    cout << data_file << " Enumeration time: " << chrono::duration_cast<chrono::milliseconds>(TIME_NOW - tick).count() << " ms" << endl;
 
     cout << endl;
     return 0;

@@ -193,7 +193,7 @@ public:
                 }
                 reset(); // clears C and X
             }
-            cout << "copy time ns" << itprTime << endl;
+            cout << "copy time ns" << ttime << endl;
         // cout<<"it "<<
         }
         ui total = 0;
