@@ -218,10 +218,14 @@ public:
     void doBranch(auto start)
     {
 #ifdef TASKGROUP
-        if (isTimeout(start) and C.size() > GRAIN_SIZE)
+        if (isTimeout(start) and C.size() > GRAIN_SIZE){
+            cout<<"T ";
             branch(start);
-        else
+        }
+        else{
+            cout<<"B ";
             branchBase(start);
+        }
 #else
         branchBase(start);
 #endif
