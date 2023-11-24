@@ -364,7 +364,7 @@ public:
         };
         if (dir == Out)
         {
-            getNonNeigh(giOut->(vp));
+            getNonNeigh(giOut->at(vp));
             p = k1 - (P.size() - dPout[vp]);
         }
         else
