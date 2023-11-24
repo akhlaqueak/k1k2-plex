@@ -272,6 +272,8 @@ public:
             td1->loadThreadData();
             recurSearch(vc, TIME_NOW);
             temp->loadThreadData();
+            delete temp;
+            delete td1;
         }
 
         ThreadData *td = new ThreadData();
@@ -285,6 +287,8 @@ public:
             XToC(vc);
             // other branch where P contains u
             temp->loadThreadData();
+             delete temp;
+            delete td;
         }
     }
     void branchBase(auto start)
