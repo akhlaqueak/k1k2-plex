@@ -3,19 +3,19 @@
 #define PuCSize (P.size() + C.size())
 
 // one of these three options should be selected, deciding how Gi is calculated
-// #define ITERATIVE_PRUNE
+#define ITERATIVE_PRUNE
 // #define TWO_HOP
-#define NAIVE
+// #define NAIVE
 
-// #define BRANCHING
-// #define LOOKAHEAD
-// #define CTCP
+#define BRANCHING
+#define LOOKAHEAD
+#define CTCP
 
 #define TIME_NOW chrono::steady_clock::now()
 // cutoff time is in seconds
-#define CUTOFF_TIME 900
+#define CUTOFF_TIME (180)
 auto clk = TIME_NOW;
-#define TIME_OUT (chrono::duration_cast<chrono::seconds>(TIME_NOW - clk).count() > CUTOFF_TIME)
+#define TIME_OUT (chrono::duration_cast<chrono::minutes>(TIME_NOW - clk).count() > CUTOFF_TIME)
 
 enum CommonNeighbors
 {
