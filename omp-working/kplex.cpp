@@ -11,6 +11,7 @@
 // time theshold in microseconds...
 #define TIMEOUT_THRESH 10
 #define TASKGROUP
+#define MAX_SIZE 20000
 bool isTimeout(auto start_t)
 {
     return duration_cast<microseconds>(steady_clock::now() - start_t).count() > TIMEOUT_THRESH;
@@ -37,6 +38,7 @@ thread_local vector<ui> dGin;
 thread_local vector<ui> dGout;
 
 thread_local vector<vector<ui>> giIn, giOut;
+thread_local vector<vector<ui>> tempIn, tempOut;
 
 thread_local vector<ui> looka, lookb, lookc, lookd;
 
@@ -67,15 +69,13 @@ public:
         c = C.getData();
         x = X.getData();
         blk = block.getData();
-        auto tick = TIME_NOW;
         gin.resize(block.size());
         gout.resize(block.size());
         for (ui i = 0; i < blk.size(); i++)
         {
-            gin[i]=giIn[i];
-            gout[i]=giOut[i];
+            gin[i] = giIn[i];
+            gout[i] = giOut[i];
         }
-            ttime += chrono::duration_cast<chrono::microseconds>(TIME_NOW - tick).count();
         for (ui i = 0; i < blk.size(); i++)
         {
             dpin.push_back(dPin[i]);
@@ -115,8 +115,10 @@ public:
         load(dpout, dPout);
         load(dgin, dGin);
         load(dgout, dGout);
+        auto tick = TIME_NOW;
         giIn = gin;
         giOut = gout;
+        ttime += chrono::duration_cast<chrono::microseconds>(TIME_NOW - tick).count();
     }
 };
 
@@ -183,7 +185,7 @@ public:
                 }
                 reset(); // clears C and X
             }
-        cout<<"copy time ns"<<ttime<<endl;
+            cout << "copy time ns" << ttime << endl;
         }
         ui total = 0;
 #pragma omp parallel reduction(+ : total)
@@ -218,10 +220,12 @@ public:
     void doBranch(auto start)
     {
 #ifdef TASKGROUP
-        if (isTimeout(start) and C.size() > GRAIN_SIZE){
+        if (isTimeout(start) and C.size() > GRAIN_SIZE)
+        {
             branch(start);
         }
-        else{
+        else
+        {
             branchBase(start);
         }
 #else
@@ -289,7 +293,7 @@ public:
             XToC(vc);
             // other branch where P contains u
             temp->loadThreadData();
-             delete temp;
+            delete temp;
             delete td;
         }
     }
@@ -720,6 +724,19 @@ private:
         lookb.resize(ds);
         lookc.resize(ds);
         lookd.resize(ds);
+
+        // giIn.resize(MAX_SIZE);
+        // giOut.resize(MAX_SIZE);
+        // tempIn.resize(MAX_SIZE);
+        // tempOut.resize(MAX_SIZE);
+        // todo check with ds rather than max_size
+        for (ui i = 0; i < MAX_SIZE; i++)
+        {
+            giIn.push_back(vector<ui>(MAX_SIZE));
+            giOut.push_back(vector<ui>(MAX_SIZE));
+            tempIn.push_back(vector<ui>(MAX_SIZE));
+            tempOut.push_back(vector<ui>(MAX_SIZE));
+        }
     }
     void shrinkGraph()
     {
@@ -1375,7 +1392,7 @@ private:
     {
         // giIn.clear();
         // giOut.clear();
-        
+
         giIn.resize(block.size());
         giOut.resize(block.size());
         for (auto &adj : giIn)
