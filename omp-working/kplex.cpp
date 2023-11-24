@@ -9,7 +9,7 @@
 #define LOOKAHEAD
 #define CTCP
 // time theshold in microseconds...
-#define TIMEOUT_THRESH 100
+#define TIMEOUT_THRESH 1000
 #define TASKGROUP
 #define MAX_SIZE 2000
 bool isTimeout(auto start_t)
@@ -66,9 +66,12 @@ public:
     ThreadData()
     {
         auto tick=TIME_NOW;
-        p = P.getData();
-        c = C.getData();
-        x = X.getData();
+        // p = P.getData();
+        // c = C.getData();
+        // x = X.getData();
+        P.copyDataTo(p);
+        C.copyDataTo(c);
+        X.copyDataTo(x);
         blk = block;
         gin = giIn;
         gout = giOut;
