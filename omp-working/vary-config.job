@@ -26,12 +26,27 @@ module load Valgrind
 alias python=python3
 
 export OMP_NUM_THREADS=32
-./kplex -g ~/DataBank/it-2004.txt -q 1000 -k1 2 -k2 2 > it-2004.32.out
-
+./kplex -g ../datasets/webbase-2001.bin -k1 3 -k2 3 -q 400 -t 100 >> web.out
+./kplex -g ../datasets/webbase-2001.bin -k1 3 -k2 3 -q 400 -t 1000 >> web.out
 
 export OMP_NUM_THREADS=16
-./kplex -g ~/DataBank/it-2004.txt -q 1000 -k1 2 -k2 2 > it-2004.16.out
-
+./kplex -g ../datasets/webbase-2001.bin -k1 3 -k2 3 -q 400 -t 100 >> web.out
+./kplex -g ../datasets/webbase-2001.bin -k1 3 -k2 3 -q 400 -t 1000 >> web.out
 
 export OMP_NUM_THREADS=8
-./kplex -g ~/DataBank/it-2004.txt -q 1000 -k1 2 -k2 2 > it-2004.8.out
+./kplex -g ../datasets/webbase-2001.bin -k1 3 -k2 3 -q 400 -t 100 >> web.out
+./kplex -g ../datasets/webbase-2001.bin -k1 3 -k2 3 -q 400 -t 100 >> web.out
+
+
+export OMP_NUM_THREADS=32
+./kplex -g ../datasets/webbase-2001.bin -k1 3 -k2 3 -q 200 -t 100 >> web.out
+./kplex -g ../datasets/webbase-2001.bin -k1 3 -k2 3 -q 200 -t 1000 >> web.out
+
+export OMP_NUM_THREADS=16
+./kplex -g ../datasets/webbase-2001.bin -k1 3 -k2 3 -q 200 -t 100 >> web.out
+./kplex -g ../datasets/webbase-2001.bin -k1 3 -k2 3 -q 200 -t 1000 >> web.out
+
+export OMP_NUM_THREADS=8
+./kplex -g ../datasets/webbase-2001.bin -k1 3 -k2 3 -q 200 -t 100 >> web.out
+./kplex -g ../datasets/webbase-2001.bin -k1 3 -k2 3 -q 200 -t 100 >> web.out
+
