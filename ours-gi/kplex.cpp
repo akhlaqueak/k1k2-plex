@@ -1547,7 +1547,7 @@ int main(int argc, char *argv[])
     if (TIME_OUT)
         cout << data_file << " Timed Out" << endl;
     else
-        cout << data_file << " Enumeration time: " << chrono::duration_cast<chrono::milliseconds>(TIME_NOW - tick).count() << " ms" << endl;
+        cout << data_file << " Enumeration time (md): " << chrono::duration_cast<chrono::milliseconds>(TIME_NOW - tick).count()  << endl;
 
     cout << endl;
     return 0;

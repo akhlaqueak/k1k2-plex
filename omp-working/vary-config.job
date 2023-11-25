@@ -26,12 +26,12 @@ module load Valgrind
 alias python=python3
 
 export OMP_NUM_THREADS=32
-./kplex -g ../datasets/wiki-it.txt -k1 3 -k2 3 -q 12 > wikit-it-32.out
+./kplex -g ~/DataBank/it-2004.txt -q 1000 -k1 2 -k2 2 > it-2004.32.out
 
 
 export OMP_NUM_THREADS=16
-./kplex -g ../datasets/wiki-it.txt -k1 3 -k2 3 -q 12 > wikit-it-16.out
+./kplex -g ~/DataBank/it-2004.txt -q 1000 -k1 2 -k2 2 > it-2004.16.out
 
 
 export OMP_NUM_THREADS=8
-./kplex -g ../datasets/wiki-it.txt -k1 3 -k2 3 -q 12 > wikit-it-8.out
+./kplex -g ~/DataBank/it-2004.txt -q 1000 -k1 2 -k2 2 > it-2004.8.out

@@ -1,7 +1,7 @@
 #include "../common/utils.h"
 #include "../common/command_line.h"
 #include <omp.h>
-#define GRAIN_SIZE 10
+#define GRAIN_SIZE 50
 #define TIME_NOW chrono::steady_clock::now()
 #define PuCSize (P.size() + C.size())
 #define ITERATIVE_PRUNE
@@ -9,9 +9,8 @@
 #define LOOKAHEAD
 #define CTCP
 // time theshold in microseconds...
-#define TIMEOUT_THRESH 10000
+#define TIMEOUT_THRESH 20000
 #define TASKGROUP
-#define MAX_SIZE 2000
 bool isTimeout(auto start_t)
 {
     return duration_cast<microseconds>(steady_clock::now() - start_t).count() > TIMEOUT_THRESH;
@@ -65,7 +64,7 @@ class ThreadData
 public:
     ThreadData()
     {
-        auto tick=TIME_NOW;
+        auto tick = TIME_NOW;
         // p = P.getData();
         // c = C.getData();
         // x = X.getData();
@@ -104,12 +103,11 @@ public:
         P.clear();
         C.clear();
         X.clear();
-        
 
         P.loadData(p);
         C.loadData(c);
         X.loadData(x);
-        block=blk;
+        block = blk;
         auto load = [&](auto &vec, auto &dest)
         {
             for (ui i = 0; i < vec.size(); i++)
@@ -166,21 +164,24 @@ public:
         shrinkGraph();
 #endif
 
-            // cout<<"No. of Threads: "<<omp_get_num_threads()<<endl;
+        cout<<"No. of Threads: "<<omp_get_num_threads()<<endl;
 #pragma omp parallel
         {
             // cout<<"id: "<<omp_get_thread_num()<<endl;
             init(); // initializes thread local vectors...
             ui itprTime = 0;
+            if (GOut.size() < q)
+                return;
+
 #pragma omp for schedule(dynamic)
             for (ui i = 0; i < GOut.size() - q + 1; i++)
             {
 
                 vi = i;
-                auto tick =TIME_NOW;
+                auto tick = TIME_NOW;
 #ifdef ITERATIVE_PRUNE
                 getTwoHopIterativePrunedG(vi);
-                itprTime+=chrono::duration_cast<chrono::microseconds>(TIME_NOW - tick).count();
+                itprTime += chrono::duration_cast<chrono::microseconds>(TIME_NOW - tick).count();
 #else
                 getTwoHopG(vi);
 #endif
@@ -194,7 +195,7 @@ public:
                 reset(); // clears C and X
             }
             cout << "thread data copy time" << ttime << endl;
-        // cout<<"it "<<
+            // cout<<"it "<<
         }
         ui total = 0;
 #pragma omp parallel reduction(+ : total)
@@ -726,24 +727,19 @@ private:
         C.init(ds);
         X.init(ds);
         P.init(ds);
-        block= new RandList(ds);
-        giIn=new vector<vector<ui>>();
-        giOut=new vector<vector<ui>>();
+        block = new RandList(ds);
+        giIn = new vector<vector<ui>>();
+        giOut = new vector<vector<ui>>();
 
         looka.resize(ds);
         lookb.resize(ds);
         lookc.resize(ds);
         lookd.resize(ds);
 
-        // giIn.resize(MAX_SIZE);
-        // giOut.resize(MAX_SIZE);
-        // tempIn.resize(MAX_SIZE);
-        // tempOut.resize(MAX_SIZE);
-        // todo check with ds rather than max_size
-        for (ui i = 0; i < MAX_SIZE; i++)
+        for (ui i = 0; i < ds; i++)
         {
-            giIn->push_back(vector<ui>(MAX_SIZE));
-            giOut->push_back(vector<ui>(MAX_SIZE));
+            giIn->push_back(vector<ui>(ds));
+            giOut->push_back(vector<ui>(ds));
         }
     }
     void shrinkGraph()
