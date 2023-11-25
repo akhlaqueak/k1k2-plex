@@ -200,16 +200,19 @@ public:
                 }
                 reset(); // clears C and X
             }
+            cout<<"tt"<<ttime<<endl;
         }
-        ui total = 0;
-        ui context = 0;
-#pragma omp  critical
+        ui total = 0, context = 0;
+#pragma omp parallel reduction(+ : total)
         {
             total += kplexes;
-            if (ttime> context)
-                context = ttime;
         }
-        cout<<"context switching cost (ms): "<<context/1000<<endl;
+        #pragma omp parallel reduction(max : context)
+        {
+            context = ttime;
+        }
+        
+        cout<<"context switching cost (ms): "<<context/1000;
         cout << "Total (" << k1 << "," << k2 << ")-plexes of at least " << q << " size: " << total << endl;
     }
 
