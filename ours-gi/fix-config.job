@@ -92,5 +92,8 @@ do
 done
 
 
-
+for i in "${!ds[@]}"
+do
+     ls  ../datasets/${ds[i]}.bin
+done
 
