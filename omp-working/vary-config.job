@@ -12,7 +12,7 @@
 #SBATCH --error=parallel.err
 #SBATCH --output=parallel.out
 #SBATCH --ntasks=1
-#--cpus-per-task=32
+#--cpus-per-task=48
 # Tell the scheduler only need 10 minutes
 #
 #SBATCH --time=5:00:00
