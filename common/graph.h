@@ -21,11 +21,14 @@ void Graph::readBinFile(string fname)
     rdfile.read(reinterpret_cast<char *>(&V), sizeof(ui));
     nsIn.resize(V);
     nsOut.resize(V);
+    ui maxin = 0, maxout = 0;
     for (ui i = 0; i < V; i++)
     {
         ui m;
         rdfile.read(reinterpret_cast<char *>(&m), sizeof(ui));
         nsOut[i].resize(m);
+        if (m > maxout)
+            maxout = m;
         rdfile.read(reinterpret_cast<char *>(&nsOut[i][0]), m * sizeof(ui));
     }
     for (ui i = 0; i < V; i++)
@@ -33,14 +36,18 @@ void Graph::readBinFile(string fname)
         ui m;
         rdfile.read(reinterpret_cast<char *>(&m), sizeof(ui));
         nsIn[i].resize(m);
+        if (m > maxin)
+            maxin = m;
         rdfile.read(reinterpret_cast<char *>(&nsIn[i][0]), m * sizeof(ui));
     }
+    cout << "Max Out Degree " << maxout << endl;
+    cout << "Max In Degree " << maxin << endl;
 }
 
 void Graph::writeBinFile(string fname)
 {
     std::ofstream wfile(fname, std::ios::binary);
-        wfile.write(reinterpret_cast<char *>(&V), sizeof(ui));
+    wfile.write(reinterpret_cast<char *>(&V), sizeof(ui));
     for (ui i = 0; i < V; i++)
     {
         ui m = nsOut[i].size();

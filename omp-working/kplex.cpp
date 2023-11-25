@@ -53,7 +53,7 @@ thread_local RandList *block;
 
 thread_local vector<ui> rC, rX;
 thread_local ui kplexes = 0;
-thread_local ui ttime = 0;
+thread_local ui ttime = 0, itprTime=0;
 
 class ThreadData
 {
@@ -159,22 +159,20 @@ public:
         k1k2CorePrune();
         // find degeneracy order, the result is degenOrder vector
         degenerate();
-
+        auto tick=TIME_NOW;
 #ifdef CTCP
-        auto tick = TIME_NOW;
         applyCoreTrussPruning();
         cout << "ctcp cost (ms): " << chrono::duration_cast<chrono::milliseconds>(TIME_NOW - tick).count() << endl;
 #endif
         shrinkGraph();
         if (GOut.size() < q)
             return;
-
+        tick = TIME_NOW;
             // cout << "No. of Threads: " << omp_get_num_threads() << endl;
 #pragma omp parallel
         {
             // cout<<"id: "<<omp_get_thread_num()<<endl;
             init(); // initializes thread local vectors...
-            ui itprTime = 0;
 
 #pragma omp for schedule(dynamic)
             for (ui i = 0; i < GOut.size() - q + 1; i++)
@@ -198,7 +196,7 @@ public:
                 reset(); // clears C and X
             }
         }
-        ui total = 0, context = 0;
+        ui total = 0, context = 0, pruningCost = 0;
 #pragma omp parallel reduction(+ : total)
         {
             total += kplexes;
@@ -208,12 +206,13 @@ public:
             context = ttime;
         }
 
-        cout << "max context switching cost (ms): " << context / 1000 << endl;
-#pragma omp parallel reduction(min : context)
+#pragma omp parallel reduction(max : pruningCost)
         {
-            context = ttime;
+            pruningCost = itprTime;
         }
-        cout << "min context switching cost (ms): " << context / 1000 << endl;
+        cout << "max context switching cost (ms): " << context / 1000 << endl;
+        cout << "max iterative pruning cost (ms): " << pruningCost / 1000 << endl;
+        cout << "search cost (ms): " << chrono::duration_cast<chrono::milliseconds>(TIME_NOW - tick).count()<< endl;
         cout << "Total (" << k1 << "," << k2 << ")-plexes of at least " << q << " size: " << total << endl;
     }
 
@@ -1636,9 +1635,9 @@ int main(int argc, char *argv[])
     EnumKPlex kp(g, k1, k2, q);
     kp.enumerate();
     if (CUTOFF)
-        cout << file << " Timed Out" << endl;
+        cout << file << "Timed Out" << endl;
     else
-        cout << file << " Enumeration time (ms): " << chrono::duration_cast<chrono::milliseconds>(TIME_NOW - tick).count() << endl;
+        cout << file << "Total execution time (ms): " << chrono::duration_cast<chrono::milliseconds>(TIME_NOW - tick).count() << endl;
 
     cout << endl;
     return 0;
