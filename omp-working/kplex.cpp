@@ -200,19 +200,24 @@ public:
                 }
                 reset(); // clears C and X
             }
-            cout<<"tt"<<ttime<<endl;
+            cout << "tt" << ttime << endl;
         }
         ui total = 0, context = 0;
 #pragma omp parallel reduction(+ : total)
         {
             total += kplexes;
         }
-        #pragma omp parallel reduction(max : context)
+#pragma omp parallel reduction(max : context)
         {
             context = ttime;
         }
-        
-        cout<<"context switching cost (ms): "<<context/1000;
+
+        cout << "max context switching cost (ms): " << context / 1000;
+#pragma omp parallel reduction(min : context)
+        {
+            context = ttime;
+        }
+        cout << "min context switching cost (ms): " << context / 1000;
         cout << "Total (" << k1 << "," << k2 << ")-plexes of at least " << q << " size: " << total << endl;
     }
 
@@ -239,7 +244,7 @@ public:
 
     void doBranch(auto start)
     {
-        if(CUTOFF) //prgram timed out
+        if (CUTOFF) // prgram timed out
             return;
 #ifdef TASKGROUP
         if (isTimeout(start) and C.size() > GRAIN_SIZE)
@@ -1618,7 +1623,8 @@ int main(int argc, char *argv[])
     string ext = file.substr(ind, file.size());
     if (ext == string(".bin"))
         g.readBinFile(file);
-    else{
+    else
+    {
         g.readTextFile(file);
         string binfile = file.substr(0, ind) + ".bin";
         g.writeBinFile(binfile);
