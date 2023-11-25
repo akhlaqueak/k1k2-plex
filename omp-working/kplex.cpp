@@ -612,7 +612,7 @@ public:
         {
             deletedOutEdge[i] = MBitSet(g.nsOut[i].size());
         }
-        Qe.reserve(g.E / 10);
+        Qe.reserve(g.V);
 
         // reset();
     }
