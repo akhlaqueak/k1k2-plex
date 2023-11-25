@@ -172,7 +172,7 @@ public:
         if (GOut.size() < q)
             return;
 
-        cout << "No. of Threads: " << omp_get_num_threads() << endl;
+        // cout << "No. of Threads: " << omp_get_num_threads() << endl;
 #pragma omp parallel
         {
             // cout<<"id: "<<omp_get_thread_num()<<endl;
