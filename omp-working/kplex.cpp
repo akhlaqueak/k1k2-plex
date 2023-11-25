@@ -212,12 +212,12 @@ public:
             context = ttime;
         }
 
-        cout << "max context switching cost (ms): " << context / 1000;
+        cout << "max context switching cost (ms): " << context / 1000<<endl;
 #pragma omp parallel reduction(min : context)
         {
             context = ttime;
         }
-        cout << "min context switching cost (ms): " << context / 1000;
+        cout << "min context switching cost (ms): " << context / 1000<<endl;
         cout << "Total (" << k1 << "," << k2 << ")-plexes of at least " << q << " size: " << total << endl;
     }
 
