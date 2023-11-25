@@ -243,7 +243,7 @@ public:
         if (CUTOFF) // prgram timed out
             return;
 #ifdef TASKGROUP
-        if (duration_cast<microseconds>(steady_clock::now() - start_t).count() > timeout and C.size() > GRAIN_SIZE)
+        if (duration_cast<microseconds>(steady_clock::now() - start).count() > timeout and C.size() > GRAIN_SIZE)
         {
             branch(start);
         }
