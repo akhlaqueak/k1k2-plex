@@ -203,7 +203,7 @@ public:
         }
         ui total = 0;
         ui context = 0;
-#pragma omp parallel critical
+#pragma omp  critical
         {
             total += kplexes;
             if (ttime> context)
