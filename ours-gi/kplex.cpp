@@ -1135,6 +1135,7 @@ private:
             sort(adj.begin(), adj.end());
             // print("in: ", adj);
         }
+        cout<<"Shrinked graph |V|: "<<GOut.size()<<endl;
     }
 
     bool intersectsAll(auto &X, auto &Y)
