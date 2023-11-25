@@ -200,7 +200,6 @@ public:
                 }
                 reset(); // clears C and X
             }
-            cout << "tt" << ttime << endl;
         }
         ui total = 0, context = 0;
 #pragma omp parallel reduction(+ : total)
