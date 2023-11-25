@@ -163,7 +163,7 @@ public:
 #ifdef CTCP
         auto tick = TIME_NOW;
         applyCoreTrussPruning();
-        cout << "ctcp cost (ms): " << chrono::duration_cast<chrono::milliseconds>(TIME_NOW - tick).count() << " ms" << endl;
+        cout << "ctcp cost (ms): " << chrono::duration_cast<chrono::milliseconds>(TIME_NOW - tick).count() << endl;
 #endif
         shrinkGraph();
         if (GOut.size() < q)
@@ -1638,7 +1638,7 @@ int main(int argc, char *argv[])
     if (CUTOFF)
         cout << file << " Timed Out" << endl;
     else
-        cout << file << " Enumeration time (md): " << chrono::duration_cast<chrono::milliseconds>(TIME_NOW - tick).count() << endl;
+        cout << file << " Enumeration time (ms): " << chrono::duration_cast<chrono::milliseconds>(TIME_NOW - tick).count() << endl;
 
     cout << endl;
     return 0;
