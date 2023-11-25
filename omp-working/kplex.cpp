@@ -1,7 +1,7 @@
 #include "../common/utils.h"
 #include "../common/command_line.h"
 #include <omp.h>
-#define GRAIN_SIZE 50
+#define GRAIN_SIZE 10
 #define TIME_NOW chrono::steady_clock::now()
 #define PuCSize (P.size() + C.size())
 #define ITERATIVE_PRUNE
@@ -9,12 +9,9 @@
 #define LOOKAHEAD
 #define CTCP
 // time theshold in microseconds...
-#define TIMEOUT_THRESH 20000
+ui timeout;
 #define TASKGROUP
-bool isTimeout(auto start_t)
-{
-    return duration_cast<microseconds>(steady_clock::now() - start_t).count() > TIMEOUT_THRESH;
-}
+
 
 #define TIME_NOW chrono::steady_clock::now()
 // cutoff time is in minutes
@@ -166,13 +163,13 @@ public:
 #ifdef CTCP
         auto tick = TIME_NOW;
         applyCoreTrussPruning();
-        cout << " CTCP time: " << chrono::duration_cast<chrono::milliseconds>(TIME_NOW - tick).count() << " ms" << endl;
+        cout << "ctcp cost (ms): " << chrono::duration_cast<chrono::milliseconds>(TIME_NOW - tick).count() << " ms" << endl;
 #endif
         shrinkGraph();
         if (GOut.size() < q)
             return;
 
-        // cout << "No. of Threads: " << omp_get_num_threads() << endl;
+            // cout << "No. of Threads: " << omp_get_num_threads() << endl;
 #pragma omp parallel
         {
             // cout<<"id: "<<omp_get_thread_num()<<endl;
@@ -211,12 +208,12 @@ public:
             context = ttime;
         }
 
-        cout << "max context switching cost (ms): " << context / 1000<<endl;
+        cout << "max context switching cost (ms): " << context / 1000 << endl;
 #pragma omp parallel reduction(min : context)
         {
             context = ttime;
         }
-        cout << "min context switching cost (ms): " << context / 1000<<endl;
+        cout << "min context switching cost (ms): " << context / 1000 << endl;
         cout << "Total (" << k1 << "," << k2 << ")-plexes of at least " << q << " size: " << total << endl;
     }
 
@@ -246,7 +243,7 @@ public:
         if (CUTOFF) // prgram timed out
             return;
 #ifdef TASKGROUP
-        if (isTimeout(start) and C.size() > GRAIN_SIZE)
+        if (duration_cast<microseconds>(steady_clock::now() - start_t).count() > timeout and C.size() > GRAIN_SIZE)
         {
             branch(start);
         }
@@ -801,7 +798,7 @@ private:
             sort(adj.begin(), adj.end());
             // print("in: ", adj);
         }
-        cout<<"Shrinked graph |V|: "<<GOut.size()<<endl;
+        cout << "Shrinked graph |V|: " << GOut.size() << endl;
     }
 
     void deleteEdge(ui u, ui vIndu)
@@ -1598,6 +1595,7 @@ int main(int argc, char *argv[])
     ui q = cmd.GetOptionIntValue("-q", 2);
     ui k1 = cmd.GetOptionIntValue("-k1", 1);
     ui k2 = cmd.GetOptionIntValue("-k2", 1);
+    timeout = cmd.GetOptionIntValue("-t", 100);
 
     if (file == "")
     {
