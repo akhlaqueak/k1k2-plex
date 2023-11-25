@@ -200,14 +200,16 @@ public:
                 }
                 reset(); // clears C and X
             }
-            cout << "thread data copy time" << ttime << endl;
-            // cout<<"it "<<
         }
         ui total = 0;
-#pragma omp parallel reduction(+ : total)
+        ui context = 0;
+#pragma omp parallel critical
         {
             total += kplexes;
+            if (ttime> context)
+                context = ttime;
         }
+        cout<<"context switching cost (ms): "<<context/1000<<endl;
         cout << "Total (" << k1 << "," << k2 << ")-plexes of at least " << q << " size: " << total << endl;
     }
 
