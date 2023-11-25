@@ -15,7 +15,7 @@
 // cutoff time is in minutes
 #define CUTOFF_TIME (180)
 auto clk = TIME_NOW;
-#define TIME_OUT (chrono::duration_cast<chrono::minutes>(TIME_NOW - clk).count() > CUTOFF_TIME)
+#define CUTOFF (chrono::duration_cast<chrono::minutes>(TIME_NOW - clk).count() > CUTOFF_TIME)
 
 enum CommonNeighbors
 {
@@ -97,7 +97,8 @@ public:
 
         ui pruningCost = 0;
 
-        if(GOut.size()<q) return;
+        if (GOut.size() < q)
+            return;
 
         for (ui i = 0; i < GOut.size() - q + 1; i++)
         {
@@ -153,7 +154,7 @@ public:
     void branch()
     {
         // cout<<"("<<P.size()<< ","<<C.size()<<")";
-        if (TIME_OUT)
+        if (CUTOFF)
             return;
         if (PuCSize < q)
             return;
@@ -537,8 +538,7 @@ public:
         {
             deletedOutEdge[i] = MBitSet(g.nsOut[i].size());
         }
-        Qe.reserve(g.E / 10);
-
+        Qe.reserve(g.V);
         // reset();
     }
     void getNeighbors(auto &neigh)
@@ -1103,7 +1103,7 @@ private:
             degenOrder[k] = u;
             k++;
         }
-        cout<<"vertices in shrinked graph: "<<k<<endl;
+        cout << "vertices in shrinked graph: " << k << endl;
         degenOrder.resize(k);
         GOut.resize(k);
         GIn.resize(k);
@@ -1511,12 +1511,12 @@ private:
 int main(int argc, char *argv[])
 {
     CommandLine cmd(argc, argv);
-    std::string data_file = cmd.GetOptionValue("-g", "");
+    std::string file = cmd.GetOptionValue("-g", "");
     ui q = cmd.GetOptionIntValue("-q", 2);
     ui k1 = cmd.GetOptionIntValue("-k1", 1);
     ui k2 = cmd.GetOptionIntValue("-k2", 1);
 
-    if (data_file == "")
+    if (file == "")
     {
         cout << "Please provide data file" << endl;
         exit(-1);
@@ -1535,7 +1535,16 @@ int main(int argc, char *argv[])
     }
 
     cout << "Loading Started" << endl;
-    Graph g(data_file);
+    Graph g;
+    size_t ind = file.find_last_of(".");
+    string ext = file.substr(ind, file.size());
+    if (ext == string(".bin"))
+        g.readBinFile(file);
+    else{
+        g.readTextFile(file);
+        string binfile = file.substr(0, ind) + ".bin";
+        g.writeBinFile(binfile);
+    }
     cout << "n=" << g.V << endl;
     cout << "Loading Done" << endl;
 
@@ -1544,10 +1553,10 @@ int main(int argc, char *argv[])
 
     EnumKPlex kp(g, k1, k2, q);
     kp.enumerate();
-    if (TIME_OUT)
-        cout << data_file << " Timed Out" << endl;
+    if (CUTOFF)
+        cout << file << " Timed Out" << endl;
     else
-        cout << data_file << " Enumeration time (md): " << chrono::duration_cast<chrono::milliseconds>(TIME_NOW - tick).count()  << endl;
+        cout << file << " Enumeration time (md): " << chrono::duration_cast<chrono::milliseconds>(TIME_NOW - tick).count() << endl;
 
     cout << endl;
     return 0;

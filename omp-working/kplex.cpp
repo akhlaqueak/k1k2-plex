@@ -15,6 +15,13 @@ bool isTimeout(auto start_t)
 {
     return duration_cast<microseconds>(steady_clock::now() - start_t).count() > TIMEOUT_THRESH;
 }
+
+#define TIME_NOW chrono::steady_clock::now()
+// cutoff time is in minutes
+#define CUTOFF_TIME (180)
+auto clk = TIME_NOW;
+#define CUTOFF (chrono::duration_cast<chrono::minutes>(TIME_NOW - clk).count() > CUTOFF_TIME)
+
 enum CommonNeighbors
 {
     PM,
@@ -227,6 +234,8 @@ public:
 
     void doBranch(auto start)
     {
+        if(CUTOFF) //prgram timed out
+            return;
 #ifdef TASKGROUP
         if (isTimeout(start) and C.size() > GRAIN_SIZE)
         {
@@ -1575,12 +1584,12 @@ private:
 int main(int argc, char *argv[])
 {
     CommandLine cmd(argc, argv);
-    std::string data_file = cmd.GetOptionValue("-g", "");
+    std::string file = cmd.GetOptionValue("-g", "");
     ui q = cmd.GetOptionIntValue("-q", 2);
     ui k1 = cmd.GetOptionIntValue("-k1", 1);
     ui k2 = cmd.GetOptionIntValue("-k2", 1);
 
-    if (data_file == "")
+    if (file == "")
     {
         cout << "Please provide data file" << endl;
         exit(-1);
@@ -1599,7 +1608,16 @@ int main(int argc, char *argv[])
     }
 
     cout << "Loading Started" << endl;
-    Graph g(data_file);
+    Graph g;
+    size_t ind = file.find_last_of(".");
+    string ext = file.substr(ind, file.size());
+    if (ext == string(".bin"))
+        g.readBinFile(file);
+    else{
+        g.readTextFile(file);
+        string binfile = file.substr(0, ind) + ".bin";
+        g.writeBinFile(binfile);
+    }
     cout << "n=" << g.V << endl;
     cout << "Loading Done" << endl;
 
@@ -1608,7 +1626,10 @@ int main(int argc, char *argv[])
 
     EnumKPlex kp(g, k1, k2, q);
     kp.enumerate();
-    cout << data_file << " Enumeration time: " << chrono::duration_cast<chrono::milliseconds>(TIME_NOW - tick).count() << " ms" << endl;
+    if (CUTOFF)
+        cout << file << " Timed Out" << endl;
+    else
+        cout << file << " Enumeration time (md): " << chrono::duration_cast<chrono::milliseconds>(TIME_NOW - tick).count() << endl;
 
     cout << endl;
     return 0;

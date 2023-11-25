@@ -6,35 +6,60 @@ using namespace std;
 using namespace chrono;
 typedef unsigned int ui;
 
-#define DS_LOC string("")
-#define OUTPUT_LOC string("")
-
 class Graph
 {
 public:
     vector<vector<ui>> nsIn, nsOut;
     ui V;
-    ui E;
-    ui AVG_DEGREE = 0;
-    Graph(std::string input_file);
-    Graph();
-    void readFile(string input_file);
+    void readTextFile(string);
+    void writeBinFile(string);
+    void readBinFile(string);
 };
-
-bool degComp(const pair<ui, ui> &lhs, const pair<ui, ui> &rhs)
+void Graph::readBinFile(string fname)
 {
-    return lhs.second > rhs.second;
+    std::ifstream rdfile(fname, std::ios::binary);
+    rdfile.read(reinterpret_cast<char *>(&V), sizeof(ui));
+    nsIn.resize(V);
+    nsOut.resize(V);
+    for (ui i = 0; i < V; i++)
+    {
+        ui m;
+        rdfile.read(reinterpret_cast<char *>(&m), sizeof(ui));
+        nsOut[i].resize(m);
+        rdfile.read(reinterpret_cast<char *>(&nsOut[i][0]), m * sizeof(ui));
+    }
+    for (ui i = 0; i < V; i++)
+    {
+        ui m;
+        rdfile.read(reinterpret_cast<char *>(&m), sizeof(ui));
+        nsIn[i].resize(m);
+        rdfile.read(reinterpret_cast<char *>(&nsIn[i][0]), m * sizeof(ui));
+    }
 }
 
-Graph::Graph()
+void Graph::writeBinFile(string fname)
 {
-    // default constructor
+    std::ofstream wfile(fname, std::ios::binary);
+        wfile.write(reinterpret_cast<char *>(&V), sizeof(ui));
+    for (ui i = 0; i < V; i++)
+    {
+        ui m = nsOut[i].size();
+        wfile.write(reinterpret_cast<char *>(&m), sizeof(ui));
+        wfile.write(reinterpret_cast<char *>(&nsOut[i][0]), m * sizeof(ui));
+    }
+    for (ui i = 0; i < V; i++)
+    {
+        ui m = nsIn[i].size();
+        wfile.write(reinterpret_cast<char *>(&m), sizeof(ui));
+        wfile.write(reinterpret_cast<char *>(&nsIn[i][0]), m * sizeof(ui));
+    }
 }
-void Graph::readFile(string input_file)
+
+void Graph::readTextFile(string input_file)
 {
 
     ifstream infile;
-    infile.open(DS_LOC + input_file);
+    infile.open(input_file);
     if (!infile)
     {
         cout << "load graph file failed " << endl;
@@ -57,7 +82,6 @@ void Graph::readFile(string input_file)
     vector<pair<ui, ui>> lines;
 
     V = 0;
-    E = 0;
     while (std::getline(infile, line))
     {
         if (!isdigit(line[0]))
@@ -82,7 +106,7 @@ void Graph::readFile(string input_file)
     {
         nsOut[p.first].push_back(p.second);
         nsIn[p.second].push_back(p.first);
-        // trying undirected graphs... 
+        // trying undirected graphs...
         // nsOut[p.second].push_back(p.first);
         // nsIn[p.first].push_back(p.second);
     }
@@ -94,7 +118,6 @@ void Graph::readFile(string input_file)
         sort(ns.begin(), ns.end());
         auto last = std::unique(ns.begin(), ns.end());
         ns.erase(last, ns.end());
-        E += ns.size();
     }
 
     for (auto &ns : nsOut)
@@ -104,62 +127,16 @@ void Graph::readFile(string input_file)
         ns.erase(last, ns.end());
     }
     ui maxdeg = 0;
-    for(auto& ns: nsOut)
-        if(ns.size()>maxdeg)
+    for (auto &ns : nsOut)
+        if (ns.size() > maxdeg)
             maxdeg = ns.size();
-    cout<<"Max Out Degree "<<maxdeg<<endl;
-    
+    cout << "Max Out Degree " << maxdeg << endl;
+
     maxdeg = 0;
-    for(auto& ns: nsIn)
-        if(ns.size()>maxdeg)
+    for (auto &ns : nsIn)
+        if (ns.size() > maxdeg)
             maxdeg = ns.size();
-    cout<<"Max In Degree "<<maxdeg<<endl;
+    cout << "Max In Degree " << maxdeg << endl;
 }
 
-Graph::Graph(std::string input_file)
-{
-
-    auto start = chrono::steady_clock::now();
-    readFile(input_file);
-    auto end = chrono::steady_clock::now();
-
-    cout << "File Loaded in: " << chrono::duration_cast<chrono::milliseconds>(end - start).count()
-         << endl;
-}
-
-// void Graph::recode(Graph &g, ui* rec){
-//     degrees = new ui[g.V];
-//     neighbors = new ui[g.E];
-//     neighbors_offset = new ui[g.V+1];
-//     V = g.V;
-//     E = g.E;
-//     auto tick = chrono::steady_clock::now();
-//     cout<<"Degrees copied"<<endl;
-//     for(int i=0;i<g.V;i++)
-//         degrees[i] = g.degrees[rec[i]];
-//     map<ui, ui> recMapping;
-//     for(int i=0;i<g.V;i++)
-//         recMapping[rec[i]] = i;
-
-//     neighbors_offset[0] = 0;
-//     std::partial_sum(degrees, degrees+V, neighbors_offset+1);
-
-//     for(int v=0;v<V;v++){
-//         ui recv = rec[v];
-//         ui start = neighbors_offset[v];
-//         ui end = neighbors_offset[v+1];
-//         for (int j=g.neighbors_offset[recv], k=start; j<g.neighbors_offset[recv+1]; j++, k++){
-//             neighbors[k] = recMapping[g.neighbors[j]];
-//         }
-//         std::sort(neighbors+start, neighbors+end);
-
-//     }
-//     cout<<"Reordering Time: "<<chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now()-tick).count()<<endl;
-// }
-// Graph::~Graph(){
-//     cout<<"Deallocated... "<<endl;
-//     delete [] neighbors;
-//     delete [] neighbors_offset;
-//     delete [] degrees;
-// }
 #endif // CUTS_GRAPH_H
