@@ -160,18 +160,17 @@ public:
         auto tick = TIME_NOW;
         applyCoreTrussPruning();
         cout << " CTCP time: " << chrono::duration_cast<chrono::milliseconds>(TIME_NOW - tick).count() << " ms" << endl;
-#else
-        shrinkGraph();
 #endif
+        shrinkGraph();
+        if (GOut.size() < q)
+            return;
 
-        cout<<"No. of Threads: "<<omp_get_num_threads()<<endl;
+        cout << "No. of Threads: " << omp_get_num_threads() << endl;
 #pragma omp parallel
         {
             // cout<<"id: "<<omp_get_thread_num()<<endl;
             init(); // initializes thread local vectors...
             ui itprTime = 0;
-            if (GOut.size() < q)
-                return;
 
 #pragma omp for schedule(dynamic)
             for (ui i = 0; i < GOut.size() - q + 1; i++)
@@ -709,8 +708,6 @@ private:
             else
                 break;
         }
-
-        shrinkGraph();
     }
 
     void init()
