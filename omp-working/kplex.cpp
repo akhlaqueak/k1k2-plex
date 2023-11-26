@@ -171,9 +171,8 @@ public:
 #pragma omp parallel
         {
             // cout<<"id: "<<omp_get_thread_num()<<endl;
-            auto tick = TIME_NOW;
             init(); // initializes thread local vectors...
-            itprTime += chrono::duration_cast<chrono::microseconds>(TIME_NOW - tick).count();
+            auto tick = TIME_NOW;
 
 #pragma omp for schedule(dynamic)
             for (ui i = 0; i < GOut.size() - q + 1; i++)
@@ -194,6 +193,7 @@ public:
                 }
                 reset(); // clears C and X
             }
+            itprTime += chrono::duration_cast<chrono::microseconds>(TIME_NOW - tick).count();
         }
         ui total = 0, context = 0, pruningCost = 0;
 #pragma omp parallel reduction(+ : total)
@@ -211,7 +211,7 @@ public:
         }
         cout << "max context switching cost (ms): " << context / 1000 << endl;
         cout << "max iterative pruning cost (ms): " << pruningCost / 1000 << endl;
-        cout << "search cost (ms): " << chrono::duration_cast<chrono::milliseconds>(TIME_NOW - tick).count() << endl;
+        cout << "search cost (ms): " << pruningCost/1000 << endl;
         cout << "Total (" << k1 << "," << k2 << ")-plexes of at least " << q << " size: " << total << endl;
     }
 
