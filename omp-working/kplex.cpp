@@ -729,7 +729,6 @@ private:
         // rX.reserve(g.V);
 
         ui ds = GOut.size();
-        cout<<ds<<" ";
         dPin.resize(ds);
         dPout.resize(ds);
         dGin.resize(ds);
@@ -747,11 +746,11 @@ private:
         lookc.resize(ds);
         lookd.resize(ds);
 
-        for (ui i = 0; i < ds; i++)
-        {
-            giIn->push_back(vector<ui>(ds));
-            giOut->push_back(vector<ui>(ds));
-        }
+        // for (ui i = 0; i < ds; i++)
+        // {
+        //     giIn->push_back(vector<ui>(ds));
+        //     giOut->push_back(vector<ui>(ds));
+        // }
     }
     void shrinkGraph()
     {
