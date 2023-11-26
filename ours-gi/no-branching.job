@@ -11,11 +11,12 @@
 #
 #SBATCH --error=clue-web.err
 #SBATCH --output=clue-web.out
-#SBATCH --ntasks=1
+#SBATCH --ntasks=4
+#SBATCH --cpus-per-task=1
 # Tell the scheduler only need 10 minutes
 #
 #SBATCH --time=48:00:00
-#SBATCH --mem-per-cpu=200000
+#SBATCH --mem-per-cpu=20000
 #
 # Set your email address and request notification when you job is complete or if it fails
 #
@@ -27,10 +28,10 @@ alias python=python3
 
 
 
-# ./kplex-no-branching -g ../datasets/epinions.bin -k1 2 -k2 3 -q 10 >> out.no-branching
-# ./kplex-no-branching -g ../datasets/epinions.bin -k1 2 -k2 3 -q 12 >> out.no-branching
-# ./kplex-no-branching -g ../datasets/epinions.bin -k1 3 -k2 4 -q 12 >> out.no-branching
-# ./kplex-no-branching -g ../datasets/epinions.bin -k1 3 -k2 4 -q 15 >> out.no-branching
+./kplex-no-branching -g ../datasets/epinions.bin -k1 2 -k2 3 -q 10 >> test.out &
+./kplex-no-branching -g ../datasets/epinions.bin -k1 2 -k2 3 -q 12 >> test.out &
+./kplex-no-branching -g ../datasets/epinions.bin -k1 3 -k2 4 -q 12 >> test.out &
+./kplex-no-branching -g ../datasets/epinions.bin -k1 3 -k2 4 -q 15 >> test.out &
 # ./kplex-no-branching -g ../datasets/email-EuAll.bin -k1 2 -k2 3 -q 10 >> out.no-branching
 # ./kplex-no-branching -g ../datasets/email-EuAll.bin -k1 2 -k2 3 -q 12 >> out.no-branching
 # ./kplex-no-branching -g ../datasets/email-EuAll.bin -k1 3 -k2 4 -q 12 >> out.no-branching
@@ -65,29 +66,29 @@ alias python=python3
 # ./kplex-no-branching -g ../datasets/wiki-vote.bin -k1 4 -k2 5 -q 12 >> out.no-branching
 
 
-./kplex-no-lookahead -g ../datasets/clue-web.bin -k1 2 -k2 3 -q 35 >> out.no-lookahead
-./kplex-no-lookahead -g ../datasets/clue-web.bin -k1 2 -k2 3 -q 40 >> out.no-lookahead
+# ./kplex-no-lookahead -g ../datasets/clue-web.bin -k1 2 -k2 3 -q 35 >> out.no-lookahead
+# ./kplex-no-lookahead -g ../datasets/clue-web.bin -k1 2 -k2 3 -q 40 >> out.no-lookahead
 
-./kplex-bk -g ../datasets/clue-web.bin -k1 2 -k2 2 -q 35 >> out.bk
-./kplex-bk -g ../datasets/clue-web.bin -k1 2 -k2 2 -q 40 >> out.bk
-./kplex-bk -g ../datasets/clue-web.bin -k1 2 -k2 3 -q 35 >> out.bk
-./kplex-bk -g ../datasets/clue-web.bin -k1 2 -k2 3 -q 40 >> out.bk
-
-
-./kplex-v2 -g ../datasets/clue-web.bin -k1 2 -k2 2 -q 35 >> out.v2
-./kplex-v2 -g ../datasets/clue-web.bin -k1 2 -k2 2 -q 40 >> out.v2
-./kplex-v2 -g ../datasets/clue-web.bin -k1 2 -k2 3 -q 35 >> out.v2
-./kplex-v2 -g ../datasets/clue-web.bin -k1 2 -k2 3 -q 40 >> out.v2
+# ./kplex-bk -g ../datasets/clue-web.bin -k1 2 -k2 2 -q 35 >> out.bk
+# ./kplex-bk -g ../datasets/clue-web.bin -k1 2 -k2 2 -q 40 >> out.bk
+# ./kplex-bk -g ../datasets/clue-web.bin -k1 2 -k2 3 -q 35 >> out.bk
+# ./kplex-bk -g ../datasets/clue-web.bin -k1 2 -k2 3 -q 40 >> out.bk
 
 
-./kplex-v1 -g ../datasets/clue-web.bin -k1 2 -k2 2 -q 35 >> out.v1
-./kplex-v1 -g ../datasets/clue-web.bin -k1 2 -k2 2 -q 40 >> out.v1
-./kplex-v1 -g ../datasets/clue-web.bin -k1 2 -k2 3 -q 35 >> out.v1
-./kplex-v1 -g ../datasets/clue-web.bin -k1 2 -k2 3 -q 40 >> out.v1
+# ./kplex-v2 -g ../datasets/clue-web.bin -k1 2 -k2 2 -q 35 >> out.v2
+# ./kplex-v2 -g ../datasets/clue-web.bin -k1 2 -k2 2 -q 40 >> out.v2
+# ./kplex-v2 -g ../datasets/clue-web.bin -k1 2 -k2 3 -q 35 >> out.v2
+# ./kplex-v2 -g ../datasets/clue-web.bin -k1 2 -k2 3 -q 40 >> out.v2
 
 
-./kplex-no-ctcp -g ../datasets/clue-web.bin -k1 2 -k2 2 -q 35 >> clueweb.no-ctcp
-./kplex-no-ctcp -g ../datasets/clue-web.bin -k1 2 -k2 2 -q 40 >> clueweb.no-ctcp
-./kplex-no-ctcp -g ../datasets/clue-web.bin -k1 2 -k2 3 -q 35 >> clueweb.no-ctcp
-./kplex-no-ctcp -g ../datasets/clue-web.bin -k1 2 -k2 3 -q 40 >> clueweb.no-ctcp
+# ./kplex-v1 -g ../datasets/clue-web.bin -k1 2 -k2 2 -q 35 >> out.v1
+# ./kplex-v1 -g ../datasets/clue-web.bin -k1 2 -k2 2 -q 40 >> out.v1
+# ./kplex-v1 -g ../datasets/clue-web.bin -k1 2 -k2 3 -q 35 >> out.v1
+# ./kplex-v1 -g ../datasets/clue-web.bin -k1 2 -k2 3 -q 40 >> out.v1
+
+
+# ./kplex-no-ctcp -g ../datasets/clue-web.bin -k1 2 -k2 2 -q 35 >> clueweb.no-ctcp
+# ./kplex-no-ctcp -g ../datasets/clue-web.bin -k1 2 -k2 2 -q 40 >> clueweb.no-ctcp
+# ./kplex-no-ctcp -g ../datasets/clue-web.bin -k1 2 -k2 3 -q 35 >> clueweb.no-ctcp
+# ./kplex-no-ctcp -g ../datasets/clue-web.bin -k1 2 -k2 3 -q 40 >> clueweb.no-ctcp
 
