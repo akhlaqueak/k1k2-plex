@@ -50,7 +50,7 @@ thread_local RandList X;
 thread_local RandList P;
 thread_local RandList *block;
 
-thread_local deque<ui> rC, rX;
+thread_local vector<ui> rC, rX;
 thread_local ui kplexes = 0;
 thread_local ui ttime = 0, searchCost = 0;
 
@@ -724,8 +724,8 @@ private:
 
     void init()
     {
-        // rC.reserve(g.V);
-        // rX.reserve(g.V);
+        rC.reserve(g.V);
+        rX.reserve(g.V);
 
         ui ds = GOut.size();
         dPin.resize(ds);
