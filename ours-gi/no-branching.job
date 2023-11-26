@@ -29,7 +29,9 @@ alias python=python3
 
 
 ./kplex-no-branching -g ../datasets/epinions.bin -k1 2 -k2 3 -q 10 >> test.out &
+echo 1
 ./kplex-no-branching -g ../datasets/epinions.bin -k1 2 -k2 3 -q 12 >> test.out &
+echo
 ./kplex-no-branching -g ../datasets/epinions.bin -k1 3 -k2 4 -q 12 >> test.out &
 ./kplex-no-branching -g ../datasets/epinions.bin -k1 3 -k2 4 -q 15 >> test.out &
 # ./kplex-no-branching -g ../datasets/email-EuAll.bin -k1 2 -k2 3 -q 10 >> out.no-branching
