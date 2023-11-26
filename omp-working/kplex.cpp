@@ -172,6 +172,7 @@ public:
 #pragma omp parallel
         {
             // cout<<"id: "<<omp_get_thread_num()<<endl;
+                auto tick = TIME_NOW;
             init(); // initializes thread local vectors...
 
 #pragma omp for schedule(dynamic)
@@ -179,7 +180,6 @@ public:
             {
 
                 vi = i;
-                auto tick = TIME_NOW;
 #ifdef ITERATIVE_PRUNE
                 getTwoHopIterativePrunedG(vi);
 #else
