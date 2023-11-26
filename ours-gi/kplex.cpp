@@ -1557,9 +1557,9 @@ int main(int argc, char *argv[])
     EnumKPlex kp(g, k1, k2, q);
     kp.enumerate();
     if (CUTOFF)
-        cout << sr << file << " Timed Out" << endl;
+        cout << sr << " " << file << " Timed Out" << endl;
     else
-        cout << sr << file << " Enumeration time (ms): " << chrono::duration_cast<chrono::milliseconds>(TIME_NOW - tick).count() << endl;
+        cout << sr << " " << file << " Enumeration time (ms): " << chrono::duration_cast<chrono::milliseconds>(TIME_NOW - tick).count() << endl;
 
     cout << endl;
     return 0;
