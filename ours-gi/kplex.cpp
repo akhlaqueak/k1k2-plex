@@ -4,16 +4,16 @@
 
 // one of these three options should be selected, deciding how Gi is calculated
 // #define ITERATIVE_PRUNE
-#define TWO_HOP
-// #define NAIVE
+// #define TWO_HOP
+#define NAIVE
 
-#define BRANCHING
-#define LOOKAHEAD
-#define CTCP
+// #define BRANCHING
+// #define LOOKAHEAD
+// #define CTCP
 
 #define TIME_NOW chrono::steady_clock::now()
 // cutoff time is in minutes
-#define CUTOFF_TIME (180)
+#define CUTOFF_TIME (360)
 auto clk = TIME_NOW;
 #define CUTOFF (chrono::duration_cast<chrono::minutes>(TIME_NOW - clk).count() > CUTOFF_TIME)
 
@@ -1135,7 +1135,7 @@ private:
             sort(adj.begin(), adj.end());
             // print("in: ", adj);
         }
-        cout<<"Shrinked graph |V|: "<<GOut.size()<<endl;
+        cout << "Shrinked graph |V|: " << GOut.size() << endl;
     }
 
     bool intersectsAll(auto &X, auto &Y)
@@ -1516,6 +1516,7 @@ int main(int argc, char *argv[])
     ui q = cmd.GetOptionIntValue("-q", 2);
     ui k1 = cmd.GetOptionIntValue("-k1", 1);
     ui k2 = cmd.GetOptionIntValue("-k2", 1);
+    ui sr = cmd.GetOptionIntValue("-sr", 1);
 
     if (file == "")
     {
@@ -1541,7 +1542,8 @@ int main(int argc, char *argv[])
     string ext = file.substr(ind, file.size());
     if (ext == string(".bin"))
         g.readBinFile(file);
-    else{
+    else
+    {
         g.readTextFile(file);
         string binfile = file.substr(0, ind) + ".bin";
         g.writeBinFile(binfile);
@@ -1555,9 +1557,9 @@ int main(int argc, char *argv[])
     EnumKPlex kp(g, k1, k2, q);
     kp.enumerate();
     if (CUTOFF)
-        cout << file << " Timed Out" << endl;
+        cout << sr << file << " Timed Out" << endl;
     else
-        cout << file << " Enumeration time (ms): " << chrono::duration_cast<chrono::milliseconds>(TIME_NOW - tick).count() << endl;
+        cout << sr << file << " Enumeration time (ms): " << chrono::duration_cast<chrono::milliseconds>(TIME_NOW - tick).count() << endl;
 
     cout << endl;
     return 0;
