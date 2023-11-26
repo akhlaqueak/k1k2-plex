@@ -28,45 +28,45 @@ alias python=python3
 
 
 
-srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/epinions.bin -k1 2 -k2 3 -q 10 -sr 1 >> out.v0
-srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/epinions.bin -k1 2 -k2 3 -q 12 -sr 2 >> out.v0
-srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/epinions.bin -k1 3 -k2 4 -q 12 -sr 3 >> out.v0
-srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/epinions.bin -k1 3 -k2 4 -q 15 -sr 4 >> out.v0
-srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/email-EuAll.bin -k1 2 -k2 3 -q 10 -sr 5 >> out.v0
-srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/email-EuAll.bin -k1 2 -k2 3 -q 12 -sr 6 >> out.v0
-srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/email-EuAll.bin -k1 3 -k2 4 -q 12 -sr 7 >> out.v0
-srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/email-EuAll.bin -k1 3 -k2 4 -q 15 -sr 8 >> out.v0
-srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/web-Google.bin -k1 2 -k2 3 -q 15 -sr 9 >> out.v0
-srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/web-Google.bin -k1 2 -k2 3 -q 20 -sr 10 >> out.v0
-srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/web-Google.bin -k1 3 -k2 4 -q 15 -sr 11 >> out.v0
-srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/web-Google.bin -k1 3 -k2 4 -q 20 -sr 12 >> out.v0
-srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/bitcoin.bin -k1 2 -k2 5 -q 10 -sr 13 >> out.v0
-srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/bitcoin.bin -k1 2 -k2 5 -q 12 -sr 14 >> out.v0
-srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/bitcoin.bin -k1 3 -k2 5 -q 10 -sr 15 >> out.v0
-srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/bitcoin.bin -k1 3 -k2 5 -q 12 -sr 16 >> out.v0
-srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/mathoverflow.bin -k1 2 -k2 2 -q 10 -sr 17 >> out.v0
-srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/mathoverflow.bin -k1 2 -k2 2 -q 12 -sr 18 >> out.v0
-srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/mathoverflow.bin -k1 2 -k2 3 -q 10 -sr 19 >> out.v0
-srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/mathoverflow.bin -k1 2 -k2 3 -q 12 -sr 20 >> out.v0
-srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/amazon0505.bin -k1 3 -k2 5 -q 10 -sr 21 >> out.v0
-srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/amazon0505.bin -k1 3 -k2 5 -q 12 -sr 22 >> out.v0
-srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/amazon0505.bin -k1 5 -k2 3 -q 10 -sr 23 >> out.v0
-srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/amazon0505.bin -k1 5 -k2 3 -q 12 -sr 24 >> out.v0
-srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/wiki-Talk.bin -k1 2 -k2 2 -q 15 -sr 25 >> out.v0
-srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/wiki-Talk.bin -k1 2 -k2 2 -q 20 -sr 26 >> out.v0
-srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/wiki-Talk.bin -k1 2 -k2 3 -q 15 -sr 27 >> out.v0
-srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/wiki-Talk.bin -k1 2 -k2 3 -q 20 -sr 28 >> out.v0
-srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/soc-pokec-relationships.bin -k1 2 -k2 3 -q 15 -sr 29 >> out.v0
-srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/soc-pokec-relationships.bin -k1 2 -k2 3 -q 20 -sr 30 >> out.v0
-srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/soc-pokec-relationships.bin -k1 3 -k2 3 -q 15 -sr 31 >> out.v0
-srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/soc-pokec-relationships.bin -k1 3 -k2 3 -q 20 -sr 32 >> out.v0
-srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/wiki-vote.bin -k1 3 -k2 5 -q 10 -sr 33 >> out.v0
-srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/wiki-vote.bin -k1 3 -k2 5 -q 12 -sr 34 >> out.v0
-srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/wiki-vote.bin -k1 4 -k2 5 -q 10 -sr 35 >> out.v0
-srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/wiki-vote.bin -k1 4 -k2 5 -q 12 -sr 36 >> out.v0
-srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/clue-web.bin -k1 2 -k2 2 -q 35 -sr 37 >> out.v0
-srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/clue-web.bin -k1 2 -k2 2 -q 40 -sr 38 >> out.v0
-srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/clue-web.bin -k1 2 -k2 3 -q 35 -sr 39 >> out.v0
-srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/clue-web.bin -k1 2 -k2 3 -q 40 -sr 40 >> out.v0
+srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/epinions.bin -k1 2 -k2 3 -q 10 -sr 1 >> out.v0 &
+srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/epinions.bin -k1 2 -k2 3 -q 12 -sr 2 >> out.v0 &
+srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/epinions.bin -k1 3 -k2 4 -q 12 -sr 3 >> out.v0 &
+srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/epinions.bin -k1 3 -k2 4 -q 15 -sr 4 >> out.v0 &
+srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/email-EuAll.bin -k1 2 -k2 3 -q 10 -sr 5 >> out.v0 &
+srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/email-EuAll.bin -k1 2 -k2 3 -q 12 -sr 6 >> out.v0 &
+srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/email-EuAll.bin -k1 3 -k2 4 -q 12 -sr 7 >> out.v0 &
+srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/email-EuAll.bin -k1 3 -k2 4 -q 15 -sr 8 >> out.v0 &
+srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/web-Google.bin -k1 2 -k2 3 -q 15 -sr 9 >> out.v0 &
+srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/web-Google.bin -k1 2 -k2 3 -q 20 -sr 10 >> out.v0 &
+srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/web-Google.bin -k1 3 -k2 4 -q 15 -sr 11 >> out.v0 &
+srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/web-Google.bin -k1 3 -k2 4 -q 20 -sr 12 >> out.v0 &
+srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/bitcoin.bin -k1 2 -k2 5 -q 10 -sr 13 >> out.v0 &
+srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/bitcoin.bin -k1 2 -k2 5 -q 12 -sr 14 >> out.v0 &
+srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/bitcoin.bin -k1 3 -k2 5 -q 10 -sr 15 >> out.v0 &
+srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/bitcoin.bin -k1 3 -k2 5 -q 12 -sr 16 >> out.v0 &
+srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/mathoverflow.bin -k1 2 -k2 2 -q 10 -sr 17 >> out.v0 &
+srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/mathoverflow.bin -k1 2 -k2 2 -q 12 -sr 18 >> out.v0 &
+srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/mathoverflow.bin -k1 2 -k2 3 -q 10 -sr 19 >> out.v0 &
+srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/mathoverflow.bin -k1 2 -k2 3 -q 12 -sr 20 >> out.v0 &
+srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/amazon0505.bin -k1 3 -k2 5 -q 10 -sr 21 >> out.v0 &
+srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/amazon0505.bin -k1 3 -k2 5 -q 12 -sr 22 >> out.v0 &
+srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/amazon0505.bin -k1 5 -k2 3 -q 10 -sr 23 >> out.v0 &
+srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/amazon0505.bin -k1 5 -k2 3 -q 12 -sr 24 >> out.v0 &
+srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/wiki-Talk.bin -k1 2 -k2 2 -q 15 -sr 25 >> out.v0 &
+srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/wiki-Talk.bin -k1 2 -k2 2 -q 20 -sr 26 >> out.v0 &
+srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/wiki-Talk.bin -k1 2 -k2 3 -q 15 -sr 27 >> out.v0 &
+srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/wiki-Talk.bin -k1 2 -k2 3 -q 20 -sr 28 >> out.v0 &
+srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/soc-pokec-relationships.bin -k1 2 -k2 3 -q 15 -sr 29 >> out.v0 &
+srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/soc-pokec-relationships.bin -k1 2 -k2 3 -q 20 -sr 30 >> out.v0 &
+srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/soc-pokec-relationships.bin -k1 3 -k2 3 -q 15 -sr 31 >> out.v0 &
+srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/soc-pokec-relationships.bin -k1 3 -k2 3 -q 20 -sr 32 >> out.v0 &
+srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/wiki-vote.bin -k1 3 -k2 5 -q 10 -sr 33 >> out.v0 &
+srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/wiki-vote.bin -k1 3 -k2 5 -q 12 -sr 34 >> out.v0 &
+srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/wiki-vote.bin -k1 4 -k2 5 -q 10 -sr 35 >> out.v0 &
+srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/wiki-vote.bin -k1 4 -k2 5 -q 12 -sr 36 >> out.v0 &
+srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/clue-web.bin -k1 2 -k2 2 -q 35 -sr 37 >> out.v0 &
+srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/clue-web.bin -k1 2 -k2 2 -q 40 -sr 38 >> out.v0 &
+srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/clue-web.bin -k1 2 -k2 3 -q 35 -sr 39 >> out.v0 &
+srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/clue-web.bin -k1 2 -k2 3 -q 40 -sr 40 >> out.v0 &
 
 wait
