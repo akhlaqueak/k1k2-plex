@@ -175,6 +175,7 @@ public:
                 auto tick = TIME_NOW;
             init(); // initializes thread local vectors...
 
+                itprTime += chrono::duration_cast<chrono::microseconds>(TIME_NOW - tick).count();
 #pragma omp for schedule(dynamic)
             for (ui i = 0; i < GOut.size() - q + 1; i++)
             {
@@ -193,7 +194,6 @@ public:
                     recurSearch(0, TIME_NOW);
                 }
                 reset(); // clears C and X
-                itprTime += chrono::duration_cast<chrono::microseconds>(TIME_NOW - tick).count();
             }
         }
         ui total = 0, context = 0, pruningCost = 0;
