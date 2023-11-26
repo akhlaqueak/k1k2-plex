@@ -68,3 +68,5 @@ srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/clue-web.bin -k1 2 -k2 2 -q 35 -sr 37 
 srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/clue-web.bin -k1 2 -k2 2 -q 40 -sr 38 >> out.v0
 srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/clue-web.bin -k1 2 -k2 3 -q 35 -sr 39 >> out.v0
 srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/clue-web.bin -k1 2 -k2 3 -q 40 -sr 40 >> out.v0
+
+wait
