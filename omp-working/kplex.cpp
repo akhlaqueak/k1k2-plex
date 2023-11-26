@@ -51,7 +51,7 @@ thread_local RandList X;
 thread_local RandList P;
 thread_local RandList *block;
 
-thread_local vector<ui> rC, rX;
+thread_local deque<ui> rC, rX;
 thread_local ui kplexes = 0;
 thread_local ui ttime = 0, itprTime=0;
 
@@ -610,8 +610,8 @@ public:
                                                   recode(_g.V)
     {
 
-        rC.reserve(g.V);
-        rX.reserve(g.V);
+        // rC.reserve(g.V);
+        // rX.reserve(g.V);
 
         for (ui i = 0; i < g.V; i++)
         {
