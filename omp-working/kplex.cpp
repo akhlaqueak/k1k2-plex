@@ -726,8 +726,8 @@ private:
 
     void init()
     {
-        rC.reserve(g.V);
-        rX.reserve(g.V);
+        // rC.reserve(g.V);
+        // rX.reserve(g.V);
 
         ui ds = GOut.size();
         dPin.resize(ds);
