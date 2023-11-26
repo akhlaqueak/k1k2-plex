@@ -52,7 +52,7 @@ thread_local RandList *block;
 
 thread_local deque<ui> rC, rX;
 thread_local ui kplexes = 0;
-thread_local ui ttime = 0, itprTime = 0;
+thread_local ui ttime = 0, searchCost = 0;
 
 class ThreadData
 {
@@ -166,7 +166,6 @@ public:
         shrinkGraph();
         if (GOut.size() < q)
             return;
-        tick = TIME_NOW;
         // cout << "No. of Threads: " << omp_get_num_threads() << endl;
 #pragma omp parallel
         {
@@ -193,9 +192,9 @@ public:
                 }
                 reset(); // clears C and X
             }
-            itprTime += chrono::duration_cast<chrono::microseconds>(TIME_NOW - tick).count();
+            searchCost += chrono::duration_cast<chrono::microseconds>(TIME_NOW - tick).count();
         }
-        ui total = 0, context = 0, pruningCost = 0;
+        ui total = 0, context = 0, searchTotal = 0;
 #pragma omp parallel reduction(+ : total)
         {
             total += kplexes;
@@ -205,13 +204,13 @@ public:
             context = ttime;
         }
 
-#pragma omp parallel reduction(max : pruningCost)
+#pragma omp parallel reduction(max : searchTotal)
         {
-            pruningCost = itprTime;
+            searchTotal = searchCost;
         }
         cout << "max context switching cost (ms): " << context / 1000 << endl;
-        cout << "max iterative pruning cost (ms): " << pruningCost / 1000 << endl;
-        cout << "search cost (ms): " << pruningCost/1000 << endl;
+        // cout << "max iterative pruning cost (ms): " << searchTotal / 1000 << endl;
+        cout << "search cost (ms): " << searchTotal/1000 << endl;
         cout << "Total (" << k1 << "," << k2 << ")-plexes of at least " << q << " size: " << total << endl;
     }
 
