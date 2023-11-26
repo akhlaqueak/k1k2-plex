@@ -12,7 +12,6 @@
 ui timeout;
 #define TASKGROUP
 
-
 #define TIME_NOW chrono::steady_clock::now()
 // cutoff time is in minutes
 #define CUTOFF_TIME (180)
@@ -53,7 +52,7 @@ thread_local RandList *block;
 
 thread_local deque<ui> rC, rX;
 thread_local ui kplexes = 0;
-thread_local ui ttime = 0, itprTime=0;
+thread_local ui ttime = 0, itprTime = 0;
 
 class ThreadData
 {
@@ -159,7 +158,7 @@ public:
         k1k2CorePrune();
         // find degeneracy order, the result is degenOrder vector
         degenerate();
-        auto tick=TIME_NOW;
+        auto tick = TIME_NOW;
 #ifdef CTCP
         applyCoreTrussPruning();
         cout << "ctcp cost (ms): " << chrono::duration_cast<chrono::milliseconds>(TIME_NOW - tick).count() << endl;
@@ -168,14 +167,13 @@ public:
         if (GOut.size() < q)
             return;
         tick = TIME_NOW;
-            // cout << "No. of Threads: " << omp_get_num_threads() << endl;
+        // cout << "No. of Threads: " << omp_get_num_threads() << endl;
 #pragma omp parallel
         {
             // cout<<"id: "<<omp_get_thread_num()<<endl;
-                auto tick = TIME_NOW;
+            auto tick = TIME_NOW;
             init(); // initializes thread local vectors...
 
-                itprTime += chrono::duration_cast<chrono::microseconds>(TIME_NOW - tick).count();
 #pragma omp for schedule(dynamic)
             for (ui i = 0; i < GOut.size() - q + 1; i++)
             {
@@ -195,6 +193,7 @@ public:
                 }
                 reset(); // clears C and X
             }
+            itprTime += chrono::duration_cast<chrono::microseconds>(TIME_NOW - tick).count();
         }
         ui total = 0, context = 0, pruningCost = 0;
 #pragma omp parallel reduction(+ : total)
@@ -212,7 +211,7 @@ public:
         }
         cout << "max context switching cost (ms): " << context / 1000 << endl;
         cout << "max iterative pruning cost (ms): " << pruningCost / 1000 << endl;
-        cout << "search cost (ms): " << chrono::duration_cast<chrono::milliseconds>(TIME_NOW - tick).count()<< endl;
+        cout << "search cost (ms): " << chrono::duration_cast<chrono::milliseconds>(TIME_NOW - tick).count() << endl;
         cout << "Total (" << k1 << "," << k2 << ")-plexes of at least " << q << " size: " << total << endl;
     }
 
@@ -1563,7 +1562,7 @@ private:
         ui sz = distance(it, rX.end());
         for (; it != rX.end(); it++)
             X.remove(*it);
-            
+
         return sz;
     }
 
