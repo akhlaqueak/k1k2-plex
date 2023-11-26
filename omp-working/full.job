@@ -25,47 +25,47 @@
 module load Valgrind
 alias python=python3
 
-export OMP_NUM_THREADS=32
+export OMP_NUM_THREADS=8
 
 
-./kplex -g ../datasets/epinions.bin -k1 2 -k2 3 -q 10 >> out32.full
-./kplex -g ../datasets/epinions.bin -k1 2 -k2 3 -q 12 >> out32.full
-./kplex -g ../datasets/epinions.bin -k1 3 -k2 4 -q 12 >> out32.full
-./kplex -g ../datasets/epinions.bin -k1 3 -k2 4 -q 15 >> out32.full
-./kplex -g ../datasets/email-EuAll.bin -k1 2 -k2 3 -q 10 >> out32.full
-./kplex -g ../datasets/email-EuAll.bin -k1 2 -k2 3 -q 12 >> out32.full
-./kplex -g ../datasets/email-EuAll.bin -k1 3 -k2 4 -q 12 >> out32.full
-./kplex -g ../datasets/email-EuAll.bin -k1 3 -k2 4 -q 15 >> out32.full
-./kplex -g ../datasets/web-Google.bin -k1 2 -k2 3 -q 15 >> out32.full
-./kplex -g ../datasets/web-Google.bin -k1 2 -k2 3 -q 20 >> out32.full
-./kplex -g ../datasets/web-Google.bin -k1 3 -k2 4 -q 15 >> out32.full
-./kplex -g ../datasets/web-Google.bin -k1 3 -k2 4 -q 20 >> out32.full
-./kplex -g ../datasets/bitcoin.bin -k1 2 -k2 5 -q 10 >> out32.full
-./kplex -g ../datasets/bitcoin.bin -k1 2 -k2 5 -q 12 >> out32.full
-./kplex -g ../datasets/bitcoin.bin -k1 3 -k2 5 -q 10 >> out32.full
-./kplex -g ../datasets/bitcoin.bin -k1 3 -k2 5 -q 12 >> out32.full
-./kplex -g ../datasets/mathoverflow.bin -k1 2 -k2 2 -q 10 >> out32.full
-./kplex -g ../datasets/mathoverflow.bin -k1 2 -k2 2 -q 12 >> out32.full
-./kplex -g ../datasets/mathoverflow.bin -k1 2 -k2 3 -q 10 >> out32.full
-./kplex -g ../datasets/mathoverflow.bin -k1 2 -k2 3 -q 12 >> out32.full
-./kplex -g ../datasets/amazon0505.bin -k1 3 -k2 5 -q 10 >> out32.full
-./kplex -g ../datasets/amazon0505.bin -k1 3 -k2 5 -q 12 >> out32.full
-./kplex -g ../datasets/amazon0505.bin -k1 5 -k2 3 -q 10 >> out32.full
-./kplex -g ../datasets/amazon0505.bin -k1 5 -k2 3 -q 12 >> out32.full
-./kplex -g ../datasets/wiki-Talk.bin -k1 2 -k2 2 -q 15 >> out32.full
-./kplex -g ../datasets/wiki-Talk.bin -k1 2 -k2 2 -q 20 >> out32.full
-./kplex -g ../datasets/wiki-Talk.bin -k1 2 -k2 3 -q 15 >> out32.full
-./kplex -g ../datasets/wiki-Talk.bin -k1 2 -k2 3 -q 20 >> out32.full
-./kplex -g ../datasets/soc-pokec-relationships.bin -k1 2 -k2 3 -q 15 >> out32.full
-./kplex -g ../datasets/soc-pokec-relationships.bin -k1 2 -k2 3 -q 20 >> out32.full
-./kplex -g ../datasets/soc-pokec-relationships.bin -k1 3 -k2 3 -q 15 >> out32.full
-./kplex -g ../datasets/soc-pokec-relationships.bin -k1 3 -k2 3 -q 20 >> out32.full
-./kplex -g ../datasets/wiki-vote.bin -k1 3 -k2 5 -q 10 >> out32.full
-./kplex -g ../datasets/wiki-vote.bin -k1 3 -k2 5 -q 12 >> out32.full
-./kplex -g ../datasets/wiki-vote.bin -k1 4 -k2 5 -q 10 >> out32.full
-./kplex -g ../datasets/wiki-vote.bin -k1 4 -k2 5 -q 12 >> out32.full
-./kplex -g ../datasets/clue-web.bin -k1 2 -k2 2 -q 35 >> out32.full
-./kplex -g ../datasets/clue-web.bin -k1 2 -k2 2 -q 40 >> out32.full
-./kplex -g ../datasets/clue-web.bin -k1 2 -k2 3 -q 35 >> out32.full
-./kplex -g ../datasets/clue-web.bin -k1 2 -k2 3 -q 40 >> out32.full
+./kplex -g ../datasets/epinions.bin -k1 2 -k2 3 -q 10 >> out8.full
+./kplex -g ../datasets/epinions.bin -k1 2 -k2 3 -q 12 >> out8.full
+./kplex -g ../datasets/epinions.bin -k1 3 -k2 4 -q 12 >> out8.full
+./kplex -g ../datasets/epinions.bin -k1 3 -k2 4 -q 15 >> out8.full
+./kplex -g ../datasets/email-EuAll.bin -k1 2 -k2 3 -q 10 >> out8.full
+./kplex -g ../datasets/email-EuAll.bin -k1 2 -k2 3 -q 12 >> out8.full
+./kplex -g ../datasets/email-EuAll.bin -k1 3 -k2 4 -q 12 >> out8.full
+./kplex -g ../datasets/email-EuAll.bin -k1 3 -k2 4 -q 15 >> out8.full
+./kplex -g ../datasets/web-Google.bin -k1 2 -k2 3 -q 15 >> out8.full
+./kplex -g ../datasets/web-Google.bin -k1 2 -k2 3 -q 20 >> out8.full
+./kplex -g ../datasets/web-Google.bin -k1 3 -k2 4 -q 15 >> out8.full
+./kplex -g ../datasets/web-Google.bin -k1 3 -k2 4 -q 20 >> out8.full
+./kplex -g ../datasets/bitcoin.bin -k1 2 -k2 5 -q 10 >> out8.full
+./kplex -g ../datasets/bitcoin.bin -k1 2 -k2 5 -q 12 >> out8.full
+./kplex -g ../datasets/bitcoin.bin -k1 3 -k2 5 -q 10 >> out8.full
+./kplex -g ../datasets/bitcoin.bin -k1 3 -k2 5 -q 12 >> out8.full
+./kplex -g ../datasets/mathoverflow.bin -k1 2 -k2 2 -q 10 >> out8.full
+./kplex -g ../datasets/mathoverflow.bin -k1 2 -k2 2 -q 12 >> out8.full
+./kplex -g ../datasets/mathoverflow.bin -k1 2 -k2 3 -q 10 >> out8.full
+./kplex -g ../datasets/mathoverflow.bin -k1 2 -k2 3 -q 12 >> out8.full
+./kplex -g ../datasets/amazon0505.bin -k1 3 -k2 5 -q 10 >> out8.full
+./kplex -g ../datasets/amazon0505.bin -k1 3 -k2 5 -q 12 >> out8.full
+./kplex -g ../datasets/amazon0505.bin -k1 5 -k2 3 -q 10 >> out8.full
+./kplex -g ../datasets/amazon0505.bin -k1 5 -k2 3 -q 12 >> out8.full
+./kplex -g ../datasets/wiki-Talk.bin -k1 2 -k2 2 -q 15 >> out8.full
+./kplex -g ../datasets/wiki-Talk.bin -k1 2 -k2 2 -q 20 >> out8.full
+./kplex -g ../datasets/wiki-Talk.bin -k1 2 -k2 3 -q 15 >> out8.full
+./kplex -g ../datasets/wiki-Talk.bin -k1 2 -k2 3 -q 20 >> out8.full
+./kplex -g ../datasets/soc-pokec-relationships.bin -k1 2 -k2 3 -q 15 >> out8.full
+./kplex -g ../datasets/soc-pokec-relationships.bin -k1 2 -k2 3 -q 20 >> out8.full
+./kplex -g ../datasets/soc-pokec-relationships.bin -k1 3 -k2 3 -q 15 >> out8.full
+./kplex -g ../datasets/soc-pokec-relationships.bin -k1 3 -k2 3 -q 20 >> out8.full
+./kplex -g ../datasets/wiki-vote.bin -k1 3 -k2 5 -q 10 >> out8.full
+./kplex -g ../datasets/wiki-vote.bin -k1 3 -k2 5 -q 12 >> out8.full
+./kplex -g ../datasets/wiki-vote.bin -k1 4 -k2 5 -q 10 >> out8.full
+./kplex -g ../datasets/wiki-vote.bin -k1 4 -k2 5 -q 12 >> out8.full
+./kplex -g ../datasets/clue-web.bin -k1 2 -k2 2 -q 35 >> out8.full
+./kplex -g ../datasets/clue-web.bin -k1 2 -k2 2 -q 40 >> out8.full
+./kplex -g ../datasets/clue-web.bin -k1 2 -k2 3 -q 35 >> out8.full
+./kplex -g ../datasets/clue-web.bin -k1 2 -k2 3 -q 40 >> out8.full
 
