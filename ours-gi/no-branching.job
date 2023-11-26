@@ -63,32 +63,10 @@ alias python=python3
 # ./kplex-no-branching -g ../datasets/wiki-vote.bin -k1 3 -k2 5 -q 12 >> out.no-branching
 # ./kplex-no-branching -g ../datasets/wiki-vote.bin -k1 4 -k2 5 -q 10 >> out.no-branching
 # ./kplex-no-branching -g ../datasets/wiki-vote.bin -k1 4 -k2 5 -q 12 >> out.no-branching
-./kplex-fulll -g ../datasets/clue-web.bin -k1 2 -k2 2 -q 35 >> out.fulll
-./kplex-fulll -g ../datasets/clue-web.bin -k1 2 -k2 2 -q 40 >> out.fulll
-./kplex-fulll -g ../datasets/clue-web.bin -k1 2 -k2 3 -q 35 >> out.fulll
-./kplex-fulll -g ../datasets/clue-web.bin -k1 2 -k2 3 -q 40 >> out.fulll
 
 
-./kplex-no-branching -g ../datasets/clue-web.bin -k1 2 -k2 2 -q 35 >> out.no-branching
-./kplex-no-branching -g ../datasets/clue-web.bin -k1 2 -k2 2 -q 40 >> out.no-branching
-./kplex-no-branching -g ../datasets/clue-web.bin -k1 2 -k2 3 -q 35 >> out.no-branching
-./kplex-no-branching -g ../datasets/clue-web.bin -k1 2 -k2 3 -q 40 >> out.no-branching
-
-./kplex-no-iterative -g ../datasets/clue-web.bin -k1 2 -k2 2 -q 35 >> out.no-iterative
-./kplex-no-iterative -g ../datasets/clue-web.bin -k1 2 -k2 2 -q 40 >> out.no-iterative
-./kplex-no-iterative -g ../datasets/clue-web.bin -k1 2 -k2 3 -q 35 >> out.no-iterative
-./kplex-no-iterative -g ../datasets/clue-web.bin -k1 2 -k2 3 -q 40 >> out.no-iterative
-
-./kplex-no-lookahead -g ../datasets/clue-web.bin -k1 2 -k2 2 -q 35 >> out.no-lookahead
-./kplex-no-lookahead -g ../datasets/clue-web.bin -k1 2 -k2 2 -q 40 >> out.no-lookahead
 ./kplex-no-lookahead -g ../datasets/clue-web.bin -k1 2 -k2 3 -q 35 >> out.no-lookahead
 ./kplex-no-lookahead -g ../datasets/clue-web.bin -k1 2 -k2 3 -q 40 >> out.no-lookahead
-
-./kplex-no-ctcp -g ../datasets/clue-web.bin -k1 2 -k2 2 -q 35 >> out.no-ctcp
-./kplex-no-ctcp -g ../datasets/clue-web.bin -k1 2 -k2 2 -q 40 >> out.no-ctcp
-./kplex-no-ctcp -g ../datasets/clue-web.bin -k1 2 -k2 3 -q 35 >> out.no-ctcp
-./kplex-no-ctcp -g ../datasets/clue-web.bin -k1 2 -k2 3 -q 40 >> out.no-ctcp
-
 
 ./kplex-bk -g ../datasets/clue-web.bin -k1 2 -k2 2 -q 35 >> out.bk
 ./kplex-bk -g ../datasets/clue-web.bin -k1 2 -k2 2 -q 40 >> out.bk
@@ -106,4 +84,10 @@ alias python=python3
 ./kplex-v1 -g ../datasets/clue-web.bin -k1 2 -k2 2 -q 40 >> out.v1
 ./kplex-v1 -g ../datasets/clue-web.bin -k1 2 -k2 3 -q 35 >> out.v1
 ./kplex-v1 -g ../datasets/clue-web.bin -k1 2 -k2 3 -q 40 >> out.v1
+
+
+./kplex-no-ctcp -g ../datasets/clue-web.bin -k1 2 -k2 2 -q 35 >> clueweb.no-ctcp
+./kplex-no-ctcp -g ../datasets/clue-web.bin -k1 2 -k2 2 -q 40 >> clueweb.no-ctcp
+./kplex-no-ctcp -g ../datasets/clue-web.bin -k1 2 -k2 3 -q 35 >> clueweb.no-ctcp
+./kplex-no-ctcp -g ../datasets/clue-web.bin -k1 2 -k2 3 -q 40 >> clueweb.no-ctcp
 
