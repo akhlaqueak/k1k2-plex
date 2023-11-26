@@ -1531,6 +1531,7 @@ private:
 
     ui updateC()
     {
+        auto tick = TIME_NOW;
         auto it = rC.end();
         for (ui i = 0; i < C.size(); i++)
         {
@@ -1545,12 +1546,13 @@ private:
 
         for (; it != rC.end(); it++)
             removeFromC(*it);
-
+                itprTime += chrono::duration_cast<chrono::microseconds>(TIME_NOW - tick).count();
         return sz;
     }
 
     ui updateX()
     {
+        auto tick=TIME_NOW;
         auto it = rX.end();
         for (ui i = 0; i < X.size(); i++)
         {
@@ -1564,6 +1566,8 @@ private:
         ui sz = distance(it, rX.end());
         for (; it != rX.end(); it++)
             X.remove(*it);
+                itprTime += chrono::duration_cast<chrono::microseconds>(TIME_NOW - tick).count();
+            
         return sz;
     }
 
