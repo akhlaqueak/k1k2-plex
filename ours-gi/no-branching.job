@@ -28,13 +28,13 @@ alias python=python3
 
 
 
-srun --exclusive -N 1 -n 1 ./kplex-no-branching -g ../datasets/epinions.bin -k1 2 -k2 3 -q 10 >> test.out &
+srun  -N 1 -n 1 ./kplex-no-branching -g ../datasets/epinions.bin -k1 2 -k2 3 -q 10 >> test.out &
 echo 1
-srun --exclusive -N 1 -n 1 ./kplex-no-branching -g ../datasets/epinions.bin -k1 2 -k2 3 -q 12 >> test.out &
+srun  -N 1 -n 1 ./kplex-no-branching -g ../datasets/epinions.bin -k1 2 -k2 3 -q 12 >> test.out &
 echo 2
-srun --exclusive -N 1 -n 1 ./kplex-no-branching -g ../datasets/epinions.bin -k1 3 -k2 4 -q 12 >> test.out &
+srun  -N 1 -n 1 ./kplex-no-branching -g ../datasets/epinions.bin -k1 3 -k2 4 -q 12 >> test.out &
 echo 3
-srun --exclusive -N 1 -n 1 ./kplex-no-branching -g ../datasets/epinions.bin -k1 3 -k2 4 -q 15 >> test.out &
+srun  -N 1 -n 1 ./kplex-no-branching -g ../datasets/epinions.bin -k1 3 -k2 4 -q 15 >> test.out &
 echo 4
 wait
 # ./kplex-no-branching -g ../datasets/email-EuAll.bin -k1 2 -k2 3 -q 10 >> out.no-branching

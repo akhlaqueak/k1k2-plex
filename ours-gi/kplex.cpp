@@ -9,7 +9,7 @@
 
 // #define BRANCHING
 // #define LOOKAHEAD
-// #define CTCP
+#define CTCP
 
 #define TIME_NOW chrono::steady_clock::now()
 // cutoff time is in minutes
