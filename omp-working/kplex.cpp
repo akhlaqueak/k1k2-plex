@@ -729,6 +729,7 @@ private:
         // rX.reserve(g.V);
 
         ui ds = GOut.size();
+        cout<<ds<<" ";
         dPin.resize(ds);
         dPout.resize(ds);
         dGin.resize(ds);
