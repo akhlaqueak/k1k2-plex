@@ -40,7 +40,7 @@ void Graph::readBinFile(string fname)
         rdfile.read(reinterpret_cast<char *>(&m), sizeof(ui));
         nsIn[i].resize(m);
         if (m > maxin)
-            maxin = m;
+            // maxin = m;
         rdfile.read(reinterpret_cast<char *>(&nsIn[i][0]), m * sizeof(ui));
     }
     cout<<"|V| = "<<nv<<endl;

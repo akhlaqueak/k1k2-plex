@@ -60,6 +60,8 @@ class EnumKPlex
     vector<pair<ui, ui>> Qe;
     vector<ui> Qv;
     vector<ui> counts;
+    pair<ui, ui> ctcpPr;
+
 
     vector<ui> look1, look2, look3, look4;
 
@@ -641,6 +643,8 @@ private:
             else
                 break;
         }
+        cout<<"CTCP pruned vertices: "<<ctcpPr.first<<endl;
+        cout<<"CTCP pruned edges: "<<ctcpPr.second<<endl;
     }
 
     void deleteEdge(ui u, ui vIndu)
@@ -648,7 +652,7 @@ private:
         // the edge might already have been deleted...
         if (deletedOutEdge[u].test(vIndu))
             return;
-
+        ctcpPr.second++;
         deletedOutEdge[u].set(vIndu);
 
         ui v = g.nsOut[u][vIndu];
@@ -957,7 +961,7 @@ private:
         if (pruned[u])
             return;
         pruned[u] = 1;
-
+        ctcpPr.first++;
         // vector<ui> outLookup = getLookup(g.nsOut[u]);
         // vector<ui> inLookup = getLookup(g.nsIn[u]);
 
