@@ -28,10 +28,10 @@ alias python=python3
 export OMP_NUM_THREADS=32
 
 ./kplex -g ../datasets/webbase-2001.bin -k1 2 -k2 2 -q 300 >> out.sim32
-./kplex -g ../datasets/webbase-2001.bin -k1 3 -k2 3 -q 300 >> out.sim32
+./kplex -g ../datasets/webbase-2001.bin -k1 3 -k2 3 -q 500 >> out.sim32
 
 ./kplex -g ../datasets/clue-web.bin -k1 2 -k2 2 -q 10 >> out.sim32
-./kplex -g ../datasets/clue-web.bin -k1 3 -k2 3 -q 10 >> out.sim32
+./kplex -g ../datasets/clue-web.bin -k1 3 -k2 3 -q 20 >> out.sim32
 
 ./kplex -g ../datasets/it-2004.bin -k1 2 -k2 2 -q 1000 >> out.sim32
 ./kplex -g ../datasets/it-2004.bin -k1 3 -k2 3 -q 3000 >> out.sim32
@@ -46,10 +46,10 @@ export OMP_NUM_THREADS=32
 export OMP_NUM_THREADS=16
 
 ./kplex -g ../datasets/webbase-2001.bin -k1 2 -k2 2 -q 300 >> out.sim16
-./kplex -g ../datasets/webbase-2001.bin -k1 3 -k2 3 -q 300 >> out.sim16
+./kplex -g ../datasets/webbase-2001.bin -k1 3 -k2 3 -q 500 >> out.sim16
 
 ./kplex -g ../datasets/clue-web.bin -k1 2 -k2 2 -q 10 >> out.sim16
-./kplex -g ../datasets/clue-web.bin -k1 3 -k2 3 -q 10 >> out.sim16
+./kplex -g ../datasets/clue-web.bin -k1 3 -k2 3 -q 20 >> out.sim16
 
 ./kplex -g ../datasets/it-2004.bin -k1 2 -k2 2 -q 1000 >> out.sim16
 ./kplex -g ../datasets/it-2004.bin -k1 3 -k2 3 -q 3000 >> out.sim16
@@ -64,10 +64,10 @@ export OMP_NUM_THREADS=16
 export OMP_NUM_THREADS=8
 
 ./kplex -g ../datasets/webbase-2001.bin -k1 2 -k2 2 -q 300 >> out.sim8
-./kplex -g ../datasets/webbase-2001.bin -k1 3 -k2 3 -q 300 >> out.sim8
+./kplex -g ../datasets/webbase-2001.bin -k1 3 -k2 3 -q 500 >> out.sim8
 
 ./kplex -g ../datasets/clue-web.bin -k1 2 -k2 2 -q 10 >> out.sim8
-./kplex -g ../datasets/clue-web.bin -k1 3 -k2 3 -q 10 >> out.sim8
+./kplex -g ../datasets/clue-web.bin -k1 3 -k2 3 -q 20 >> out.sim8
 
 ./kplex -g ../datasets/it-2004.bin -k1 2 -k2 2 -q 1000 >> out.sim8
 ./kplex -g ../datasets/it-2004.bin -k1 3 -k2 3 -q 3000 >> out.sim8
