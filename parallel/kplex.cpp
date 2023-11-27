@@ -52,7 +52,7 @@ thread_local RandList *block;
 
 thread_local vector<ui> rC, rX;
 thread_local ui kplexes = 0;
-thread_local ui ttime = 0, searchCost = 0;
+thread_local ui ttime = 0, searchCost = 0, itp = 0;
 
 class ThreadData
 {
@@ -166,7 +166,7 @@ public:
         shrinkGraph();
         if (GOut.size() < q)
             return;
-        // cout << "No. of Threads: " << omp_get_num_threads() << endl;
+            // cout << "No. of Threads: " << omp_get_num_threads() << endl;
 #pragma omp parallel
         {
             // cout<<"id: "<<omp_get_thread_num()<<endl;
@@ -178,11 +178,13 @@ public:
             {
 
                 vi = i;
+                auto t1 = TIME_NOW;
 #ifdef ITERATIVE_PRUNE
                 getTwoHopIterativePrunedG(vi);
 #else
                 getTwoHopG(vi);
 #endif
+                itp += chrono::duration_cast<chrono::microseconds>(TIME_NOW - t1).count();
 
 #ifdef TASKGROUP
 #pragma omp taskgroup
@@ -192,9 +194,9 @@ public:
                 }
                 reset(); // clears C and X
             }
-            searchCost += chrono::duration_cast<chrono::microseconds>(TIME_NOW - tick).count();
+            searchCost = chrono::duration_cast<chrono::microseconds>(TIME_NOW - tick).count();
         }
-        ui total = 0, context = 0, searchTotal = 0;
+        ui total = 0, context = 0, searchTotal = 0, itpmax = 0;
 #pragma omp parallel reduction(+ : total)
         {
             total += kplexes;
@@ -208,9 +210,13 @@ public:
         {
             searchTotal = searchCost;
         }
+#pragma omp parallel reduction(max : itpmax)
+        {
+            itpmax = itp;
+        }
         cout << "max context switching cost (ms): " << context / 1000 << endl;
-        // cout << "max iterative pruning cost (ms): " << searchTotal / 1000 << endl;
-        cout << "search cost (ms): " << searchTotal/1000 << endl;
+        cout << "max iterative pruning cost (ms): " << itpmax / 1000 << endl;
+        cout << "search cost (ms): " << searchTotal / 1000 << endl;
         cout << "Total (" << k1 << "," << k2 << ")-plexes of at least " << q << " size: " << total << endl;
     }
 

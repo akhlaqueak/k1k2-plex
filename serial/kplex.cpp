@@ -100,13 +100,13 @@ public:
         // some nodes are pruned in k1k2CorePrune, so graph will be shrinked in case ctcp is not applied
         shrinkGraph();
         cout << "preprocessing cost (ms): " << chrono::duration_cast<chrono::milliseconds>(TIME_NOW - prep).count() << endl;
+        auto search = TIME_NOW;
         init(); // initilize G, and other vectors
 
         ui pruningCost = 0;
 
         if (GOut.size() < q)
             return;
-        auto search = TIME_NOW;
         for (ui i = 0; i < GOut.size() - q + 1; i++)
         {
             vi = i;
