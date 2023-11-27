@@ -1,0 +1,330 @@
+#!/bin/bash
+# normal command for interactive session: srun --ntasks=2 --cpus-per-task=1 --mem-per-cpu=64000 --time=12:00:00 --partition=pascalnodes --job-name=GG --gres=gpu:1 --pty /bin/bash
+#SBATCH --share
+#SBATCH --partition=medium
+#
+# Name your job to make it easier for you to track
+#
+#SBATCH --job-name=mediumall
+#
+# Set your error and output files
+#
+#SBATCH --error=termall.err
+#SBATCH --output=termall.out
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=48
+# Tell the scheduler only need 10 minutes
+#
+#SBATCH --time=12:00:00
+#SBATCH --mem-per-cpu=10000
+#
+# Set your email address and request notification when you job is complete or if it fails
+#
+#SBATCH --mail-type=END
+#SBATCH --mail-user=akhlaque.ak@gmail.com
+module load Valgrind
+alias python=python3
+
+export OMP_NUM_THREADS=32
+
+
+./kplex-2 -g ../datasets/epinions.bin -k1 2 -k2 3 -q 10 >> mediumall.out
+./kplex-2 -g ../datasets/epinions.bin -k1 2 -k2 3 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/epinions.bin -k1 3 -k2 4 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/epinions.bin -k1 3 -k2 4 -q 15 >> mediumall.out
+./kplex-2 -g ../datasets/email-EuAll.bin -k1 2 -k2 3 -q 10 >> mediumall.out
+./kplex-2 -g ../datasets/email-EuAll.bin -k1 2 -k2 3 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/email-EuAll.bin -k1 3 -k2 4 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/email-EuAll.bin -k1 3 -k2 4 -q 15 >> mediumall.out
+./kplex-2 -g ../datasets/web-Google.bin -k1 2 -k2 3 -q 15 >> mediumall.out
+./kplex-2 -g ../datasets/web-Google.bin -k1 2 -k2 3 -q 20 >> mediumall.out
+./kplex-2 -g ../datasets/web-Google.bin -k1 3 -k2 4 -q 15 >> mediumall.out
+./kplex-2 -g ../datasets/web-Google.bin -k1 3 -k2 4 -q 20 >> mediumall.out
+./kplex-2 -g ../datasets/bitcoin.bin -k1 2 -k2 5 -q 10 >> mediumall.out
+./kplex-2 -g ../datasets/bitcoin.bin -k1 2 -k2 5 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/bitcoin.bin -k1 3 -k2 5 -q 10 >> mediumall.out
+./kplex-2 -g ../datasets/bitcoin.bin -k1 3 -k2 5 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/mathoverflow.bin -k1 2 -k2 2 -q 10 >> mediumall.out
+./kplex-2 -g ../datasets/mathoverflow.bin -k1 2 -k2 2 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/mathoverflow.bin -k1 2 -k2 3 -q 10 >> mediumall.out
+./kplex-2 -g ../datasets/mathoverflow.bin -k1 2 -k2 3 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/amazon0505.bin -k1 3 -k2 5 -q 10 >> mediumall.out
+./kplex-2 -g ../datasets/amazon0505.bin -k1 3 -k2 5 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/amazon0505.bin -k1 5 -k2 3 -q 10 >> mediumall.out
+./kplex-2 -g ../datasets/amazon0505.bin -k1 5 -k2 3 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-Talk.bin -k1 2 -k2 2 -q 15 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-Talk.bin -k1 2 -k2 2 -q 20 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-Talk.bin -k1 2 -k2 3 -q 15 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-Talk.bin -k1 2 -k2 3 -q 20 >> mediumall.out
+./kplex-2 -g ../datasets/soc-pokec-relationships.bin -k1 2 -k2 3 -q 15 >> mediumall.out
+./kplex-2 -g ../datasets/soc-pokec-relationships.bin -k1 2 -k2 3 -q 20 >> mediumall.out
+./kplex-2 -g ../datasets/soc-pokec-relationships.bin -k1 3 -k2 3 -q 15 >> mediumall.out
+./kplex-2 -g ../datasets/soc-pokec-relationships.bin -k1 3 -k2 3 -q 20 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-vote.bin -k1 3 -k2 5 -q 10 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-vote.bin -k1 3 -k2 5 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-vote.bin -k1 4 -k2 5 -q 10 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-vote.bin -k1 4 -k2 5 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-topcats.bin -k1 2 -k2 3 -q 15 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-topcats.bin -k1 2 -k2 3 -q 20 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-topcats.bin -k1 3 -k2 4 -q 15 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-topcats.bin -k1 3 -k2 4 -q 20 >> mediumall.out
+
+./kplex-2 -g ../datasets/webbase-2001.bin -k1 2 -k2 2 -q 300 >> mediumall.out
+./kplex-2 -g ../datasets/webbase-2001.bin -k1 3 -k2 3 -q 500 >> mediumall.out
+
+./kplex-2 -g ../datasets/clue-web.bin -k1 2 -k2 2 -q 10 >> mediumall.out
+./kplex-2 -g ../datasets/clue-web.bin -k1 3 -k2 3 -q 20 >> mediumall.out
+
+./kplex-2 -g ../datasets/it-2004.bin -k1 2 -k2 2 -q 1000 >> mediumall.out
+./kplex-2 -g ../datasets/it-2004.bin -k1 3 -k2 3 -q 3000 >> mediumall.out
+
+./kplex-2 -g ../datasets/arabic-2005.bin -k1 2 -k2 2 -q 1000 >> mediumall.out
+./kplex-2 -g ../datasets/arabic-2005.bin -k1 3 -k2 3 -q 3000 >> mediumall.out
+
+./kplex-2 -g ../datasets/uk-2005.bin -k1 2 -k2 2 -q 200 >> mediumall.out
+./kplex-2 -g ../datasets/uk-2005.bin -k1 3 -k2 3 -q 400 >> mediumall.out
+
+
+export OMP_NUM_THREADS=16
+
+
+./kplex-2 -g ../datasets/epinions.bin -k1 2 -k2 3 -q 10 >> mediumall.out
+./kplex-2 -g ../datasets/epinions.bin -k1 2 -k2 3 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/epinions.bin -k1 3 -k2 4 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/epinions.bin -k1 3 -k2 4 -q 15 >> mediumall.out
+./kplex-2 -g ../datasets/email-EuAll.bin -k1 2 -k2 3 -q 10 >> mediumall.out
+./kplex-2 -g ../datasets/email-EuAll.bin -k1 2 -k2 3 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/email-EuAll.bin -k1 3 -k2 4 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/email-EuAll.bin -k1 3 -k2 4 -q 15 >> mediumall.out
+./kplex-2 -g ../datasets/web-Google.bin -k1 2 -k2 3 -q 15 >> mediumall.out
+./kplex-2 -g ../datasets/web-Google.bin -k1 2 -k2 3 -q 20 >> mediumall.out
+./kplex-2 -g ../datasets/web-Google.bin -k1 3 -k2 4 -q 15 >> mediumall.out
+./kplex-2 -g ../datasets/web-Google.bin -k1 3 -k2 4 -q 20 >> mediumall.out
+./kplex-2 -g ../datasets/bitcoin.bin -k1 2 -k2 5 -q 10 >> mediumall.out
+./kplex-2 -g ../datasets/bitcoin.bin -k1 2 -k2 5 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/bitcoin.bin -k1 3 -k2 5 -q 10 >> mediumall.out
+./kplex-2 -g ../datasets/bitcoin.bin -k1 3 -k2 5 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/mathoverflow.bin -k1 2 -k2 2 -q 10 >> mediumall.out
+./kplex-2 -g ../datasets/mathoverflow.bin -k1 2 -k2 2 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/mathoverflow.bin -k1 2 -k2 3 -q 10 >> mediumall.out
+./kplex-2 -g ../datasets/mathoverflow.bin -k1 2 -k2 3 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/amazon0505.bin -k1 3 -k2 5 -q 10 >> mediumall.out
+./kplex-2 -g ../datasets/amazon0505.bin -k1 3 -k2 5 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/amazon0505.bin -k1 5 -k2 3 -q 10 >> mediumall.out
+./kplex-2 -g ../datasets/amazon0505.bin -k1 5 -k2 3 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-Talk.bin -k1 2 -k2 2 -q 15 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-Talk.bin -k1 2 -k2 2 -q 20 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-Talk.bin -k1 2 -k2 3 -q 15 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-Talk.bin -k1 2 -k2 3 -q 20 >> mediumall.out
+./kplex-2 -g ../datasets/soc-pokec-relationships.bin -k1 2 -k2 3 -q 15 >> mediumall.out
+./kplex-2 -g ../datasets/soc-pokec-relationships.bin -k1 2 -k2 3 -q 20 >> mediumall.out
+./kplex-2 -g ../datasets/soc-pokec-relationships.bin -k1 3 -k2 3 -q 15 >> mediumall.out
+./kplex-2 -g ../datasets/soc-pokec-relationships.bin -k1 3 -k2 3 -q 20 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-vote.bin -k1 3 -k2 5 -q 10 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-vote.bin -k1 3 -k2 5 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-vote.bin -k1 4 -k2 5 -q 10 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-vote.bin -k1 4 -k2 5 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-topcats.bin -k1 2 -k2 3 -q 15 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-topcats.bin -k1 2 -k2 3 -q 20 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-topcats.bin -k1 3 -k2 4 -q 15 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-topcats.bin -k1 3 -k2 4 -q 20 >> mediumall.out
+
+
+./kplex-2 -g ../datasets/webbase-2001.bin -k1 2 -k2 2 -q 300 >> mediumall.out
+./kplex-2 -g ../datasets/webbase-2001.bin -k1 3 -k2 3 -q 500 >> mediumall.out
+
+./kplex-2 -g ../datasets/clue-web.bin -k1 2 -k2 2 -q 10 >> mediumall.out
+./kplex-2 -g ../datasets/clue-web.bin -k1 3 -k2 3 -q 20 >> mediumall.out
+
+./kplex-2 -g ../datasets/it-2004.bin -k1 2 -k2 2 -q 1000 >> mediumall.out
+./kplex-2 -g ../datasets/it-2004.bin -k1 3 -k2 3 -q 3000 >> mediumall.out
+
+./kplex-2 -g ../datasets/arabic-2005.bin -k1 2 -k2 2 -q 1000 >> mediumall.out
+./kplex-2 -g ../datasets/arabic-2005.bin -k1 3 -k2 3 -q 3000 >> mediumall.out
+
+./kplex-2 -g ../datasets/uk-2005.bin -k1 2 -k2 2 -q 200 >> mediumall.out
+./kplex-2 -g ../datasets/uk-2005.bin -k1 3 -k2 3 -q 400 >> mediumall.out
+
+
+export OMP_NUM_THREADS=8
+
+
+./kplex-2 -g ../datasets/epinions.bin -k1 2 -k2 3 -q 10 >> mediumall.out
+./kplex-2 -g ../datasets/epinions.bin -k1 2 -k2 3 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/epinions.bin -k1 3 -k2 4 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/epinions.bin -k1 3 -k2 4 -q 15 >> mediumall.out
+./kplex-2 -g ../datasets/email-EuAll.bin -k1 2 -k2 3 -q 10 >> mediumall.out
+./kplex-2 -g ../datasets/email-EuAll.bin -k1 2 -k2 3 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/email-EuAll.bin -k1 3 -k2 4 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/email-EuAll.bin -k1 3 -k2 4 -q 15 >> mediumall.out
+./kplex-2 -g ../datasets/web-Google.bin -k1 2 -k2 3 -q 15 >> mediumall.out
+./kplex-2 -g ../datasets/web-Google.bin -k1 2 -k2 3 -q 20 >> mediumall.out
+./kplex-2 -g ../datasets/web-Google.bin -k1 3 -k2 4 -q 15 >> mediumall.out
+./kplex-2 -g ../datasets/web-Google.bin -k1 3 -k2 4 -q 20 >> mediumall.out
+./kplex-2 -g ../datasets/bitcoin.bin -k1 2 -k2 5 -q 10 >> mediumall.out
+./kplex-2 -g ../datasets/bitcoin.bin -k1 2 -k2 5 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/bitcoin.bin -k1 3 -k2 5 -q 10 >> mediumall.out
+./kplex-2 -g ../datasets/bitcoin.bin -k1 3 -k2 5 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/mathoverflow.bin -k1 2 -k2 2 -q 10 >> mediumall.out
+./kplex-2 -g ../datasets/mathoverflow.bin -k1 2 -k2 2 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/mathoverflow.bin -k1 2 -k2 3 -q 10 >> mediumall.out
+./kplex-2 -g ../datasets/mathoverflow.bin -k1 2 -k2 3 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/amazon0505.bin -k1 3 -k2 5 -q 10 >> mediumall.out
+./kplex-2 -g ../datasets/amazon0505.bin -k1 3 -k2 5 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/amazon0505.bin -k1 5 -k2 3 -q 10 >> mediumall.out
+./kplex-2 -g ../datasets/amazon0505.bin -k1 5 -k2 3 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-Talk.bin -k1 2 -k2 2 -q 15 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-Talk.bin -k1 2 -k2 2 -q 20 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-Talk.bin -k1 2 -k2 3 -q 15 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-Talk.bin -k1 2 -k2 3 -q 20 >> mediumall.out
+./kplex-2 -g ../datasets/soc-pokec-relationships.bin -k1 2 -k2 3 -q 15 >> mediumall.out
+./kplex-2 -g ../datasets/soc-pokec-relationships.bin -k1 2 -k2 3 -q 20 >> mediumall.out
+./kplex-2 -g ../datasets/soc-pokec-relationships.bin -k1 3 -k2 3 -q 15 >> mediumall.out
+./kplex-2 -g ../datasets/soc-pokec-relationships.bin -k1 3 -k2 3 -q 20 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-vote.bin -k1 3 -k2 5 -q 10 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-vote.bin -k1 3 -k2 5 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-vote.bin -k1 4 -k2 5 -q 10 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-vote.bin -k1 4 -k2 5 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-topcats.bin -k1 2 -k2 3 -q 15 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-topcats.bin -k1 2 -k2 3 -q 20 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-topcats.bin -k1 3 -k2 4 -q 15 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-topcats.bin -k1 3 -k2 4 -q 20 >> mediumall.out
+
+
+./kplex-2 -g ../datasets/webbase-2001.bin -k1 2 -k2 2 -q 300 >> mediumall.out
+./kplex-2 -g ../datasets/webbase-2001.bin -k1 3 -k2 3 -q 500 >> mediumall.out
+
+./kplex-2 -g ../datasets/clue-web.bin -k1 2 -k2 2 -q 10 >> mediumall.out
+./kplex-2 -g ../datasets/clue-web.bin -k1 3 -k2 3 -q 20 >> mediumall.out
+
+./kplex-2 -g ../datasets/it-2004.bin -k1 2 -k2 2 -q 1000 >> mediumall.out
+./kplex-2 -g ../datasets/it-2004.bin -k1 3 -k2 3 -q 3000 >> mediumall.out
+
+./kplex-2 -g ../datasets/arabic-2005.bin -k1 2 -k2 2 -q 1000 >> mediumall.out
+./kplex-2 -g ../datasets/arabic-2005.bin -k1 3 -k2 3 -q 3000 >> mediumall.out
+
+./kplex-2 -g ../datasets/uk-2005.bin -k1 2 -k2 2 -q 200 >> mediumall.out
+./kplex-2 -g ../datasets/uk-2005.bin -k1 3 -k2 3 -q 400 >> mediumall.out
+
+
+export OMP_NUM_THREADS=4
+
+
+./kplex-2 -g ../datasets/epinions.bin -k1 2 -k2 3 -q 10 >> mediumall.out
+./kplex-2 -g ../datasets/epinions.bin -k1 2 -k2 3 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/epinions.bin -k1 3 -k2 4 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/epinions.bin -k1 3 -k2 4 -q 15 >> mediumall.out
+./kplex-2 -g ../datasets/email-EuAll.bin -k1 2 -k2 3 -q 10 >> mediumall.out
+./kplex-2 -g ../datasets/email-EuAll.bin -k1 2 -k2 3 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/email-EuAll.bin -k1 3 -k2 4 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/email-EuAll.bin -k1 3 -k2 4 -q 15 >> mediumall.out
+./kplex-2 -g ../datasets/web-Google.bin -k1 2 -k2 3 -q 15 >> mediumall.out
+./kplex-2 -g ../datasets/web-Google.bin -k1 2 -k2 3 -q 20 >> mediumall.out
+./kplex-2 -g ../datasets/web-Google.bin -k1 3 -k2 4 -q 15 >> mediumall.out
+./kplex-2 -g ../datasets/web-Google.bin -k1 3 -k2 4 -q 20 >> mediumall.out
+./kplex-2 -g ../datasets/bitcoin.bin -k1 2 -k2 5 -q 10 >> mediumall.out
+./kplex-2 -g ../datasets/bitcoin.bin -k1 2 -k2 5 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/bitcoin.bin -k1 3 -k2 5 -q 10 >> mediumall.out
+./kplex-2 -g ../datasets/bitcoin.bin -k1 3 -k2 5 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/mathoverflow.bin -k1 2 -k2 2 -q 10 >> mediumall.out
+./kplex-2 -g ../datasets/mathoverflow.bin -k1 2 -k2 2 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/mathoverflow.bin -k1 2 -k2 3 -q 10 >> mediumall.out
+./kplex-2 -g ../datasets/mathoverflow.bin -k1 2 -k2 3 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/amazon0505.bin -k1 3 -k2 5 -q 10 >> mediumall.out
+./kplex-2 -g ../datasets/amazon0505.bin -k1 3 -k2 5 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/amazon0505.bin -k1 5 -k2 3 -q 10 >> mediumall.out
+./kplex-2 -g ../datasets/amazon0505.bin -k1 5 -k2 3 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-Talk.bin -k1 2 -k2 2 -q 15 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-Talk.bin -k1 2 -k2 2 -q 20 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-Talk.bin -k1 2 -k2 3 -q 15 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-Talk.bin -k1 2 -k2 3 -q 20 >> mediumall.out
+./kplex-2 -g ../datasets/soc-pokec-relationships.bin -k1 2 -k2 3 -q 15 >> mediumall.out
+./kplex-2 -g ../datasets/soc-pokec-relationships.bin -k1 2 -k2 3 -q 20 >> mediumall.out
+./kplex-2 -g ../datasets/soc-pokec-relationships.bin -k1 3 -k2 3 -q 15 >> mediumall.out
+./kplex-2 -g ../datasets/soc-pokec-relationships.bin -k1 3 -k2 3 -q 20 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-vote.bin -k1 3 -k2 5 -q 10 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-vote.bin -k1 3 -k2 5 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-vote.bin -k1 4 -k2 5 -q 10 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-vote.bin -k1 4 -k2 5 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-topcats.bin -k1 2 -k2 3 -q 15 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-topcats.bin -k1 2 -k2 3 -q 20 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-topcats.bin -k1 3 -k2 4 -q 15 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-topcats.bin -k1 3 -k2 4 -q 20 >> mediumall.out
+
+
+./kplex-2 -g ../datasets/webbase-2001.bin -k1 2 -k2 2 -q 300 >> mediumall.out
+./kplex-2 -g ../datasets/webbase-2001.bin -k1 3 -k2 3 -q 500 >> mediumall.out
+
+./kplex-2 -g ../datasets/clue-web.bin -k1 2 -k2 2 -q 10 >> mediumall.out
+./kplex-2 -g ../datasets/clue-web.bin -k1 3 -k2 3 -q 20 >> mediumall.out
+
+./kplex-2 -g ../datasets/it-2004.bin -k1 2 -k2 2 -q 1000 >> mediumall.out
+./kplex-2 -g ../datasets/it-2004.bin -k1 3 -k2 3 -q 3000 >> mediumall.out
+
+./kplex-2 -g ../datasets/arabic-2005.bin -k1 2 -k2 2 -q 1000 >> mediumall.out
+./kplex-2 -g ../datasets/arabic-2005.bin -k1 3 -k2 3 -q 3000 >> mediumall.out
+
+./kplex-2 -g ../datasets/uk-2005.bin -k1 2 -k2 2 -q 200 >> mediumall.out
+./kplex-2 -g ../datasets/uk-2005.bin -k1 3 -k2 3 -q 400 >> mediumall.out
+
+
+export OMP_NUM_THREADS=2
+
+
+./kplex-2 -g ../datasets/epinions.bin -k1 2 -k2 3 -q 10 >> mediumall.out
+./kplex-2 -g ../datasets/epinions.bin -k1 2 -k2 3 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/epinions.bin -k1 3 -k2 4 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/epinions.bin -k1 3 -k2 4 -q 15 >> mediumall.out
+./kplex-2 -g ../datasets/email-EuAll.bin -k1 2 -k2 3 -q 10 >> mediumall.out
+./kplex-2 -g ../datasets/email-EuAll.bin -k1 2 -k2 3 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/email-EuAll.bin -k1 3 -k2 4 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/email-EuAll.bin -k1 3 -k2 4 -q 15 >> mediumall.out
+./kplex-2 -g ../datasets/web-Google.bin -k1 2 -k2 3 -q 15 >> mediumall.out
+./kplex-2 -g ../datasets/web-Google.bin -k1 2 -k2 3 -q 20 >> mediumall.out
+./kplex-2 -g ../datasets/web-Google.bin -k1 3 -k2 4 -q 15 >> mediumall.out
+./kplex-2 -g ../datasets/web-Google.bin -k1 3 -k2 4 -q 20 >> mediumall.out
+./kplex-2 -g ../datasets/bitcoin.bin -k1 2 -k2 5 -q 10 >> mediumall.out
+./kplex-2 -g ../datasets/bitcoin.bin -k1 2 -k2 5 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/bitcoin.bin -k1 3 -k2 5 -q 10 >> mediumall.out
+./kplex-2 -g ../datasets/bitcoin.bin -k1 3 -k2 5 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/mathoverflow.bin -k1 2 -k2 2 -q 10 >> mediumall.out
+./kplex-2 -g ../datasets/mathoverflow.bin -k1 2 -k2 2 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/mathoverflow.bin -k1 2 -k2 3 -q 10 >> mediumall.out
+./kplex-2 -g ../datasets/mathoverflow.bin -k1 2 -k2 3 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/amazon0505.bin -k1 3 -k2 5 -q 10 >> mediumall.out
+./kplex-2 -g ../datasets/amazon0505.bin -k1 3 -k2 5 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/amazon0505.bin -k1 5 -k2 3 -q 10 >> mediumall.out
+./kplex-2 -g ../datasets/amazon0505.bin -k1 5 -k2 3 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-Talk.bin -k1 2 -k2 2 -q 15 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-Talk.bin -k1 2 -k2 2 -q 20 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-Talk.bin -k1 2 -k2 3 -q 15 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-Talk.bin -k1 2 -k2 3 -q 20 >> mediumall.out
+./kplex-2 -g ../datasets/soc-pokec-relationships.bin -k1 2 -k2 3 -q 15 >> mediumall.out
+./kplex-2 -g ../datasets/soc-pokec-relationships.bin -k1 2 -k2 3 -q 20 >> mediumall.out
+./kplex-2 -g ../datasets/soc-pokec-relationships.bin -k1 3 -k2 3 -q 15 >> mediumall.out
+./kplex-2 -g ../datasets/soc-pokec-relationships.bin -k1 3 -k2 3 -q 20 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-vote.bin -k1 3 -k2 5 -q 10 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-vote.bin -k1 3 -k2 5 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-vote.bin -k1 4 -k2 5 -q 10 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-vote.bin -k1 4 -k2 5 -q 12 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-topcats.bin -k1 2 -k2 3 -q 15 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-topcats.bin -k1 2 -k2 3 -q 20 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-topcats.bin -k1 3 -k2 4 -q 15 >> mediumall.out
+./kplex-2 -g ../datasets/wiki-topcats.bin -k1 3 -k2 4 -q 20 >> mediumall.out
+
+
+./kplex-2 -g ../datasets/webbase-2001.bin -k1 2 -k2 2 -q 300 >> mediumall.out
+./kplex-2 -g ../datasets/webbase-2001.bin -k1 3 -k2 3 -q 500 >> mediumall.out
+
+./kplex-2 -g ../datasets/clue-web.bin -k1 2 -k2 2 -q 10 >> mediumall.out
+./kplex-2 -g ../datasets/clue-web.bin -k1 3 -k2 3 -q 20 >> mediumall.out
+
+./kplex-2 -g ../datasets/it-2004.bin -k1 2 -k2 2 -q 1000 >> mediumall.out
+./kplex-2 -g ../datasets/it-2004.bin -k1 3 -k2 3 -q 3000 >> mediumall.out
+
+./kplex-2 -g ../datasets/arabic-2005.bin -k1 2 -k2 2 -q 1000 >> mediumall.out
+./kplex-2 -g ../datasets/arabic-2005.bin -k1 3 -k2 3 -q 3000 >> mediumall.out
+
+./kplex-2 -g ../datasets/uk-2005.bin -k1 2 -k2 2 -q 200 >> mediumall.out
+./kplex-2 -g ../datasets/uk-2005.bin -k1 3 -k2 3 -q 400 >> mediumall.out
+
