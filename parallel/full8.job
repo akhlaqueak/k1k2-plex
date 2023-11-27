@@ -64,8 +64,5 @@ export OMP_NUM_THREADS=8
 ./kplex -g ../datasets/wiki-vote.bin -k1 3 -k2 5 -q 12 >> out8.full
 ./kplex -g ../datasets/wiki-vote.bin -k1 4 -k2 5 -q 10 >> out8.full
 ./kplex -g ../datasets/wiki-vote.bin -k1 4 -k2 5 -q 12 >> out8.full
-./kplex -g ../datasets/clue-web.bin -k1 2 -k2 2 -q 35 >> out8.full
-./kplex -g ../datasets/clue-web.bin -k1 2 -k2 2 -q 40 >> out8.full
-./kplex -g ../datasets/clue-web.bin -k1 2 -k2 3 -q 35 >> out8.full
-./kplex -g ../datasets/clue-web.bin -k1 2 -k2 3 -q 40 >> out8.full
+
 

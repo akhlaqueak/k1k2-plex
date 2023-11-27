@@ -3,9 +3,9 @@
 #define PuCSize (P.size() + C.size())
 #include "version.h"
 // one of these three options should be selected, deciding how Gi is calculated
-// // #define ITERATIVE_PRUNE
+// #define ITERATIVE_PRUNE
 // #define TWO_HOP
-// // #define NAIVE
+// #define NAIVE
 
 // #define BRANCHING
 // #define LOOKAHEAD

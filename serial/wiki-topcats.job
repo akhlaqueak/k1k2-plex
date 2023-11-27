@@ -34,7 +34,7 @@ srun  -N 1 -n 1 ./kplex-full -g ../datasets/wiki-topcats.bin -k1 2 -k2 3 -q 20  
 sr=$((sr+1))
 srun  -N 1 -n 1 ./kplex-full -g ../datasets/wiki-topcats.bin -k1 3 -k2 4 -q 15  -sr $sr >> wiki-topcats.out &
 sr=$((sr+1))
-srun  -N 1 -n 1 ./kplex-full -g ../datasets/wiki-topcats.bin -k1 3 -k2 4 -q 10  -sr $sr >> wiki-topcats.out &
+srun  -N 1 -n 1 ./kplex-full -g ../datasets/wiki-topcats.bin -k1 3 -k2 4 -q 20  -sr $sr >> wiki-topcats.out &
 sr=$((sr+1))
 
 srun  -N 1 -n 1 ./kplex-bk -g ../datasets/wiki-topcats.bin -k1 2 -k2 3 -q 15 -sr $sr >> wiki-topcats.out &
@@ -43,7 +43,7 @@ srun  -N 1 -n 1 ./kplex-bk -g ../datasets/wiki-topcats.bin -k1 2 -k2 3 -q 20  -s
 sr=$((sr+1))
 srun  -N 1 -n 1 ./kplex-bk -g ../datasets/wiki-topcats.bin -k1 3 -k2 4 -q 15  -sr $sr >> wiki-topcats.out &
 sr=$((sr+1))
-srun  -N 1 -n 1 ./kplex-bk -g ../datasets/wiki-topcats.bin -k1 3 -k2 4 -q 10  -sr $sr >> wiki-topcats.out &
+srun  -N 1 -n 1 ./kplex-bk -g ../datasets/wiki-topcats.bin -k1 3 -k2 4 -q 20  -sr $sr >> wiki-topcats.out &
 sr=$((sr+1))
 
 srun  -N 1 -n 1 ./kplex-v2 -g ../datasets/wiki-topcats.bin -k1 2 -k2 3 -q 15 -sr $sr >> wiki-topcats.out &
@@ -52,7 +52,7 @@ srun  -N 1 -n 1 ./kplex-v2 -g ../datasets/wiki-topcats.bin -k1 2 -k2 3 -q 20  -s
 sr=$((sr+1))
 srun  -N 1 -n 1 ./kplex-v2 -g ../datasets/wiki-topcats.bin -k1 3 -k2 4 -q 15  -sr $sr >> wiki-topcats.out &
 sr=$((sr+1))
-srun  -N 1 -n 1 ./kplex-v2 -g ../datasets/wiki-topcats.bin -k1 3 -k2 4 -q 10  -sr $sr >> wiki-topcats.out &
+srun  -N 1 -n 1 ./kplex-v2 -g ../datasets/wiki-topcats.bin -k1 3 -k2 4 -q 20  -sr $sr >> wiki-topcats.out &
 sr=$((sr+1))
 
 srun  -N 1 -n 1 ./kplex-v1 -g ../datasets/wiki-topcats.bin -k1 2 -k2 3 -q 15 -sr $sr >> wiki-topcats.out &
@@ -61,7 +61,7 @@ srun  -N 1 -n 1 ./kplex-v1 -g ../datasets/wiki-topcats.bin -k1 2 -k2 3 -q 20  -s
 sr=$((sr+1))
 srun  -N 1 -n 1 ./kplex-v1 -g ../datasets/wiki-topcats.bin -k1 3 -k2 4 -q 15  -sr $sr >> wiki-topcats.out &
 sr=$((sr+1))
-srun  -N 1 -n 1 ./kplex-v1 -g ../datasets/wiki-topcats.bin -k1 3 -k2 4 -q 10  -sr $sr >> wiki-topcats.out &
+srun  -N 1 -n 1 ./kplex-v1 -g ../datasets/wiki-topcats.bin -k1 3 -k2 4 -q 20  -sr $sr >> wiki-topcats.out &
 sr=$((sr+1))
 
 srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/wiki-topcats.bin -k1 2 -k2 3 -q 15 -sr $sr >> wiki-topcats.out &
@@ -70,7 +70,7 @@ srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/wiki-topcats.bin -k1 2 -k2 3 -q 20  -s
 sr=$((sr+1))
 srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/wiki-topcats.bin -k1 3 -k2 4 -q 15  -sr $sr >> wiki-topcats.out &
 sr=$((sr+1))
-srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/wiki-topcats.bin -k1 3 -k2 4 -q 10  -sr $sr >> wiki-topcats.out &
+srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/wiki-topcats.bin -k1 3 -k2 4 -q 20  -sr $sr >> wiki-topcats.out &
 sr=$((sr+1))
 
 srun  -N 1 -n 1 ./kplex-no-ctcp -g ../datasets/wiki-topcats.bin -k1 2 -k2 3 -q 15 -sr $sr >> wiki-topcats.out &
@@ -79,7 +79,7 @@ srun  -N 1 -n 1 ./kplex-no-ctcp -g ../datasets/wiki-topcats.bin -k1 2 -k2 3 -q 2
 sr=$((sr+1))
 srun  -N 1 -n 1 ./kplex-no-ctcp -g ../datasets/wiki-topcats.bin -k1 3 -k2 4 -q 15  -sr $sr >> wiki-topcats.out &
 sr=$((sr+1))
-srun  -N 1 -n 1 ./kplex-no-ctcp -g ../datasets/wiki-topcats.bin -k1 3 -k2 4 -q 10  -sr $sr >> wiki-topcats.out &
+srun  -N 1 -n 1 ./kplex-no-ctcp -g ../datasets/wiki-topcats.bin -k1 3 -k2 4 -q 20  -sr $sr >> wiki-topcats.out &
 sr=$((sr+1))
 
 srun  -N 1 -n 1 ./kplex-no-iterative -g ../datasets/wiki-topcats.bin -k1 2 -k2 3 -q 15 -sr $sr >> wiki-topcats.out &
@@ -88,7 +88,7 @@ srun  -N 1 -n 1 ./kplex-no-iterative -g ../datasets/wiki-topcats.bin -k1 2 -k2 3
 sr=$((sr+1))
 srun  -N 1 -n 1 ./kplex-no-iterative -g ../datasets/wiki-topcats.bin -k1 3 -k2 4 -q 15  -sr $sr >> wiki-topcats.out &
 sr=$((sr+1))
-srun  -N 1 -n 1 ./kplex-no-iterative -g ../datasets/wiki-topcats.bin -k1 3 -k2 4 -q 10  -sr $sr >> wiki-topcats.out &
+srun  -N 1 -n 1 ./kplex-no-iterative -g ../datasets/wiki-topcats.bin -k1 3 -k2 4 -q 20  -sr $sr >> wiki-topcats.out &
 sr=$((sr+1))
 
 srun  -N 1 -n 1 ./kplex-no-branching -g ../datasets/wiki-topcats.bin -k1 2 -k2 3 -q 15 -sr $sr >> wiki-topcats.out &
@@ -97,7 +97,7 @@ srun  -N 1 -n 1 ./kplex-no-branching -g ../datasets/wiki-topcats.bin -k1 2 -k2 3
 sr=$((sr+1))
 srun  -N 1 -n 1 ./kplex-no-branching -g ../datasets/wiki-topcats.bin -k1 3 -k2 4 -q 15  -sr $sr >> wiki-topcats.out &
 sr=$((sr+1))
-srun  -N 1 -n 1 ./kplex-no-branching -g ../datasets/wiki-topcats.bin -k1 3 -k2 4 -q 10  -sr $sr >> wiki-topcats.out &
+srun  -N 1 -n 1 ./kplex-no-branching -g ../datasets/wiki-topcats.bin -k1 3 -k2 4 -q 20  -sr $sr >> wiki-topcats.out &
 sr=$((sr+1))
 
 srun  -N 1 -n 1 ./kplex-no-lookahead -g ../datasets/wiki-topcats.bin -k1 2 -k2 3 -q 15 -sr $sr >> wiki-topcats.out &
@@ -106,7 +106,7 @@ srun  -N 1 -n 1 ./kplex-no-lookahead -g ../datasets/wiki-topcats.bin -k1 2 -k2 3
 sr=$((sr+1))
 srun  -N 1 -n 1 ./kplex-no-lookahead -g ../datasets/wiki-topcats.bin -k1 3 -k2 4 -q 15  -sr $sr >> wiki-topcats.out &
 sr=$((sr+1))
-srun  -N 1 -n 1 ./kplex-no-lookahead -g ../datasets/wiki-topcats.bin -k1 3 -k2 4 -q 10  -sr $sr >> wiki-topcats.out &
+srun  -N 1 -n 1 ./kplex-no-lookahead -g ../datasets/wiki-topcats.bin -k1 3 -k2 4 -q 20  -sr $sr >> wiki-topcats.out &
 sr=$((sr+1))
 
 wait
