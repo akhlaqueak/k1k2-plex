@@ -9,7 +9,7 @@
 
 // #define BRANCHING
 // #define LOOKAHEAD
-#define CTCP
+// #define CTCP
 
 #define TIME_NOW chrono::steady_clock::now()
 // cutoff time is in minutes
@@ -643,8 +643,8 @@ private:
             else
                 break;
         }
-        cout<<"CTCP pruned vertices: "<<ctcpPr.first<<endl;
-        cout<<"CTCP pruned edges: "<<ctcpPr.second<<endl;
+        cout<<"ctcp pruned vertices: "<<ctcpPr.first<<endl;
+        cout<<"ctcp pruned edges: "<<ctcpPr.second<<endl;
     }
 
     void deleteEdge(ui u, ui vIndu)
