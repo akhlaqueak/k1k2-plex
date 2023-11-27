@@ -21,6 +21,7 @@ void Graph::readBinFile(string fname)
     rdfile.read(reinterpret_cast<char *>(&V), sizeof(ui));
     nsIn.resize(V);
     nsOut.resize(V);
+    ui nv=0, ne=0;
     ui maxin = 0, maxout = 0;
     for (ui i = 0; i < V; i++)
     {
@@ -30,6 +31,8 @@ void Graph::readBinFile(string fname)
         if (m > maxout)
             maxout = m;
         rdfile.read(reinterpret_cast<char *>(&nsOut[i][0]), m * sizeof(ui));
+        if(m) nv++;
+        ne+=m;
     }
     for (ui i = 0; i < V; i++)
     {
@@ -40,8 +43,10 @@ void Graph::readBinFile(string fname)
             maxin = m;
         rdfile.read(reinterpret_cast<char *>(&nsIn[i][0]), m * sizeof(ui));
     }
-    cout << "Max Out Degree " << maxout << endl;
-    cout << "Max In Degree " << maxin << endl;
+    cout<<"|V| = "<<nv<<endl;
+    cout<<"|E| = "<<ne<<endl;
+    cout << "Max d+ " << maxout << endl;
+    cout << "Max d- " << maxin << endl;
 }
 
 void Graph::writeBinFile(string fname)
