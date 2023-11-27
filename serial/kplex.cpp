@@ -4,12 +4,12 @@
 
 // one of these three options should be selected, deciding how Gi is calculated
 // #define ITERATIVE_PRUNE
-// #define TWO_HOP
-#define NAIVE
+#define TWO_HOP
+// #define NAIVE
 
 // #define BRANCHING
 // #define LOOKAHEAD
-// #define CTCP
+#define CTCP
 
 #define TIME_NOW chrono::steady_clock::now()
 // cutoff time is in minutes
