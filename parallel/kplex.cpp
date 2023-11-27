@@ -77,16 +77,16 @@ public:
         blk = block;
         gin = giIn;
         gout = giOut;
-        dpin.reserve(blk->size());
-        dpout.reserve(blk->size());
-        dgin.reserve(blk->size());
-        dgout.reserve(blk->size());
+        dpin.resize(blk->size());
+        dpout.resize(blk->size());
+        dgin.resize(blk->size());
+        dgout.resize(blk->size());
         for (ui i = 0; i < blk->size(); i++)
         {
-            dpin.push_back(dPin[i]);
-            dpout.push_back(dPout[i]);
-            dgin.push_back(dGin[i]);
-            dgout.push_back(dGout[i]);
+            dpin[i]=dPin[i];
+            dpout[i]=dPout[i];
+            dgin[i]=dGin[i];
+            dgout[i]=dGout[i];
         }
         ttime += chrono::duration_cast<chrono::microseconds>(TIME_NOW - tick).count();
         // for (ui i = 0; i < blk.size(); i++)
