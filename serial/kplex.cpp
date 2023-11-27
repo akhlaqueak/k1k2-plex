@@ -106,7 +106,7 @@ public:
 
         if (GOut.size() < q)
             return;
-
+        auto search = TIME_NOW;
         for (ui i = 0; i < GOut.size() - q + 1; i++)
         {
             vi = i;
@@ -132,6 +132,8 @@ public:
             // start from first vertex
             reset(); // clears C and X
         }
+           
+        cout<<"search cost (ms): " <<  chrono::duration_cast<chrono::milliseconds>(TIME_NOW - search).count();
         cout << "iterative pruning cost (ms): " << pruningCost / 1000 << endl;
         cout << "Total (" << k1 << "," << k2 << ")-plexes of at least " << q << " size: " << kplexes << endl;
         for (ui i = 0; i < counts.size(); i++)
