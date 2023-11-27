@@ -3,11 +3,11 @@
 #define PuCSize (P.size() + C.size())
 
 // one of these three options should be selected, deciding how Gi is calculated
-#define ITERATIVE_PRUNE
-// #define TWO_HOP
+// #define ITERATIVE_PRUNE
+#define TWO_HOP
 // #define NAIVE
 
-// #define BRANCHING
+#define BRANCHING
 #define LOOKAHEAD
 #define CTCP
 
