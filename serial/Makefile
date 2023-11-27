@@ -16,9 +16,6 @@ versions:
 	printf "#define NAIVE \n #define CTCP" > version.h
 	${CC}  kplex.cpp -o kplex-v1
 
-	printf "#define NAIVE \n #define CTCP" > version.h
-	${CC}  kplex.cpp -o kplex-v1
-	
 	printf "#define TWO_HOP \n #define CTCP" > version.h
 	${CC}  kplex.cpp -o kplex-v2
 	
