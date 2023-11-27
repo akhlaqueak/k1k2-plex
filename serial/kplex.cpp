@@ -81,6 +81,7 @@ class EnumKPlex
 public:
     void enumerate()
     {
+        auto prep = TIME_NOW;
         // remove vertices v with outdeg(v)+k1 < q OR indeg(v)+k2 < q
         k1k2CorePrune();
         // find degeneracy order, the result is degenOrder vector
@@ -93,6 +94,7 @@ public:
 #endif
         // some nodes are pruned in k1k2CorePrune, so graph will be shrinked in case ctcp is not applied
         shrinkGraph();
+        cout << "preprocessing cost (ms): " << chrono::duration_cast<chrono::milliseconds>(TIME_NOW - prep).count() << endl;
         init(); // initilize G, and other vectors
 
         ui pruningCost = 0;
