@@ -77,6 +77,10 @@ public:
         blk = block;
         gin = giIn;
         gout = giOut;
+        dpin.reserve(blk->size());
+        dpout.reserve(blk->size());
+        dgin.reserve(blk->size());
+        dgout.reserve(blk->size());
         for (ui i = 0; i < blk->size(); i++)
         {
             dpin.push_back(dPin[i]);
