@@ -33,11 +33,11 @@ export OMP_NUM_THREADS=32
 ./kplex -g ../datasets/clue-web.bin -k1 2 -k2 2 -q 10 >> out.sim32
 ./kplex -g ../datasets/clue-web.bin -k1 3 -k2 3 -q 10 >> out.sim32
 
-./kplex -g ../datasets/it-2004.bin -k1 2 -k2 2 -q 500 >> out.sim32
-./kplex -g ../datasets/it-2004.bin -k1 3 -k2 3 -q 1500 >> out.sim32
+./kplex -g ../datasets/it-2004.bin -k1 2 -k2 2 -q 1000 >> out.sim32
+./kplex -g ../datasets/it-2004.bin -k1 3 -k2 3 -q 3000 >> out.sim32
 
-./kplex -g ../datasets/arabic-2005.bin -k1 2 -k2 2 -q 600 >> out.sim32
-./kplex -g ../datasets/arabic-2005.bin -k1 3 -k2 3 -q 1500 >> out.sim32
+./kplex -g ../datasets/arabic-2005.bin -k1 2 -k2 2 -q 1000 >> out.sim32
+./kplex -g ../datasets/arabic-2005.bin -k1 3 -k2 3 -q 3000 >> out.sim32
 
 ./kplex -g ../datasets/uk-2005.bin -k1 2 -k2 2 -q 200 >> out.sim32
 ./kplex -g ../datasets/uk-2005.bin -k1 3 -k2 3 -q 400 >> out.sim32
@@ -51,11 +51,11 @@ export OMP_NUM_THREADS=16
 ./kplex -g ../datasets/clue-web.bin -k1 2 -k2 2 -q 10 >> out.sim16
 ./kplex -g ../datasets/clue-web.bin -k1 3 -k2 3 -q 10 >> out.sim16
 
-./kplex -g ../datasets/it-2004.bin -k1 2 -k2 2 -q 500 >> out.sim16
-./kplex -g ../datasets/it-2004.bin -k1 3 -k2 3 -q 1500 >> out.sim16
+./kplex -g ../datasets/it-2004.bin -k1 2 -k2 2 -q 1000 >> out.sim16
+./kplex -g ../datasets/it-2004.bin -k1 3 -k2 3 -q 3000 >> out.sim16
 
-./kplex -g ../datasets/arabic-2005.bin -k1 2 -k2 2 -q 600 >> out.sim16
-./kplex -g ../datasets/arabic-2005.bin -k1 3 -k2 3 -q 1500 >> out.sim16
+./kplex -g ../datasets/arabic-2005.bin -k1 2 -k2 2 -q 1000 >> out.sim16
+./kplex -g ../datasets/arabic-2005.bin -k1 3 -k2 3 -q 3000 >> out.sim16
 
 ./kplex -g ../datasets/uk-2005.bin -k1 2 -k2 2 -q 200 >> out.sim16
 ./kplex -g ../datasets/uk-2005.bin -k1 3 -k2 3 -q 400 >> out.sim16
@@ -69,11 +69,11 @@ export OMP_NUM_THREADS=8
 ./kplex -g ../datasets/clue-web.bin -k1 2 -k2 2 -q 10 >> out.sim8
 ./kplex -g ../datasets/clue-web.bin -k1 3 -k2 3 -q 10 >> out.sim8
 
-./kplex -g ../datasets/it-2004.bin -k1 2 -k2 2 -q 500 >> out.sim8
-./kplex -g ../datasets/it-2004.bin -k1 3 -k2 3 -q 1500 >> out.sim8
+./kplex -g ../datasets/it-2004.bin -k1 2 -k2 2 -q 1000 >> out.sim8
+./kplex -g ../datasets/it-2004.bin -k1 3 -k2 3 -q 3000 >> out.sim8
 
-./kplex -g ../datasets/arabic-2005.bin -k1 2 -k2 2 -q 600 >> out.sim8
-./kplex -g ../datasets/arabic-2005.bin -k1 3 -k2 3 -q 1500 >> out.sim8
+./kplex -g ../datasets/arabic-2005.bin -k1 2 -k2 2 -q 1000 >> out.sim8
+./kplex -g ../datasets/arabic-2005.bin -k1 3 -k2 3 -q 3000 >> out.sim8
 
 ./kplex -g ../datasets/uk-2005.bin -k1 2 -k2 2 -q 200 >> out.sim8
 ./kplex -g ../datasets/uk-2005.bin -k1 3 -k2 3 -q 400 >> out.sim8
