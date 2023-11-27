@@ -82,13 +82,16 @@ public:
     void enumerate()
     {
         auto prep = TIME_NOW;
+        cout<<"core pruning started"<<endl;
         // remove vertices v with outdeg(v)+k1 < q OR indeg(v)+k2 < q
         k1k2CorePrune();
         // find degeneracy order, the result is degenOrder vector
+        cout<<"degeneracy order started"<<endl;
         degenerate();
 
 #ifdef CTCP
         auto tick = TIME_NOW;
+        cout<<"ctcp started"<<endl;
         applyCoreTrussPruning();
         cout << "ctcp cost (ms): " << chrono::duration_cast<chrono::milliseconds>(TIME_NOW - tick).count() << endl;
 #endif
