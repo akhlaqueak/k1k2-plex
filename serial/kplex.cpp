@@ -7,8 +7,8 @@
 // #define TWO_HOP
 // #define NAIVE
 
-// #define BRANCHING
-// #define LOOKAHEAD
+#define BRANCHING
+#define LOOKAHEAD
 #define CTCP
 
 #define TIME_NOW chrono::steady_clock::now()
