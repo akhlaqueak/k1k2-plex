@@ -9,8 +9,8 @@
 #
 # Set your error and output files
 #
-#SBATCH --error=medium24.err
-#SBATCH --output=medium24.out
+#SBATCH --error=term24.err
+#SBATCH --output=term24.out
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=48
 # Tell the scheduler only need 10 minutes
