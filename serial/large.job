@@ -11,7 +11,7 @@
 #
 #SBATCH --error=large.err
 #SBATCH --output=large.out 
-#SBATCH --ntasks=60
+#SBATCH --ntasks=25
 #SBATCH --cpus-per-task=1
 # Tell the scheduler only need 10 minutes
 #
