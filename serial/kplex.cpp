@@ -133,7 +133,7 @@ public:
             reset(); // clears C and X
         }
            
-        cout<<"search cost (ms): " <<  chrono::duration_cast<chrono::milliseconds>(TIME_NOW - search).count();
+        cout<<"search cost (ms): " <<  chrono::duration_cast<chrono::milliseconds>(TIME_NOW - search).count()<<endl;
         cout << "iterative pruning cost (ms): " << pruningCost / 1000 << endl;
         cout << "Total (" << k1 << "," << k2 << ")-plexes of at least " << q << " size: " << kplexes << endl;
         for (ui i = 0; i < counts.size(); i++)
