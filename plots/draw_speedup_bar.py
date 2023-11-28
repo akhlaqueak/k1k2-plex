@@ -34,7 +34,7 @@ plt.bar(x - width*1.5,[i[0] for i in data1],width,label='2 threads', color='dodg
 plt.bar(x-width*0.5,[i[1] for i in data1],width,label='4 threads', color='mediumslateblue', alpha = 0.5)
 plt.bar(x+width*0.5,[i[2] for i in data1],width,label='8 threads', color='sandybrown', alpha = 0.5)
 plt.bar(x+width*1.5,[i[3] for i in data1],width,label='16 threads', color='r', alpha = 0.5)
-plt.bar(x+width*1.5,[i[4] for i in data1],width,label='32 threads', color='crimson', alpha = 0.5)
+plt.bar(x+width*2,[i[4] for i in data1],width,label='32 threads', color='crimson', alpha = 0.5)
 ax.set_xticks(x)
 ax.set_xticklabels(labels, fontsize=15)
 # plt.legend()
