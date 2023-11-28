@@ -217,6 +217,7 @@ public:
 		return data;
 	}
 	void copyDataTo(vector<ui>& data){
+		data.reserve(vnum);
 		data.insert(data.begin(), vlist, vlist+vnum);
 	}
 	void loadData(vector<ui> data){
