@@ -28,13 +28,13 @@ alias python=python3
 sr=1
 
 
-srun  -N 1 -n 1 ./kplex-full -g ../datasets/as-caida.bin -k1 2 -k2 3 -q 10 -sr $sr >> as-caida.out &
+srun  -N 1 -n 1 ./kplex -g ../datasets/as-caida.bin -k1 2 -k2 3 -q 10 -sr $sr >> as-caida.out &
 sr=$((sr+1))
-srun  -N 1 -n 1 ./kplex-full -g ../datasets/as-caida.bin -k1 2 -k2 3 -q 15  -sr $sr >> as-caida.out &
+srun  -N 1 -n 1 ./kplex -g ../datasets/as-caida.bin -k1 2 -k2 3 -q 15  -sr $sr >> as-caida.out &
 sr=$((sr+1))
-srun  -N 1 -n 1 ./kplex-full -g ../datasets/as-caida.bin -k1 3 -k2 4 -q 15  -sr $sr >> as-caida.out &
+srun  -N 1 -n 1 ./kplex -g ../datasets/as-caida.bin -k1 3 -k2 4 -q 15  -sr $sr >> as-caida.out &
 sr=$((sr+1))
-srun  -N 1 -n 1 ./kplex-full -g ../datasets/as-caida.bin -k1 3 -k2 4 -q 20  -sr $sr >> as-caida.out &
+srun  -N 1 -n 1 ./kplex -g ../datasets/as-caida.bin -k1 3 -k2 4 -q 20  -sr $sr >> as-caida.out &
 sr=$((sr+1))
 
 srun  -N 1 -n 1 ./kplex-bk -g ../datasets/as-caida.bin -k1 2 -k2 3 -q 10 -sr $sr >> as-caida.out &
@@ -110,3 +110,33 @@ srun  -N 1 -n 1 ./kplex-no-lookahead -g ../datasets/as-caida.bin -k1 3 -k2 4 -q 
 sr=$((sr+1))
 
 wait
+
+export OMP_NUM_THREADS=32
+ ./kplex -g ../datasets/as-caida.bin -k1 2 -k2 3 -q 10 -sr $sr >> as-caida.out 
+ ./kplex -g ../datasets/as-caida.bin -k1 2 -k2 3 -q 15  -sr $sr >> as-caida.out 
+ ./kplex -g ../datasets/as-caida.bin -k1 3 -k2 4 -q 15  -sr $sr >> as-caida.out 
+ ./kplex -g ../datasets/as-caida.bin -k1 3 -k2 4 -q 20  -sr $sr >> as-caida.out 
+
+export OMP_NUM_THREADS=16
+ ./kplex -g ../datasets/as-caida.bin -k1 2 -k2 3 -q 10 -sr $sr >> as-caida.out 
+ ./kplex -g ../datasets/as-caida.bin -k1 2 -k2 3 -q 15  -sr $sr >> as-caida.out 
+ ./kplex -g ../datasets/as-caida.bin -k1 3 -k2 4 -q 15  -sr $sr >> as-caida.out 
+ ./kplex -g ../datasets/as-caida.bin -k1 3 -k2 4 -q 20  -sr $sr >> as-caida.out 
+
+export OMP_NUM_THREADS=8
+ ./kplex -g ../datasets/as-caida.bin -k1 2 -k2 3 -q 10 -sr $sr >> as-caida.out 
+ ./kplex -g ../datasets/as-caida.bin -k1 2 -k2 3 -q 15  -sr $sr >> as-caida.out 
+ ./kplex -g ../datasets/as-caida.bin -k1 3 -k2 4 -q 15  -sr $sr >> as-caida.out 
+ ./kplex -g ../datasets/as-caida.bin -k1 3 -k2 4 -q 20  -sr $sr >> as-caida.out 
+
+export OMP_NUM_THREADS=4
+ ./kplex -g ../datasets/as-caida.bin -k1 2 -k2 3 -q 10 -sr $sr >> as-caida.out 
+ ./kplex -g ../datasets/as-caida.bin -k1 2 -k2 3 -q 15  -sr $sr >> as-caida.out 
+ ./kplex -g ../datasets/as-caida.bin -k1 3 -k2 4 -q 15  -sr $sr >> as-caida.out 
+ ./kplex -g ../datasets/as-caida.bin -k1 3 -k2 4 -q 20  -sr $sr >> as-caida.out 
+
+export OMP_NUM_THREADS=2
+ ./kplex -g ../datasets/as-caida.bin -k1 2 -k2 3 -q 10 -sr $sr >> as-caida.out 
+ ./kplex -g ../datasets/as-caida.bin -k1 2 -k2 3 -q 15  -sr $sr >> as-caida.out 
+ ./kplex -g ../datasets/as-caida.bin -k1 3 -k2 4 -q 15  -sr $sr >> as-caida.out 
+ ./kplex -g ../datasets/as-caida.bin -k1 3 -k2 4 -q 20  -sr $sr >> as-caida.out 
