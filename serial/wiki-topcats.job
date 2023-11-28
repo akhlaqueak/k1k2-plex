@@ -28,81 +28,81 @@ alias python=python3
 sr=1
 
 
-srun  -N 1 -n 1 ./kplex-full -g ../datasets/as-caida.bin -k1 2 -k2 3 -q 15 -sr $sr >> as-caida.out &
+srun  -N 1 -n 1 ./kplex-full -g ../datasets/as-caida.bin -k1 2 -k2 3 -q 10 -sr $sr >> as-caida.out &
 sr=$((sr+1))
-srun  -N 1 -n 1 ./kplex-full -g ../datasets/as-caida.bin -k1 2 -k2 3 -q 20  -sr $sr >> as-caida.out &
+srun  -N 1 -n 1 ./kplex-full -g ../datasets/as-caida.bin -k1 2 -k2 3 -q 15  -sr $sr >> as-caida.out &
 sr=$((sr+1))
 srun  -N 1 -n 1 ./kplex-full -g ../datasets/as-caida.bin -k1 3 -k2 4 -q 15  -sr $sr >> as-caida.out &
 sr=$((sr+1))
 srun  -N 1 -n 1 ./kplex-full -g ../datasets/as-caida.bin -k1 3 -k2 4 -q 20  -sr $sr >> as-caida.out &
 sr=$((sr+1))
 
-srun  -N 1 -n 1 ./kplex-bk -g ../datasets/as-caida.bin -k1 2 -k2 3 -q 15 -sr $sr >> as-caida.out &
+srun  -N 1 -n 1 ./kplex-bk -g ../datasets/as-caida.bin -k1 2 -k2 3 -q 10 -sr $sr >> as-caida.out &
 sr=$((sr+1))
-srun  -N 1 -n 1 ./kplex-bk -g ../datasets/as-caida.bin -k1 2 -k2 3 -q 20  -sr $sr >> as-caida.out &
+srun  -N 1 -n 1 ./kplex-bk -g ../datasets/as-caida.bin 15 -sr $sr >> as-caida.out &
 sr=$((sr+1))
 srun  -N 1 -n 1 ./kplex-bk -g ../datasets/as-caida.bin -k1 3 -k2 4 -q 15  -sr $sr >> as-caida.out &
 sr=$((sr+1))
 srun  -N 1 -n 1 ./kplex-bk -g ../datasets/as-caida.bin -k1 3 -k2 4 -q 20  -sr $sr >> as-caida.out &
 sr=$((sr+1))
 
-srun  -N 1 -n 1 ./kplex-v2 -g ../datasets/as-caida.bin -k1 2 -k2 3 -q 15 -sr $sr >> as-caida.out &
+srun  -N 1 -n 1 ./kplex-v2 -g ../datasets/as-caida.bin -k1 2 -k2 3 -q 10 -sr $sr >> as-caida.out &
 sr=$((sr+1))
-srun  -N 1 -n 1 ./kplex-v2 -g ../datasets/as-caida.bin -k1 2 -k2 3 -q 20  -sr $sr >> as-caida.out &
+srun  -N 1 -n 1 ./kplex-v2 -g ../datasets/as-caida.bin 15 -sr $sr >> as-caida.out &
 sr=$((sr+1))
 srun  -N 1 -n 1 ./kplex-v2 -g ../datasets/as-caida.bin -k1 3 -k2 4 -q 15  -sr $sr >> as-caida.out &
 sr=$((sr+1))
 srun  -N 1 -n 1 ./kplex-v2 -g ../datasets/as-caida.bin -k1 3 -k2 4 -q 20  -sr $sr >> as-caida.out &
 sr=$((sr+1))
 
-srun  -N 1 -n 1 ./kplex-v1 -g ../datasets/as-caida.bin -k1 2 -k2 3 -q 15 -sr $sr >> as-caida.out &
+srun  -N 1 -n 1 ./kplex-v1 -g ../datasets/as-caida.bin -k1 2 -k2 3 -q 10 -sr $sr >> as-caida.out &
 sr=$((sr+1))
-srun  -N 1 -n 1 ./kplex-v1 -g ../datasets/as-caida.bin -k1 2 -k2 3 -q 20  -sr $sr >> as-caida.out &
+srun  -N 1 -n 1 ./kplex-v1 -g ../datasets/as-caida.bin 15 -sr $sr >> as-caida.out &
 sr=$((sr+1))
 srun  -N 1 -n 1 ./kplex-v1 -g ../datasets/as-caida.bin -k1 3 -k2 4 -q 15  -sr $sr >> as-caida.out &
 sr=$((sr+1))
 srun  -N 1 -n 1 ./kplex-v1 -g ../datasets/as-caida.bin -k1 3 -k2 4 -q 20  -sr $sr >> as-caida.out &
 sr=$((sr+1))
 
-srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/as-caida.bin -k1 2 -k2 3 -q 15 -sr $sr >> as-caida.out &
+srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/as-caida.bin -k1 2 -k2 3 -q 10 -sr $sr >> as-caida.out &
 sr=$((sr+1))
-srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/as-caida.bin -k1 2 -k2 3 -q 20  -sr $sr >> as-caida.out &
+srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/as-caida.bin 15 -sr $sr >> as-caida.out &
 sr=$((sr+1))
 srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/as-caida.bin -k1 3 -k2 4 -q 15  -sr $sr >> as-caida.out &
 sr=$((sr+1))
 srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/as-caida.bin -k1 3 -k2 4 -q 20  -sr $sr >> as-caida.out &
 sr=$((sr+1))
 
-srun  -N 1 -n 1 ./kplex-no-ctcp -g ../datasets/as-caida.bin -k1 2 -k2 3 -q 15 -sr $sr >> as-caida.out &
+srun  -N 1 -n 1 ./kplex-no-ctcp -g ../datasets/as-caida.bin -k1 2 -k2 3 -q 10 -sr $sr >> as-caida.out &
 sr=$((sr+1))
-srun  -N 1 -n 1 ./kplex-no-ctcp -g ../datasets/as-caida.bin -k1 2 -k2 3 -q 20  -sr $sr >> as-caida.out &
+srun  -N 1 -n 1 ./kplex-no-ctcp -g ../datasets/as-caida.bin 15 -sr $sr >> as-caida.out &
 sr=$((sr+1))
 srun  -N 1 -n 1 ./kplex-no-ctcp -g ../datasets/as-caida.bin -k1 3 -k2 4 -q 15  -sr $sr >> as-caida.out &
 sr=$((sr+1))
 srun  -N 1 -n 1 ./kplex-no-ctcp -g ../datasets/as-caida.bin -k1 3 -k2 4 -q 20  -sr $sr >> as-caida.out &
 sr=$((sr+1))
 
-srun  -N 1 -n 1 ./kplex-no-iterative -g ../datasets/as-caida.bin -k1 2 -k2 3 -q 15 -sr $sr >> as-caida.out &
+srun  -N 1 -n 1 ./kplex-no-iterative -g ../datasets/as-caida.bin -k1 2 -k2 3 -q 10 -sr $sr >> as-caida.out &
 sr=$((sr+1))
-srun  -N 1 -n 1 ./kplex-no-iterative -g ../datasets/as-caida.bin -k1 2 -k2 3 -q 20  -sr $sr >> as-caida.out &
+srun  -N 1 -n 1 ./kplex-no-iterative -g ../datasets/as-caida.bin 15 -sr $sr >> as-caida.out &
 sr=$((sr+1))
 srun  -N 1 -n 1 ./kplex-no-iterative -g ../datasets/as-caida.bin -k1 3 -k2 4 -q 15  -sr $sr >> as-caida.out &
 sr=$((sr+1))
 srun  -N 1 -n 1 ./kplex-no-iterative -g ../datasets/as-caida.bin -k1 3 -k2 4 -q 20  -sr $sr >> as-caida.out &
 sr=$((sr+1))
 
-srun  -N 1 -n 1 ./kplex-no-branching -g ../datasets/as-caida.bin -k1 2 -k2 3 -q 15 -sr $sr >> as-caida.out &
+srun  -N 1 -n 1 ./kplex-no-branching -g ../datasets/as-caida.bin -k1 2 -k2 3 -q 10 -sr $sr >> as-caida.out &
 sr=$((sr+1))
-srun  -N 1 -n 1 ./kplex-no-branching -g ../datasets/as-caida.bin -k1 2 -k2 3 -q 20  -sr $sr >> as-caida.out &
+srun  -N 1 -n 1 ./kplex-no-branching -g ../datasets/as-caida.bin 15 -sr $sr >> as-caida.out &
 sr=$((sr+1))
 srun  -N 1 -n 1 ./kplex-no-branching -g ../datasets/as-caida.bin -k1 3 -k2 4 -q 15  -sr $sr >> as-caida.out &
 sr=$((sr+1))
 srun  -N 1 -n 1 ./kplex-no-branching -g ../datasets/as-caida.bin -k1 3 -k2 4 -q 20  -sr $sr >> as-caida.out &
 sr=$((sr+1))
 
-srun  -N 1 -n 1 ./kplex-no-lookahead -g ../datasets/as-caida.bin -k1 2 -k2 3 -q 15 -sr $sr >> as-caida.out &
+srun  -N 1 -n 1 ./kplex-no-lookahead -g ../datasets/as-caida.bin -k1 2 -k2 3 -q 10 -sr $sr >> as-caida.out &
 sr=$((sr+1))
-srun  -N 1 -n 1 ./kplex-no-lookahead -g ../datasets/as-caida.bin -k1 2 -k2 3 -q 20  -sr $sr >> as-caida.out &
+srun  -N 1 -n 1 ./kplex-no-lookahead -g ../datasets/as-caida.bin 15 -sr $sr >> as-caida.out &
 sr=$((sr+1))
 srun  -N 1 -n 1 ./kplex-no-lookahead -g ../datasets/as-caida.bin -k1 3 -k2 4 -q 15  -sr $sr >> as-caida.out &
 sr=$((sr+1))
