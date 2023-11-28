@@ -27,14 +27,14 @@ data2=[
 fig, ax = plt.subplots(figsize=(9,5))
 size = 5
 x = np.arange(size)
-total_width, n = 0.5, 4
+total_width, n = 0.5, 5
 width = total_width / n
 labels = ['arabic-2005\n($q = 1000$)', 'uk-2005\n($q = 200$)', 'it-2004\n($q = 1000$)', 'webbase-2001\n($q = 300$)', 'clue-web\n($q = 10$)']
 plt.bar(x - width*1.5,[i[0] for i in data1],width,label='2 threads', color='dodgerblue', alpha = 0.5)
 plt.bar(x-width*0.5,[i[1] for i in data1],width,label='4 threads', color='mediumslateblue', alpha = 0.5)
 plt.bar(x+width*0.5,[i[2] for i in data1],width,label='8 threads', color='sandybrown', alpha = 0.5)
-plt.bar(x+width*1.5,[i[3] for i in data1],width,label='16 threads', color='r', alpha = 0.5)
-plt.bar(x+width*2,[i[4] for i in data1],width,label='32 threads', color='crimson', alpha = 0.5)
+plt.bar(x+width*1.5,[i[3] for i in data1],width,label='16 threads', color='crimson', alpha = 0.5)
+plt.bar(x+width*2.5,[i[4] for i in data1],width,label='32 threads', color='r', alpha = 0.5)
 ax.set_xticks(x)
 ax.set_xticklabels(labels, fontsize=15)
 # plt.legend()
@@ -47,34 +47,40 @@ plt.legend(borderpad=1, shadow=True, loc='upper center', bbox_to_anchor=(0.5, -0
 
 fig.tight_layout()
 
-with PdfPages('speedup_k=2.pdf') as pdf:
+with PdfPages('speedup_k1=2_k2=2.pdf') as pdf:
    pdf.savefig()
-plt.savefig("speedup1.jpg", dpi=300)
+plt.savefig("speedup_k1=2_k2=2.jpg", dpi=300)
 
 
 plt.close()
-# fig, ax = plt.subplots(figsize=(9,5))
-# size = 5
-# x = np.arange(size)
-# total_width, n = 0.5, 4
-# width = total_width / n
-# labels = ['arabic-2005\n($q = 3000$)', 'uk-2005\n($q = 400$)', 'it-2004\n($q = 3000$)', 'webbase-2001\n($q = 500$)', 'clue-web\n($q = 20$)']
-# plt.bar(x - width*1.5,threads_2_3,width,label='2 threads', color='dodgerblue', alpha = 0.5)
-# plt.bar(x-width*0.5,threads_4_3,width,label='4 threads', color='mediumslateblue', alpha = 0.5)
-# plt.bar(x+width*0.5,threads_8_3,width,label='8 threads', color='sandybrown', alpha = 0.5)
-# plt.bar(x+width*1.5,threads_16_3,width,label='16 threads', color='r', alpha = 0.5)
-# #plt.rcParams['text.usetex'] = True
-# ax.set_xticks(x)
-# ax.set_xticklabels(labels, fontsize=15)
-# # plt.legend()
-# # plt.xlabel('network')
-# plt.ylabel('Speedup ratio', fontsize=15)
-# #plt.xticks(x)
-# y_ticks = [0, 1, 2, 4, 8, 16]
-# plt.yticks(y_ticks)
-# plt.legend(borderpad=1, shadow=True, loc='upper center', bbox_to_anchor=(0.5, -0.18), ncol=4, fontsize=14)
 
-# fig.tight_layout()
-# plt.savefig("speedup2.jpg", dpi=300)
-# with PdfPages('speedup_k=3.pdf') as pdf:
-#    pdf.savefig()
+
+fig, ax = plt.subplots(figsize=(9,5))
+size = 5
+x = np.arange(size)
+total_width, n = 0.5, 5
+width = total_width / n
+labels = ['arabic-2005\n($q = 3000$)', 'uk-2005\n($q = 400$)', 'it-2004\n($q = 3000$)', 'webbase-2001\n($q = 500$)', 'clue-web\n($q = 20$)']
+plt.bar(x - width*1.5,[i[0] for i in data2],width,label='2 threads', color='dodgerblue', alpha = 0.5)
+plt.bar(x-width*0.5,[i[1] for i in data2],width,label='4 threads', color='mediumslateblue', alpha = 0.5)
+plt.bar(x+width*0.5,[i[2] for i in data2],width,label='8 threads', color='sandybrown', alpha = 0.5)
+plt.bar(x+width*1.5,[i[3] for i in data2],width,label='16 threads', color='crimson', alpha = 0.5)
+plt.bar(x+width*2.5,[i[4] for i in data2],width,label='32 threads', color='r', alpha = 0.5)
+ax.set_xticks(x)
+ax.set_xticklabels(labels, fontsize=15)
+# plt.legend()
+# plt.xlabel('network')
+plt.ylabel('Speedup ratio', fontsize=15)
+#plt.xticks(x)
+y_ticks = [0, 1, 2, 4, 8, 16, 32]
+plt.yticks(y_ticks)
+plt.legend(borderpad=1, shadow=True, loc='upper center', bbox_to_anchor=(0.5, -0.18), ncol=4, fontsize=14)
+
+fig.tight_layout()
+
+with PdfPages('speedup_k1=3_k2=3.pdf') as pdf:
+   pdf.savefig()
+plt.savefig("speedup_k1=3_k2=3.jpg", dpi=300)
+
+
+plt.close()

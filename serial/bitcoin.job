@@ -1,0 +1,62 @@
+#!/bin/bash
+# normal command for interactive session: srun --ntasks=2 --cpus-per-task=1 --mem-per-cpu=64000 --time=12:00:00 --partition=pascalnodes --job-name=GG --gres=gpu:1 --pty /bin/bash
+#SBATCH --share
+#SBATCH --partition=medium
+#
+# Name your job to make it easier for you to track
+#
+#SBATCH --job-name=bitcoin
+#
+# Set your error and output files
+#
+#SBATCH --error=bitcoin.err
+#SBATCH --output=bitcoin.out
+#SBATCH --ntasks=60
+#SBATCH --cpus-per-task=1
+# Tell the scheduler only need 10 minutes
+#
+#SBATCH --time=1:00:00
+#SBATCH --mem-per-cpu=10000
+#
+# Set your email address and request notification when you job is complete or if it fails
+#
+#SBATCH --mail-type=END
+#SBATCH --mail-user=akhlaque.ak@gmail.com
+module load Valgrind
+alias python=python3
+
+sr=1
+
+simulate() {
+echo ./kplex-full -g ../datasets/$2.bin -k1 3 -k2 4 -q $1 -sr $sr >> bitcoin.out
+sr=$((sr+1))
+echo ./kplex-v3 -g ../datasets/$2.bin -k1 3 -k2 4 -q $1 -sr $sr >> bitcoin.out
+sr=$((sr+1))
+echo ./kplex-v2 -g ../datasets/$2.bin -k1 3 -k2 4 -q $1 -sr $sr >> bitcoin.out
+sr=$((sr+1))
+echo ./kplex-v1 -g ../datasets/$2.bin -k1 3 -k2 4 -q $1 -sr $sr >> bitcoin.out
+sr=$((sr+1))
+echo ./kplex-v0 -g ../datasets/$2.bin -k1 3 -k2 4 -q $1 -sr $sr >> bitcoin.out
+sr=$((sr+1))
+echo ./kplex-full -g ../datasets/$2.bin -k1 3 -k2 4 -q $1 -sr $sr >> bitcoin.out
+sr=$((sr+1))
+echo ./kplex-v3 -g ../datasets/$2.bin -k1 3 -k2 4 -q $1 -sr $sr >> bitcoin.out
+sr=$((sr+1))
+echo ./kplex-v2 -g ../datasets/$2.bin -k1 3 -k2 4 -q $1 -sr $sr >> bitcoin.out
+sr=$((sr+1))
+echo ./kplex-v1 -g ../datasets/$2.bin -k1 3 -k2 4 -q $1 -sr $sr >> bitcoin.out
+sr=$((sr+1))
+echo ./kplex-v0 -g ../datasets/$2.bin -k1 3 -k2 4 -q $1 -sr $sr >> bitcoin.out
+sr=$((sr+1))
+}
+
+simulate 10 bitcoin
+simulate 11 bitcoin
+simulate 12 bitcoin
+simulate 13 bitcoin
+simulate 14 bitcoin
+simulate 15 bitcoin
+
+
+
+
