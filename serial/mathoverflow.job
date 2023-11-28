@@ -1,0 +1,62 @@
+#!/bin/bash
+# normal command for interactive session: srun --ntasks=2 --cpus-per-task=1 --mem-per-cpu=64000 --time=12:00:00 --partition=pascalnodes --job-name=GG --gres=gpu:1 --pty /bin/bash
+#SBATCH --share
+#SBATCH --partition=medium
+#
+# Name your job to make it easier for you to track
+#
+#SBATCH --job-name=mathoverflow
+#
+# Set your error and output files
+#
+#SBATCH --error=mathoverflow.err
+#SBATCH --output=mathoverflow.out
+#SBATCH --ntasks=60
+#SBATCH --cpus-per-task=1
+# Tell the scheduler only need 10 minutes
+#
+#SBATCH --time=1:00:00
+#SBATCH --mem-per-cpu=10000
+#
+# Set your email address and request notification when you job is complete or if it fails
+#
+#SBATCH --mail-type=END
+#SBATCH --mail-user=akhlaque.ak@gmail.com
+module load Valgrind
+alias python=python3
+
+sr=1
+
+simulate() {
+./kplex-full -g ../datasets/$2.bin -k1 3 -k2 4 -q $1 -sr $sr >> mathoverflow.out
+sr=$((sr+1))
+./kplex-v3 -g ../datasets/$2.bin -k1 3 -k2 4 -q $1 -sr $sr >> mathoverflow.out
+sr=$((sr+1))
+./kplex-v2 -g ../datasets/$2.bin -k1 3 -k2 4 -q $1 -sr $sr >> mathoverflow.out
+sr=$((sr+1))
+./kplex-v1 -g ../datasets/$2.bin -k1 3 -k2 4 -q $1 -sr $sr >> mathoverflow.out
+sr=$((sr+1))
+./kplex-v0 -g ../datasets/$2.bin -k1 3 -k2 4 -q $1 -sr $sr >> mathoverflow.out
+sr=$((sr+1))
+./kplex-full -g ../datasets/$2.bin -k1 3 -k2 4 -q $1 -sr $sr >> mathoverflow.out
+sr=$((sr+1))
+./kplex-v3 -g ../datasets/$2.bin -k1 3 -k2 4 -q $1 -sr $sr >> mathoverflow.out
+sr=$((sr+1))
+./kplex-v2 -g ../datasets/$2.bin -k1 3 -k2 4 -q $1 -sr $sr >> mathoverflow.out
+sr=$((sr+1))
+./kplex-v1 -g ../datasets/$2.bin -k1 3 -k2 4 -q $1 -sr $sr >> mathoverflow.out
+sr=$((sr+1))
+./kplex-v0 -g ../datasets/$2.bin -k1 3 -k2 4 -q $1 -sr $sr >> mathoverflow.out
+sr=$((sr+1))
+}
+
+simulate 10 mathoverflow
+simulate 11 mathoverflow
+simulate 12 mathoverflow
+simulate 13 mathoverflow
+simulate 14 mathoverflow
+simulate 15 mathoverflow
+
+wait
+
+
