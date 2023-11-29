@@ -1,0 +1,50 @@
+#!/bin/bash
+# normal command for interactive session: srun --ntasks=2 --cpus-per-task=1 --mem-per-cpu=64000 --time=12:00:00 --partition=pascalnodes --job-name=GG --gres=gpu:1 --pty /bin/bash
+#SBATCH --share
+#SBATCH --partition=medium
+#
+# Name your job to make it easier for you to track
+#
+#SBATCH --job-name=clue-web
+#
+# Set your error and output files
+#
+#SBATCH --error=clue-web.err
+#SBATCH --output=clue-web.out 
+#SBATCH --ntasks=48
+#SBATCH --cpus-per-task=1
+# Tell the scheduler only need 10 minutes
+#
+#SBATCH --time=6:00:00
+#SBATCH --mem-per-cpu=15000
+#
+# Set your email address and request notification when you job is complete or if it fails
+#
+#SBATCH --mail-type=END
+#SBATCH --mail-user=akhlaque.ak@gmail.com
+module load Valgrind
+alias python=python3
+
+sr=1
+ds=clue-web
+q1=10
+q2=20
+
+srun  -N 1 -n 1 ./kplex-v3 -g ../datasets/$ds.bin -k1 2 -k2 2 -q $q1 -sr $sr >> clue-web.out &
+sr=$((sr+1))
+srun  -N 1 -n 1 ./kplex-v3 -g ../datasets/$ds.bin -k1 3 -k2 3 -q $q2 -sr $sr >> clue-web.out &
+sr=$((sr+1))
+wait
+
+srun  -N 1 -n 1 ./kplex-v2 -g ../datasets/$ds.bin -k1 2 -k2 2 -q $q1 -sr $sr >> clue-web.out &
+sr=$((sr+1))
+srun  -N 1 -n 1 ./kplex-v2 -g ../datasets/$ds.bin -k1 3 -k2 3 -q $q2 -sr $sr >> clue-web.out &
+sr=$((sr+1))
+wait
+
+
+srun  -N 1 -n 1 ./kplex-v1 -g ../datasets/$ds.bin -k1 2 -k2 2 -q $q1 -sr $sr >> clue-web.out &
+sr=$((sr+1))
+srun  -N 1 -n 1 ./kplex-v1 -g ../datasets/$ds.bin -k1 3 -k2 3 -q $q2 -sr $sr >> clue-web.out &
+sr=$((sr+1))
+wait
