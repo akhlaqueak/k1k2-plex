@@ -28,25 +28,25 @@ alias python=python3
 sr=1
 
 simulate() {
-./kplex-full -g ../datasets/$2.bin -k1 2 -k2 3 -q $1 -sr $sr >> web-Google.out
+srun  -N 1 -n 1 ./kplex-full -g ../datasets/$2.bin -k1 2 -k2 3 -q $1 -sr $sr >> web-Google.out &
 sr=$((sr+1))
-./kplex-v3 -g ../datasets/$2.bin -k1 2 -k2 3 -q $1 -sr $sr >> web-Google.out
+srun  -N 1 -n 1 ./kplex-v3 -g ../datasets/$2.bin -k1 2 -k2 3 -q $1 -sr $sr >> web-Google.out &
 sr=$((sr+1))
-./kplex-v2 -g ../datasets/$2.bin -k1 2 -k2 3 -q $1 -sr $sr >> web-Google.out
+srun  -N 1 -n 1 ./kplex-v2 -g ../datasets/$2.bin -k1 2 -k2 3 -q $1 -sr $sr >> web-Google.out &
 sr=$((sr+1))
-./kplex-v1 -g ../datasets/$2.bin -k1 2 -k2 3 -q $1 -sr $sr >> web-Google.out
+srun  -N 1 -n 1 ./kplex-v1 -g ../datasets/$2.bin -k1 2 -k2 3 -q $1 -sr $sr >> web-Google.out &
 sr=$((sr+1))
-./kplex-v0 -g ../datasets/$2.bin -k1 2 -k2 3 -q $1 -sr $sr >> web-Google.out
+srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/$2.bin -k1 2 -k2 3 -q $1 -sr $sr >> web-Google.out &
 sr=$((sr+1))
-./kplex-full -g ../datasets/$2.bin -k1 3 -k2 4 -q $1 -sr $sr >> web-Google.out
+srun  -N 1 -n 1 ./kplex-full -g ../datasets/$2.bin -k1 3 -k2 4 -q $1 -sr $sr >> web-Google.out &
 sr=$((sr+1))
-./kplex-v3 -g ../datasets/$2.bin -k1 3 -k2 4 -q $1 -sr $sr >> web-Google.out
+srun  -N 1 -n 1 ./kplex-v3 -g ../datasets/$2.bin -k1 3 -k2 4 -q $1 -sr $sr >> web-Google.out &
 sr=$((sr+1))
-./kplex-v2 -g ../datasets/$2.bin -k1 3 -k2 4 -q $1 -sr $sr >> web-Google.out
+srun  -N 1 -n 1 ./kplex-v2 -g ../datasets/$2.bin -k1 3 -k2 4 -q $1 -sr $sr >> web-Google.out &
 sr=$((sr+1))
-./kplex-v1 -g ../datasets/$2.bin -k1 3 -k2 4 -q $1 -sr $sr >> web-Google.out
+srun  -N 1 -n 1 ./kplex-v1 -g ../datasets/$2.bin -k1 3 -k2 4 -q $1 -sr $sr >> web-Google.out &
 sr=$((sr+1))
-./kplex-v0 -g ../datasets/$2.bin -k1 3 -k2 4 -q $1 -sr $sr >> web-Google.out
+srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/$2.bin -k1 3 -k2 4 -q $1 -sr $sr >> web-Google.out &
 sr=$((sr+1))
 }
 
