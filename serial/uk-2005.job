@@ -30,21 +30,21 @@ ds=uk-2005
 q1=200
 q2=400
 
-srun  -N 1 -n 1 ./kplex-v3 -g ../datasets/$1.bin -k1 2 -k2 2 -q $q1 -sr $sr >> uk-2005.out &
+srun  -N 1 -n 1 ./kplex-v3 -g ../datasets/$ds.bin -k1 2 -k2 2 -q $q1 -sr $sr >> uk-2005.out &
 sr=$((sr+1))
-srun  -N 1 -n 1 ./kplex-v3 -g ../datasets/$1.bin -k1 3 -k2 3 -q $q2 -sr $sr >> uk-2005.out &
-sr=$((sr+1))
-wait
-
-srun  -N 1 -n 1 ./kplex-v2 -g ../datasets/$1.bin -k1 2 -k2 2 -q $q1 -sr $sr >> uk-2005.out &
-sr=$((sr+1))
-srun  -N 1 -n 1 ./kplex-v2 -g ../datasets/$1.bin -k1 3 -k2 3 -q $q2 -sr $sr >> uk-2005.out &
+srun  -N 1 -n 1 ./kplex-v3 -g ../datasets/$ds.bin -k1 3 -k2 3 -q $q2 -sr $sr >> uk-2005.out &
 sr=$((sr+1))
 wait
 
-
-srun  -N 1 -n 1 ./kplex-v1 -g ../datasets/$1.bin -k1 2 -k2 2 -q $q1 -sr $sr >> uk-2005.out &
+srun  -N 1 -n 1 ./kplex-v2 -g ../datasets/$ds.bin -k1 2 -k2 2 -q $q1 -sr $sr >> uk-2005.out &
 sr=$((sr+1))
-srun  -N 1 -n 1 ./kplex-v1 -g ../datasets/$1.bin -k1 3 -k2 3 -q $q2 -sr $sr >> uk-2005.out &
+srun  -N 1 -n 1 ./kplex-v2 -g ../datasets/$ds.bin -k1 3 -k2 3 -q $q2 -sr $sr >> uk-2005.out &
+sr=$((sr+1))
+wait
+
+
+srun  -N 1 -n 1 ./kplex-v1 -g ../datasets/$ds.bin -k1 2 -k2 2 -q $q1 -sr $sr >> uk-2005.out &
+sr=$((sr+1))
+srun  -N 1 -n 1 ./kplex-v1 -g ../datasets/$ds.bin -k1 3 -k2 3 -q $q2 -sr $sr >> uk-2005.out &
 sr=$((sr+1))
 wait
