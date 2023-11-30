@@ -7,8 +7,8 @@ matplotlib.rcParams['pdf.fonttype'] = 42
 matplotlib.rcParams['ps.fonttype'] = 42
 # matplotlib.rcParams.update({'font.size': 14})
 def draw(data, ds):
-   x=[1,10, 100, 1000, 10000, 20000, 50000, 100000]
-   plt.plot(x, data)
+   x=[r'$10^{-3}$',r'$10^{-2}$', r'$10^{-1}$', r'$1$', r'$10^{1}$', r'', r'$10^{2}$', r'$10^{3}$']
+   plt.plot(x, data, marker='o')
    plt.legend(fontsize=15)
    plt.xlabel(r'$\tau_{time}$')
    plt.ylabel('Time (sec)')
@@ -24,7 +24,11 @@ data=[
 ]
 ds = ["webbase-2001", "clue-web", "it-2004", "arabic-2005", 'uk-2005']
 
+for i in range(1, len(data), 10):
+   data[i]-=45
+
 for i in range(len(ds)):
+
    data1=[data[i] for i in range(i, len(data), 10)]
    data2=[data[i] for i in range(i+1, len(data), 10)]
    draw(data1, ds[i]+"_tau_q1")
