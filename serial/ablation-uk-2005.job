@@ -27,22 +27,21 @@ alias python=python3
 
 sr=1
 
+srun  -N 1 -n 1 ./kplex-no-ctcp -g ../datasets/uk-2005.bin -k1 2 -k2 2 -q 200 -sr $sr >> uk-2005.out &
 sr=$((sr+1))
-srun  -N 1 -n 1 ./kplex-v3 -g ../datasets/uk-2005.bin -k1 2 -k2 2 -q 200 -sr $sr >> uk-2005.out &
+srun  -N 1 -n 1 ./kplex-no-iterative -g ../datasets/uk-2005.bin -k1 2 -k2 2 -q 200 -sr $sr >> uk-2005.out &
 sr=$((sr+1))
-srun  -N 1 -n 1 ./kplex-v2 -g ../datasets/uk-2005.bin -k1 2 -k2 2 -q 200 -sr $sr >> uk-2005.out &
+srun  -N 1 -n 1 ./kplex-no-branching -g ../datasets/uk-2005.bin -k1 2 -k2 2 -q 200 -sr $sr >> uk-2005.out &
 sr=$((sr+1))
-srun  -N 1 -n 1 ./kplex-v1 -g ../datasets/uk-2005.bin -k1 2 -k2 2 -q 200 -sr $sr >> uk-2005.out &
+srun  -N 1 -n 1 ./kplex-no-lookahead -g ../datasets/uk-2005.bin -k1 2 -k2 2 -q 200 -sr $sr >> uk-2005.out &
 sr=$((sr+1))
-srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/uk-2005.bin -k1 2 -k2 2 -q 200 -sr $sr >> uk-2005.out &
+srun  -N 1 -n 1 ./kplex-no-ctcp -g ../datasets/uk-2005.bin -k1 3 -k2 3 -q 400 -sr $sr >> uk-2005.out &
 sr=$((sr+1))
-srun  -N 1 -n 1 ./kplex-v3 -g ../datasets/uk-2005.bin -k1 3 -k2 3 -q 400 -sr $sr >> uk-2005.out &
+srun  -N 1 -n 1 ./kplex-no-iterative -g ../datasets/uk-2005.bin -k1 3 -k2 3 -q 400 -sr $sr >> uk-2005.out &
 sr=$((sr+1))
-srun  -N 1 -n 1 ./kplex-v2 -g ../datasets/uk-2005.bin -k1 3 -k2 3 -q 400 -sr $sr >> uk-2005.out &
+srun  -N 1 -n 1 ./kplex-no-branching -g ../datasets/uk-2005.bin -k1 3 -k2 3 -q 400 -sr $sr >> uk-2005.out &
 sr=$((sr+1))
-srun  -N 1 -n 1 ./kplex-v1 -g ../datasets/uk-2005.bin -k1 3 -k2 3 -q 400 -sr $sr >> uk-2005.out &
-sr=$((sr+1))
-srun  -N 1 -n 1 ./kplex-v0 -g ../datasets/uk-2005.bin -k1 3 -k2 3 -q 400 -sr $sr >> uk-2005.out &
+srun  -N 1 -n 1 ./kplex-no-lookahead -g ../datasets/uk-2005.bin -k1 3 -k2 3 -q 400 -sr $sr >> uk-2005.out &
 sr=$((sr+1))
 
 
