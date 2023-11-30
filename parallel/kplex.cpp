@@ -10,6 +10,7 @@
 #define CTCP
 // time theshold in microseconds...
 ui timeout;
+ui sr;
 #define TASKGROUP
 
 #define TIME_NOW chrono::steady_clock::now()
@@ -220,7 +221,7 @@ public:
         }
         cout << "max context switching cost (ms): " << context / 1000 << endl;
         cout << "max iterative pruning cost (ms): " << itpmax / 1000 << endl;
-        cout << "search cost (ms): " << searchTotal / 1000 << endl;
+        cout << sr << " search cost (ms): " << searchTotal / 1000 << endl;
         cout << "Total (" << k1 << "," << k2 << ")-plexes of at least " << q << " size: " << total << endl;
     }
 
@@ -1603,6 +1604,7 @@ int main(int argc, char *argv[])
     ui k1 = cmd.GetOptionIntValue("-k1", 1);
     ui k2 = cmd.GetOptionIntValue("-k2", 1);
     timeout = cmd.GetOptionIntValue("-t", 100);
+    sr = cmd.GetOptionIntValue("-sr", 1);
 
     if (file == "")
     {
@@ -1643,9 +1645,9 @@ int main(int argc, char *argv[])
     EnumKPlex kp(g, k1, k2, q);
     kp.enumerate();
     if (CUTOFF)
-        cout << file << " Timed Out" << endl;
+        cout << sr << " " << file << " Timed Out" << endl;
     else
-        cout << file << " Total execution time (ms): " << chrono::duration_cast<chrono::milliseconds>(TIME_NOW - tick).count() << endl;
+        cout << sr << " " << file << " Total execution time (ms): " << chrono::duration_cast<chrono::milliseconds>(TIME_NOW - tick).count() << endl;
 
     cout << endl;
     return 0;

@@ -5,11 +5,13 @@ import matplotlib
 
 matplotlib.rcParams['pdf.fonttype'] = 42
 matplotlib.rcParams['ps.fonttype'] = 42
+# matplotlib.rcParams.update({'font.size': 14})
 
 includev0 = True
 
 def drawfig(ds, data, x):
-   versions = ["Ours", "v3", "v2", "v1", "v0"]
+   plt.figure(figsize=(6, 5))
+   versions = ["Ours", "Base-3", "Base-2", "Base-1", "Base-0"]
    dstyle = ['d', '*', 'x', 'o', '^']
    if (includev0):
       r = 5
@@ -18,11 +20,11 @@ def drawfig(ds, data, x):
    for i in range(r):
       plt.plot(x, data[i], marker=dstyle[i], linewidth=1.2, label=versions[i])
 
-   plt.legend()
-   plt.xlabel(r'$q$', fontsize=15)
-   plt.ylabel('Time (sec)', fontsize=15)
-   plt.xticks(x, fontsize=14) 
-   plt.yticks(fontsize=14)
+   plt.legend(fontsize=15)
+   plt.xlabel(r'$q$')
+   plt.ylabel('Time (sec)')
+   plt.xticks(x) 
+   plt.yticks()
 
 
    with PdfPages(ds+'.pdf') as pdf:
@@ -51,7 +53,10 @@ ascaida=[
 0.43, 2.346, 2.29, 2.374, 4.437, 0.863, 3.178, 3.126, 3.39, 16.286, 0.244, 1.208, 1.163, 1.221, 2.497, 0.406, 1.421, 1.38, 1.512, 10.452, 0.138, 0.542, 0.527, 0.547, 1.112, 0.174, 0.569, 0.554, 0.598, 6.764, 0.078, 0.215, 0.21, 0.219, 0.583, 0.066, 0.203, 0.197, 0.212, 4.168, 0.05, 0.094, 0.092, 0.097, 0.308, 0.026, 0.064, 0.063, 0.066, 3.044, 0.031, 0.044, 0.044, 0.043, 0.2, 0.016, 0.03, 0.029, 0.03, 1.88
 ]
 mathoverflow=[
-658.347, 2218.82, 2241.78, 3557.38, 11341, np.nan, np.nan, np.nan, np.nan, np.nan, 501.231, 1990.61, 1383.8, 1396.81, 8280.34, np.nan, np.nan, np.nan, np.nan, np.nan, 356.159, 1081.15, 814.304, 1105.18, 3567.22, np.nan, np.nan, np.nan, np.nan, np.nan, 288.637, 524.034, 529.533, 530.723, 3020.51, 19664, np.nan, np.nan, np.nan, np.nan, 197.458, 413.121, 351.036, 418.146, 2563.54, np.nan, np.nan, np.nan, np.nan, np.nan, 136.577, 250.031, 245.364, 251.886, 3429.29, 16630.9, np.nan, np.nan, np.nan, np.nan, 
+1061.73, 3175.34, 542.362, 3229.32, 5923.51, 324.502, 5899.54, 5904.78, 1648.16, 2194.54, 791.665, 2124.93, 464.726, 2157.16, 1377.78, 324.902, 4775.04, 4765.76, 4838.88, 6132.48, 557.652, 1314.07, 1321.49, 1337.2, 672.25, 245.753, 558.164, 735.897, 3365.12, 5896.5, 72.801, 829.927, 831.231, 152.006, 4074.99, 843.888, 2168.22, 2199.88, 2221.01, 5268.76, 59.631, 102.469, 549.439, 553.464, 3567.7, 585.016, 1474.43, 1488.48, 1515.16, 4800.47, 42.36, 385.116, 379.826, 84.494, 3140.82, 390.117, 187.237, 1055.51, 1089.58, 4277.53, 
+]
+webgoogle=[
+8.48, np.nan, np.nan, np.nan, np.nan, 9.536, np.nan, np.nan, np.nan, np.nan, 8.791, np.nan, np.nan, np.nan, np.nan, 2.823, np.nan, np.nan, np.nan, np.nan, 0.969, np.nan, np.nan, np.nan, np.nan, 4.744, np.nan, np.nan, np.nan, np.nan, 6.453, np.nan, np.nan, np.nan, np.nan, 3.087, np.nan, 18205.2, np.nan, np.nan, 5.926, np.nan, np.nan, 18083.2, np.nan, 2.758, np.nan, np.nan, np.nan, np.nan, 1.855, 15661.4, np.nan, np.nan, np.nan, 2.044, 15675.1, np.nan, np.nan, np.nan, 
 ]
 x1=[10, 11, 12, 13, 14, 15]
 x2=[15, 16, 17, 18, 19, 20]
@@ -60,3 +65,4 @@ draw("bitcoin", bitcoin, x1, x1)
 draw("wiki-vote", wikivote, x1, x1)
 draw("as-caida", ascaida, x1, x2)
 draw("mathoverflow", mathoverflow, x1, x1)
+draw("web-google", webgoogle, x2, x2)
