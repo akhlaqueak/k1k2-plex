@@ -12,6 +12,11 @@ make
 ```
 ./kplex -g <dataset.txt> -k1 <k1 value> -k2 <k2 value> -q <min size of (k1,k2)-plex>
 ```
+Some datasets are available with this code, an example execution of the program is:
+
+```
+./kplex -g ../datasets/congress.txt -k1 2 -k2 3 -q 8
+```
 
 ### Baselines and Ablation Study Versions
 All the versions reported as baselines and in ablation study can be produced with:
