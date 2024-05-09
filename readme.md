@@ -37,6 +37,3 @@ make
 export OMP_NUM_THREADS=<no. of threads>
 ./kplex -g <dataset.txt> -k1 <k1 value> -k2 <k2 value> -q <min size of (k1,k2)-plex> -t <tau time threshold. default=0.1ms>
 ```
-
-### Appendix
-Our online appendix is available at: 
