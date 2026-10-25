@@ -1,0 +1,12 @@
+# graph                               k1 k2  q  number of maximal (k1,k2)-plexes
+tests/data/planted_communities.txt     2  2  8  365
+tests/data/planted_communities.txt     3  2  8  467
+tests/data/planted_communities.txt     2  3  8  364
+tests/data/planted_communities.txt     4  3  9  319
+tests/data/planted_communities.txt     3  5 10  196
+tests/data/planted_communities.txt     5  3 10  270
+tests/data/planted_communities.txt     4  5 11  33
+datasets/congress.txt                  2  2  4  23465
+datasets/congress.txt                  3  2  6  8770
+datasets/congress.txt                  2  3  6  9598
+datasets/congress.txt                  4  2  7  2892
