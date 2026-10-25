@@ -527,6 +527,8 @@ public:
 
     void reportSolution()
     {
+        if (P.size() > counts.size())
+            counts.resize(P.size()); // plexes can be larger than the initial 1000 slots (e.g., q = 1000 or 3000)
         counts[P.size() - 1]++;
         // print("KPlex: ", P);
         kplexes++;
