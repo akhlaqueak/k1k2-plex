@@ -1,9 +1,5 @@
 
-#include <bits/stdc++.h>
 #include "command_line.h"
-using namespace std;
-using namespace chrono;
-typedef unsigned int ui;
 #include "graph.h"
 int main(int argc, char *argv[])
 {

@@ -1,0 +1,15 @@
+# build outputs
+serial/kplex
+serial/kplex-*
+parallel/kplex
+*.o
+# binary graphs written next to the input text files on first load
+*.bin
+!datasets/congress.bin
+# test and example outputs
+tests/out/
+examples/case_study/data/
+examples/case_study/output/
+.ipynb_checkpoints/
+__pycache__/
+.DS_Store
