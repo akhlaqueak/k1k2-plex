@@ -15,6 +15,8 @@
 // cutoff time is in minutes
 #define CUTOFF_TIME (360)
 auto clk = TIME_NOW;
+// optional output of the maximal plexes (-o <file>), one plex per line with the original vertex IDs
+std::ofstream plexOut;
 #define CUTOFF (chrono::duration_cast<chrono::minutes>(TIME_NOW - clk).count() > CUTOFF_TIME)
 
 enum CommonNeighbors
@@ -525,12 +527,31 @@ public:
         return true;
     }
 
+    // writes P with the original vertex IDs (sorted) as one line of the -o file
+    void writePlex()
+    {
+        vector<ui> ids;
+        ids.reserve(P.size());
+        for (ui i = 0; i < P.size(); i++)
+        {
+#if defined(ITERATIVE_PRUNE) || defined(TWO_HOP)
+            ids.push_back(degenOrder[block[P[i]]]); // P holds positions in the two-hop block
+#else
+            ids.push_back(degenOrder[P[i]]); // P holds positions in the shrunk graph
+#endif
+        }
+        sort(ids.begin(), ids.end());
+        for (ui i = 0; i < ids.size(); i++)
+            plexOut << ids[i] << (i + 1 < ids.size() ? ' ' : '\n');
+    }
+
     void reportSolution()
     {
         if (P.size() > counts.size())
             counts.resize(P.size()); // plexes can be larger than the initial 1000 slots (e.g., q = 1000 or 3000)
         counts[P.size() - 1]++;
-        // print("KPlex: ", P);
+        if (plexOut.is_open())
+            writePlex();
         kplexes++;
         return;
     }
@@ -1473,6 +1494,16 @@ int main(int argc, char *argv[])
     ui k1 = cmd.GetOptionIntValue("-k1", 1);
     ui k2 = cmd.GetOptionIntValue("-k2", 1);
     ui sr = cmd.GetOptionIntValue("-sr", 1);
+    std::string outFile = cmd.GetOptionValue("-o", "");
+    if (outFile != "")
+    {
+        plexOut.open(outFile);
+        if (!plexOut)
+        {
+            cout << "cannot open output file " << outFile << endl;
+            exit(-1);
+        }
+    }
 
     if (file == "")
     {

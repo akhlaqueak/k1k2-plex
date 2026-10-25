@@ -17,6 +17,18 @@ ui sr;
 // cutoff time is in minutes
 #define CUTOFF_TIME (180)
 auto clk = TIME_NOW;
+// optional output of the maximal plexes (-o <file>), one plex per line with the original vertex IDs;
+// each thread buffers its lines and appends them to the file under a critical section
+std::ofstream plexOut;
+thread_local std::string plexBuf;
+void flushPlexBuf()
+{
+    if (plexBuf.empty())
+        return;
+#pragma omp critical(plexout)
+    plexOut << plexBuf;
+    plexBuf.clear();
+}
 #define CUTOFF (chrono::duration_cast<chrono::minutes>(TIME_NOW - clk).count() > CUTOFF_TIME)
 
 enum CommonNeighbors
@@ -200,6 +212,7 @@ public:
                 reset(); // clears C and X
             }
             searchCost = chrono::duration_cast<chrono::microseconds>(TIME_NOW - tick).count();
+            flushPlexBuf();
         }
         ui total = 0, context = 0, searchTotal = 0, itpmax = 0;
 #pragma omp parallel reduction(+ : total)
@@ -635,7 +648,18 @@ public:
 
     void reportSolution()
     {
-        // print("KPlex: ", P);
+        if (plexOut.is_open())
+        {
+            vector<ui> ids;
+            ids.reserve(P.size());
+            for (ui i = 0; i < P.size(); i++)
+                ids.push_back(degenOrder[(*block)[P[i]]]); // P holds positions in the two-hop block of this task
+            sort(ids.begin(), ids.end());
+            for (ui i = 0; i < ids.size(); i++)
+                plexBuf += to_string(ids[i]) + (i + 1 < ids.size() ? " " : "\n");
+            if (plexBuf.size() > (1u << 20))
+                flushPlexBuf();
+        }
         kplexes++;
         return;
     }
@@ -1572,6 +1596,16 @@ int main(int argc, char *argv[])
     ui k2 = cmd.GetOptionIntValue("-k2", 1);
     timeout = cmd.GetOptionIntValue("-t", 100);
     sr = cmd.GetOptionIntValue("-sr", 1);
+    std::string outFile = cmd.GetOptionValue("-o", "");
+    if (outFile != "")
+    {
+        plexOut.open(outFile);
+        if (!plexOut)
+        {
+            cout << "cannot open output file " << outFile << endl;
+            exit(-1);
+        }
+    }
 
     if (file == "")
     {
