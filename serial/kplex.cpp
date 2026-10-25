@@ -112,7 +112,7 @@ public:
             vi = i;
 #ifdef ITERATIVE_PRUNE
             auto t1 = TIME_NOW;
-            getTwoHopIterativePrunedG(vi);
+            getDirectionalTwoHopG(vi);
             pruningCost += chrono::duration_cast<chrono::microseconds>(TIME_NOW - t1).count();
             recurSearch(0);
 #else
@@ -1223,117 +1223,55 @@ private:
         }
     }
     // calculates two-hop iterative pruned graph according to Algo 2
-    void getTwoHopIterativePrunedG(ui s)
+    // Algorithm 2 (directional two-hop pruning): adds B(s) to the two-hop block of s
+    void getDirectionalTwoHopG(ui s)
     {
         auto &nsIn = GIn[s];
         auto &nsOut = GOut[s];
         addTo2HopG(s);
-        // auto inLookup = getLookup(nsIn);
-        // auto outLookup = getLookup(nsOut);
         Lookup inLookup(look1, nsIn);
         Lookup outLookup(look2, nsOut);
-        // both in-out neighbors
-        vector<ui> nsInOut;
-        // exclusive in/out neighbors
-        vector<ui> I;
-        vector<ui> O;
-        nsInOut.reserve(min(nsIn.size(), nsOut.size()));
-        I.reserve(nsIn.size());
+        // D: bidirectional neighbors; O, I: kept out-only / in-only neighbors (O', I' of Algorithm 2)
+        vector<ui> D, O, I;
+        D.reserve(min(nsIn.size(), nsOut.size()));
         O.reserve(nsOut.size());
+        I.reserve(nsIn.size());
 
-        // vector<ui> existsIn(g.V, 0);
-        // vector<ui> existsOut(g.V, 0);
-        Lookup existsIn(look3, nsIn);
-        Lookup existsOut(look4, nsOut);
-        ui round = 1;
-
+        // Line 1: D = N^{+-}(s)
         for (ui u : nsIn)
-        {
             if (outLookup[u])
-                nsInOut.push_back(u);
-            else
-            {
-                I.push_back(u);
-                existsIn[u] = 1;
-            }
-        }
-        for (ui u : nsOut)
-        {
-            if (not inLookup[u])
-            {
-                O.push_back(u);
-                existsOut[u] = 1;
-            }
-        }
-        ui inSize, outSize;
-        do
-        {
-            // cout << s << " I: " << I.size() << " O: "<< O.size() << endl;
-            inSize = I.size();
-            outSize = O.size();
-
-            vector<ui> tempIn, tempOut;
-            tempIn.reserve(inSize);
-            tempOut.reserve(outSize);
-
-            for (auto v : nsInOut)
-            {
-                I.push_back(v);
-                O.push_back(v);
-                // Now these vectors are like SO and SI
-            }
-            for (auto u : O)
-            {
-                for (auto v : GOut[u])
-                {
-                    if (existsIn[v] == round)
+                D.push_back(u);
+        // Line 2: keep an out-only neighbor o only if there is a path o -> w -> s
+        for (ui o : nsOut)
+            if (!inLookup[o])
+                for (ui w : GOut[o])
+                    if (inLookup[w])
                     {
-                        existsIn[v]++;
-                        tempIn.push_back(v);
+                        O.push_back(o);
+                        break;
                     }
-                }
-            }
-
-            for (auto u : I)
-            {
-                for (auto v : GIn[u])
-                {
-                    // does it exist in last iteration of O
-                    if (existsOut[v] == round)
+        // Line 3: keep an in-only neighbor i only if there is a path s -> w -> i
+        for (ui i : nsIn)
+            if (!outLookup[i])
+                for (ui w : GIn[i])
+                    if (outLookup[w])
                     {
-                        existsOut[v]++;
-                        tempOut.push_back(v);
+                        I.push_back(i);
+                        break;
                     }
-                }
-            }
+        // A single pass suffices: if o is kept due to an edge o -> i with i in-only, the path s -> o -> i keeps i as well
 
-            round++;
-            I.swap(tempIn);
-            O.swap(tempOut);
-        } while (I.size() < inSize or O.size() < outSize);
-
-        // add Exclusive-out neighbors...
-        for (auto u : O)
-        {
+        for (ui u : O)
             addTo2HopG(u);
-        }
-        // add Exclusive-In neighbors...
-        for (auto u : I)
-        {
+        for (ui u : I)
             addTo2HopG(u);
-        }
-
-        // add bi-directional nieghbors...
-        // Adding in/out nieghbors to exclusive neighs.
-        for (auto u : nsInOut)
+        // Line 4: S_O = D + O', S_I = D + I'
+        for (ui u : D)
         {
-            I.push_back(u);
             O.push_back(u);
+            I.push_back(u);
             addTo2HopG(u);
         }
-        // erasing previous lookups so that we can reutilize the memory
-        existsIn.erase();
-        existsOut.erase();
         // since in/out neighbors are added, now onwards I is SI and O is SO
         // Calculate and B to two hop graph
         vector<ui> temp;
