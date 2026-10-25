@@ -833,7 +833,7 @@ private:
                 else if (cnMP[u][j] + k1 + k2 < q)
                     Qe.push_back({u, j});
                 // Theorem 6
-                else if (cnPM[u][j] + 2 * k2 < q)
+                else if (cnMM[u][j] + 2 * k2 < q)
                     Qe.push_back({u, j});
             }
         }
