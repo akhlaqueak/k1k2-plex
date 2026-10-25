@@ -374,6 +374,30 @@ public:
         XToC(vc);
         // other branch where P contains u
     }
+    // Runs one branch of BK2. Once the current task has run longer than tau_time, the branch is
+    // materialized as a new task instead (Section VII), so that the p+1 branches of branch pruning
+    // (Eqs. 1-3) can also be decomposed, not only the two-way branches.
+    void spawnOrBranch(auto start)
+    {
+#ifdef TASKGROUP
+        if (duration_cast<microseconds>(steady_clock::now() - start).count() > timeout and C.size() > GRAIN_SIZE)
+        {
+            ThreadData *td = new ThreadData(); // snapshot of P, C, X and degrees for this branch
+#pragma omp task firstprivate(td)
+            {
+                ThreadData *temp = new ThreadData();
+                td->loadThreadData();
+                doBranch(TIME_NOW);
+                temp->loadThreadData();
+                delete temp;
+                delete td;
+            }
+            return;
+        }
+#endif
+        doBranch(start);
+    }
+
     void multiRecurSearch(ui vp, Direction dir, auto start)
     {
         if (PuCSize < q)
@@ -414,7 +438,7 @@ public:
         // Branch 0
         ui u = vpNN[0];
         CToX(u);
-        doBranch(start);
+        spawnOrBranch(start);
         XToC(u);
         // Branches 1...p
         bool feasible = true; // whether u_1..u_(i-1) could all be moved into P
@@ -435,13 +459,13 @@ public:
             if (C.contains(u))
             {
                 CToX(u);
-                doBranch(start);
+                spawnOrBranch(start);
                 XToC(u);
             }
             else
             {
                 // u_i is already incompatible with P, so this branch covers all extensions of P; later branches are empty
-                doBranch(start);
+                spawnOrBranch(start);
                 feasible = false;
                 break;
             }
@@ -468,7 +492,7 @@ public:
             CToP(u);
             rc += updateC();
             rx += updateX();
-            doBranch(start);
+            spawnOrBranch(start);
         }
         // cout<<vpNN.size()<<" "<<p<<" "<<P.size()<<" "<<C.size()<<endl;
 
