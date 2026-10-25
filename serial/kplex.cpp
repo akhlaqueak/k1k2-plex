@@ -250,17 +250,21 @@ public:
         branch();
         XToC(u);
         // Branches 1...p
+        bool feasible = true; // whether u_1..u_(i-1) could all be moved into P
         for (ui i = 1; i < p; i++)
         {
 
             ui u = vpNN[i];     // u_i of algo
             ui v = vpNN[i - 1]; // u_(i-1) of algo
             if (!C.contains(v))
-                continue;
+            {
+                // u_(i-1) cannot join P, so none of the remaining branches (Eq. 2-3), which all need u_(i-1) in P, can succeed
+                feasible = false;
+                break;
+            }
             CToP(v);
             rc += updateC();
             rx += updateX();
-            // cout << rC.size() << " " << rX.size() << " . ";
             if (C.contains(u))
             {
                 CToX(u);
@@ -269,9 +273,10 @@ public:
             }
             else
             {
-                X.add(u);
+                // u_i is already incompatible with P, so this branch covers all extensions of P; later branches are empty
                 branch();
-                X.remove(u);
+                feasible = false;
+                break;
             }
         }
 
@@ -279,20 +284,20 @@ public:
         // so far 1...(p-2) vertices are moved from C to P
         // now move p...d vertices from C to X
 
-        for (ui i = p; i < vpNN.size(); i++)
-        {
-            ui u = vpNN[i];
-            if (C.contains(u))
-            {
-                // cout<<"*";
-                removeFromC(u);
-                rC.emplace_back(u);
-                rc++;
-            }
-        }
+        // Branch p+1 (Eq. 3): only valid if u_1..u_(p-1) are all in P and u_p can join P
         u = vpNN[p - 1];
-        if (C.contains(u))
+        if (feasible and C.contains(u))
         {
+            for (ui i = p; i < vpNN.size(); i++)
+            {
+                ui w = vpNN[i];
+                if (C.contains(w))
+                {
+                    removeFromC(w);
+                    rC.emplace_back(w);
+                    rc++;
+                }
+            }
             CToP(u);
             rc += updateC();
             rx += updateX();
