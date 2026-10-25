@@ -28,8 +28,8 @@ versions:
 	printf "#define ITERATIVE_PRUNE \n #define BRANCHING \n #define LOOKAHEAD" > version.h
 	${CC}  kplex.cpp -o kplex-no-ctcp
 
-	printf "#define CTCP \n #define BRANCHING \n #define LOOKAHEAD" > version.h
-	${CC}  kplex.cpp -o kplex-no-iterative
+	printf "#define TWO_HOP \n #define CTCP \n #define BRANCHING \n #define LOOKAHEAD" > version.h
+	${CC}  kplex.cpp -o kplex-no-dtp
 
 	printf "#define ITERATIVE_PRUNE \n #define CTCP \n #define LOOKAHEAD" > version.h
 	${CC}  kplex.cpp -o kplex-no-branching
